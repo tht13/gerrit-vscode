@@ -11,13 +11,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.sayHello"
+		"onCommand:extension.activateGerrit"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
 		"commands": [{
-			"command": "extension.sayHello",
-			"title": "Hello World"
+			"command": "extension.activateGerrit",
+			"title": "Open Command Pane",
+            "category": "Gerrit"
 		}]
 	},
 	"scripts": {
