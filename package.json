@@ -1,33 +1,53 @@
 {
-	"name": "gerrit-vscode",
-	"displayName": "gerrit-vscode",
-	"description": "A Gerrit extension for vscode",
-	"version": "0.0.1",
-	"publisher": "tht13",
-	"engines": {
-		"vscode": "^0.10.8"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:extension.activateGerrit"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"commands": [{
-			"command": "extension.activateGerrit",
-			"title": "Open Command Pane",
-            "category": "Gerrit"
-		}]
-	},
-	"scripts": {
-		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "name": "gerrit-vscode",
+    "displayName": "gerrit-vscode",
+    "description": "A Gerrit extension for vscode",
+    "version": "0.0.1",
+    "publisher": "tht13",
+    "engines": {
+        "vscode": "^0.10.8"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:gerrit.checkOutBranch",
+        "onCommand:gerrit.checkOutRevision",
+        "onCommand:gerrit.commitAmend",
+        "onCommand:gerrit.pushBranch"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "gerrit.checkOutBranch",
+                "title": "Check out branch",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.checkOutRevision",
+                "title": "Check out revision",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.commitAmend",
+                "title": "Commit amend",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.pushBranch",
+                "title": "Push to branch",
+                "category": "Gerrit"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
-	},
-	"devDependencies": {
-		"typescript": "^1.8.2",
-		"vscode": "^0.11.1"
-	}
+    },
+    "devDependencies": {
+        "typescript": "^1.8.2",
+        "vscode": "^0.11.1"
+    }
 }
