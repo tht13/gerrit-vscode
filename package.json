@@ -11,8 +11,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:gerrit.checkOutBranch",
-        "onCommand:gerrit.checkOutRevision",
+        "onCommand:gerrit.checkoutBranch",
+        "onCommand:gerrit.checkoutRevision",
         "onCommand:gerrit.commitAmend",
         "onCommand:gerrit.pushBranch"
     ],
@@ -20,12 +20,12 @@
     "contributes": {
         "commands": [
             {
-                "command": "gerrit.checkOutBranch",
+                "command": "gerrit.checkoutBranch",
                 "title": "Check out branch",
                 "category": "Gerrit"
             },
             {
-                "command": "gerrit.checkOutRevision",
+                "command": "gerrit.checkoutRevision",
                 "title": "Check out revision",
                 "category": "Gerrit"
             },

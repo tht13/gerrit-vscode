@@ -5,12 +5,12 @@ import { Gerrit } from "./gerrit/gerrit";
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
     commands.push(
-        vscode.commands.registerCommand("gerrit.checkOutBranch", () => {
+        vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
             vscode.window.showInformationMessage("Gerrit: Check out branch");
         })
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.checkOutRevision", () => {
+        vscode.commands.registerCommand("gerrit.checkoutRevision", () => {
             vscode.window.showInformationMessage("Gerrit: Check out revision");
         })
     );
