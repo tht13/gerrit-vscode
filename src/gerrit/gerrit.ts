@@ -20,9 +20,10 @@ export class Gerrit {
         this.currentRef = ref;
     }
 
-    // TODO: commit should return Promise
-    public commit(msg: string, files: string[], ammend: boolean) {
-
+    public commit(msg: string, files: string[], ammend: boolean): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
     }
 
     // TODO: isDirty maybe return Promise?
@@ -31,33 +32,44 @@ export class Gerrit {
         return false;
     }
 
-    public checkoutBranch(branch: string) {
-        this.checkout("origin/" + branch);
+    public checkoutBranch(branch: string): Promise<boolean> {
+        return this.checkout("origin/" + branch);
     }
 
-    // TODO: checkout should return Promise
-    private checkoutRef(ref?: Ref) {
+    private checkoutRef(ref?: Ref): Promise<boolean> {
         if (this.isDirty()) {
             return;
         }
         ref = (ref === undefined) ? this.currentRef : ref;
-        this.fetch(ref.getUrl());
-        // THEN
-        this.checkout("FETCH_HEAD");
+
+        return new Promise((resolve, reject) => {
+            this.fetch(ref.getUrl()).then(value => {
+                this.checkout("FETCH_HEAD").then(value => {
+                    resolve(true);
+                }, reason => {
+                    reject(reason);
+                });
+            }, reason => {
+                reject(reason);
+            });
+        });
     }
 
-    // TODO: fetch should return Promise
-    private fetch(url: string) {
-
+    private fetch(url: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
     }
 
-    // TODO: checkout should return Promise
-    private checkout(HEAD: string) {
-
+    private checkout(HEAD: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
     }
 
-    // TODO: push should return Promise
-    public push() {
-
+    public push(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
     }
 }
