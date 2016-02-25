@@ -15,7 +15,7 @@ export class Gerrit {
 
     public setCurrentRef(ref: Ref) {
         if (ref !== this.currentRef) {
-            this.checkOutRef(ref);
+            this.checkoutRef(ref);
         }
         this.currentRef = ref;
     }
@@ -29,13 +29,23 @@ export class Gerrit {
         return false;
     }
 
-    private checkOutRef(ref?: Ref) {
+    private checkoutRef(ref?: Ref) {
         if (this.isDirty()) {
             return;
         }
         ref = (ref === undefined) ? this.currentRef : ref;
+        this.fetch(ref.getUrl());
+        // THEN
+        this.checkout("FETCH_HEAD");
     }
 
+    private fetch(url: string) {
+
+    }
+
+    private checkout(HEAD: string) {
+
+    }
     public push() {
 
     }

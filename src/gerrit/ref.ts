@@ -19,4 +19,8 @@ export class Ref {
         this.patchSet = patchSet;
     }
 
+    public getUrl(): string {
+        return "";
+    }
+
 }
