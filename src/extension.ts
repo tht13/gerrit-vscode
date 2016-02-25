@@ -1,5 +1,6 @@
 "use strict";
 import * as vscode from "vscode";
+import { Gerrit } from "./gerrit/gerrit";
 
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
@@ -25,70 +26,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.concat(commands);
-}
-
-class Ref {
-
-    constructor(private id: number, private patchSet: number = 1) {
-    }
-
-    public getId(): number {
-        return this.id;
-    }
-
-    public setId(id: number) {
-        this.id = id;
-    }
-
-    public getPatchSet(): number {
-        return this.patchSet;
-    }
-
-    public setPatchSet(patchSet: number) {
-        this.patchSet = patchSet;
-    }
-
-}
-
-class Gerrit {
-    private currentRef: Ref;
-
-    constructor(private workspace: string, private repo: string, ref: Ref = null) {
-        if (ref !== null) {
-            this.currentRef = ref;
-        }
-    }
-
-    public getCurrentRef(): Ref {
-        return this.currentRef;
-    }
-
-    public setCurrentRef(ref: Ref) {
-        if (ref !== this.currentRef) {
-            this.checkOutRef(ref);
-        }
-        this.currentRef = ref;
-    }
-
-    public commit(msg: string, files: string[], ammend: boolean) {
-
-    }
-
-    private isDirty(): boolean {
-
-        return false;
-    }
-
-    private checkOutRef(ref?: Ref) {
-        if (this.isDirty()) {
-            return;
-        }
-        ref = (ref === undefined) ? this.currentRef : ref;
-    }
-
-    public push() {
-
-    }
 }
 
 export function deactivate() {
