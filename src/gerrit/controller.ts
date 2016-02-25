@@ -64,4 +64,8 @@ export class GerritController {
         }, reason => {
         });
     }
+
+    public push() {
+        this.gerrit.push();
+    }
 }

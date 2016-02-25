@@ -13,6 +13,7 @@
     "activationEvents": [
         "onCommand:gerrit.checkoutBranch",
         "onCommand:gerrit.checkoutRevision",
+        "onCommand:gerrit.commit",
         "onCommand:gerrit.commitAmend",
         "onCommand:gerrit.pushBranch"
     ],
@@ -27,6 +28,11 @@
             {
                 "command": "gerrit.checkoutRevision",
                 "title": "Check out revision",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.commit",
+                "title": "Commit",
                 "category": "Gerrit"
             },
             {

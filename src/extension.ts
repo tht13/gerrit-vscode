@@ -21,6 +21,12 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.commit", () => {
+            vscode.window.showInformationMessage("Gerrit: Commit");
+            controller.commit();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.commitAmend", () => {
             vscode.window.showInformationMessage("Gerrit: Commit amend");
             controller.commitAmend();
@@ -29,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
     commands.push(
         vscode.commands.registerCommand("gerrit.pushBranch", () => {
             vscode.window.showInformationMessage("Gerrit: Push to branch");
-            controller.commit();
+            controller.push();
         })
     );
 
