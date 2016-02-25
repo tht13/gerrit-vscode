@@ -29,6 +29,10 @@ export class Gerrit {
         return false;
     }
 
+    public checkoutBranch(branch: string) {
+        this.checkout("origin/" + branch);
+    }
+
     private checkoutRef(ref?: Ref) {
         if (this.isDirty()) {
             return;
