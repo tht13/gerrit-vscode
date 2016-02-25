@@ -20,10 +20,12 @@ export class Gerrit {
         this.currentRef = ref;
     }
 
+    // TODO: commit should return Promise
     public commit(msg: string, files: string[], ammend: boolean) {
 
     }
 
+    // TODO: isDirty maybe return Promise?
     private isDirty(): boolean {
 
         return false;
@@ -33,6 +35,7 @@ export class Gerrit {
         this.checkout("origin/" + branch);
     }
 
+    // TODO: checkout should return Promise
     private checkoutRef(ref?: Ref) {
         if (this.isDirty()) {
             return;
@@ -43,13 +46,17 @@ export class Gerrit {
         this.checkout("FETCH_HEAD");
     }
 
+    // TODO: fetch should return Promise
     private fetch(url: string) {
 
     }
 
+    // TODO: checkout should return Promise
     private checkout(HEAD: string) {
 
     }
+
+    // TODO: push should return Promise
     public push() {
 
     }
