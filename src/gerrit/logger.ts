@@ -3,7 +3,7 @@ import { window, OutputChannel } from "vscode";
 export class Logger {
     private static _logger: LoggerSingleton = null;
 
-    get logger() {
+    static get logger() {
         if (Logger._logger === null) {
             Logger._logger = new LoggerSingleton();
         }

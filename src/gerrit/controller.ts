@@ -1,10 +1,13 @@
 import { window, InputBoxOptions } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
+import { Logger } from "./logger";
 
 export class GerritController {
+    private logger: Logger;
 
     constructor(private gerrit: Gerrit) {
+        this.logger = Logger.logger;
     }
 
     public checkoutBranch() {

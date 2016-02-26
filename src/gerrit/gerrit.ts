@@ -1,9 +1,12 @@
 import { Ref } from "./ref";
+import { Logger } from "./logger";
 
 export class Gerrit {
     private currentRef: Ref;
+    private logger: Logger;
 
     constructor(private workspace: string, private repo: string, ref: Ref = null) {
+        this.logger = Logger.logger;
         if (ref !== null) {
             this.currentRef = ref;
         }
