@@ -51,6 +51,35 @@ export class GerritController {
         });
     }
 
+    public cherrypickRevision() {
+        let revisionOptions: InputBoxOptions = {
+            placeHolder: "Ref Number",
+            validateInput: (value: string): string => {
+                if (isNaN(parseInt(value))) {
+                    return "Not a Number";
+                } else {
+                    return null;
+                }
+            },
+            prompt: "The revision to cherrypick"
+        };
+
+        window.showInputBox(revisionOptions).then(refString => {
+            let refId = parseInt(refString);
+            let patchsetOptions: InputBoxOptions = revisionOptions;
+            patchsetOptions.placeHolder = `Patchset for Ref: ${refString}`;
+            patchsetOptions.prompt = "The patchset to cherrypick";
+
+            window.showInputBox(patchsetOptions).then(patchString => {
+                let patchId = parseInt(patchString);
+                let newRef: Ref = new Ref(refId, patchId);
+                this.gerrit.cherrypickRef(newRef);
+            }, reason => {
+            });
+        }, reason => {
+        });
+    }
+
     public commitAmend() {
         // TODO: should not require new commit message
         this.gerrit.commit("", [""], true);
