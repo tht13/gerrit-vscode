@@ -10,13 +10,13 @@ export function activate(context: vscode.ExtensionContext) {
 
     commands.push(
         vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
-            vscode.window.showInformationMessage("Gerrit: Check out branch");
+            vscode.window.showInformationMessage("Gerrit: Checkout branch");
             controller.checkoutBranch();
         })
     );
     commands.push(
         vscode.commands.registerCommand("gerrit.checkoutRevision", () => {
-            vscode.window.showInformationMessage("Gerrit: Check out revision");
+            vscode.window.showInformationMessage("Gerrit: Checkout revision");
             controller.checkoutRevision();
         })
     );

@@ -22,12 +22,12 @@
         "commands": [
             {
                 "command": "gerrit.checkoutBranch",
-                "title": "Check out branch",
+                "title": "Checkout branch",
                 "category": "Gerrit"
             },
             {
                 "command": "gerrit.checkoutRevision",
-                "title": "Check out revision",
+                "title": "Checkout revision",
                 "category": "Gerrit"
             },
             {
