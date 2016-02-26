@@ -44,6 +44,12 @@ export function activate(context: vscode.ExtensionContext) {
             controller.push();
         })
     );
+    commands.push(
+        vscode.commands.registerCommand("gerrit.rebaseBranch", () => {
+            vscode.window.showInformationMessage("Gerrit: Rebase from branch");
+            controller.rebase();
+        })
+    );
 
     context.subscriptions.concat(commands);
 }

@@ -49,6 +49,11 @@
                 "command": "gerrit.pushBranch",
                 "title": "Push to branch",
                 "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.rebaseBranch",
+                "title": "Rebase from branch",
+                "category": "Gerrit"
             }
         ]
     },
