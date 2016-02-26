@@ -89,4 +89,15 @@ export class Gerrit {
             resolve(true);
         });
     }
+
+    public rebase(branch: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let url = "" + branch;
+            this.fetch(url).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
 }
