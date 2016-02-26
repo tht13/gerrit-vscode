@@ -2,6 +2,7 @@ import { window, InputBoxOptions } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
 import { Logger } from "./logger";
+import * as utils from "./utils";
 
 export class GerritController {
     private logger: Logger;
@@ -25,23 +26,25 @@ export class GerritController {
     public checkoutRevision() {
         let revisionOptions: InputBoxOptions = {
             placeHolder: "Ref Number",
-            validateInput: (value: string): string => {
-                if (isNaN(parseInt(value))) {
-                    return "Not a Number";
-                } else {
-                    return null;
-                }
-            },
+            validateInput: utils.isValidNumber,
             prompt: "The revision to checkout"
         };
 
         window.showInputBox(revisionOptions).then(refString => {
+            if (utils.isValidNumber(refString) !== null) {
+                window.showWarningMessage("Valid Ref number not entered");
+                return;
+            }
             let refId = parseInt(refString);
             let patchsetOptions: InputBoxOptions = revisionOptions;
             patchsetOptions.placeHolder = `Patchset for Ref: ${refString}`;
             patchsetOptions.prompt = "The patchset to checkout";
 
             window.showInputBox(patchsetOptions).then(patchString => {
+                if (utils.isValidNumber(patchString) !== null) {
+                    window.showWarningMessage("Valid PatchSetnumber not entered");
+                    return;
+                }
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
                 this.gerrit.checkoutRef(newRef);
@@ -54,23 +57,25 @@ export class GerritController {
     public cherrypickRevision() {
         let revisionOptions: InputBoxOptions = {
             placeHolder: "Ref Number",
-            validateInput: (value: string): string => {
-                if (isNaN(parseInt(value))) {
-                    return "Not a Number";
-                } else {
-                    return null;
-                }
-            },
+            validateInput: utils.isValidNumber,
             prompt: "The revision to cherrypick"
         };
 
         window.showInputBox(revisionOptions).then(refString => {
+            if (utils.isValidNumber(refString) !== null) {
+                window.showWarningMessage("Valid Ref number not entered");
+                return;
+            }
             let refId = parseInt(refString);
             let patchsetOptions: InputBoxOptions = revisionOptions;
             patchsetOptions.placeHolder = `Patchset for Ref: ${refString}`;
             patchsetOptions.prompt = "The patchset to cherrypick";
 
             window.showInputBox(patchsetOptions).then(patchString => {
+                if (utils.isValidNumber(patchString) !== null) {
+                    window.showWarningMessage("Valid PatchSetnumber not entered");
+                    return;
+                }
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
                 this.gerrit.cherrypickRef(newRef);
