@@ -2,6 +2,7 @@ import { Ref } from "./ref";
 import { Logger } from "./logger";
 
 export class Gerrit {
+    private branch: string;
     private currentRef: Ref;
     private logger: Logger;
 
@@ -33,6 +34,7 @@ export class Gerrit {
     }
 
     public checkoutBranch(branch: string): Promise<boolean> {
+        this.branch = branch;
         return this.checkout("origin/" + branch);
     }
 
