@@ -105,4 +105,16 @@ export class GerritController {
     public push() {
         this.gerrit.push();
     }
+
+    public rebase() {
+        let rebaseOptions: InputBoxOptions = {
+            placeHolder: "master",
+            prompt: "The branch to rebase"
+        };
+
+        window.showInputBox(rebaseOptions).then(branch => {
+            this.gerrit.rebase(branch);
+        }, reason => {
+        });
+    }
 }
