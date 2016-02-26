@@ -37,13 +37,13 @@ export class Gerrit {
     }
 
     public checkoutRef(ref: Ref): Promise<boolean> {
-        if (this.isDirty()) {
-            return;
-        }
-
-        this.setCurrentRef(ref);
-
         return new Promise((resolve, reject) => {
+            if (this.isDirty()) {
+                reject("Dirty");
+            }
+
+            this.setCurrentRef(ref);
+
             this.fetch(ref.getUrl()).then(value => {
                 this.checkout("FETCH_HEAD").then(value => {
                     resolve(true);
@@ -57,13 +57,13 @@ export class Gerrit {
     }
 
     public cherrypickRef(ref: Ref): Promise<boolean> {
-        if (this.isDirty()) {
-            return;
-        }
-
-        this.setCurrentRef(ref);
-
         return new Promise((resolve, reject) => {
+            if (this.isDirty()) {
+                reject("Dirty");
+            }
+
+            this.setCurrentRef(ref);
+
             this.fetch(ref.getUrl()).then(value => {
                 this.cherrypick("FETCH_HEAD").then(value => {
                     resolve(true);
@@ -74,7 +74,6 @@ export class Gerrit {
                 reject(reason);
             });
         });
-
     }
 
     private fetch(url: string): Promise<boolean> {
