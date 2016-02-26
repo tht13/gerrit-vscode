@@ -56,6 +56,27 @@ export class Gerrit {
         });
     }
 
+    public cherrypickRef(ref: Ref): Promise<boolean> {
+        if (this.isDirty()) {
+            return;
+        }
+
+        this.setCurrentRef(ref);
+
+        return new Promise((resolve, reject) => {
+            this.fetch(ref.getUrl()).then(value => {
+                this.cherrypick("FETCH_HEAD").then(value => {
+                    resolve(true);
+                }, reason => {
+                    reject(reason);
+                });
+            }, reason => {
+                reject(reason);
+            });
+        });
+
+    }
+
     private fetch(url: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             resolve(true);
@@ -63,6 +84,12 @@ export class Gerrit {
     }
 
     private checkout(HEAD: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            resolve(true);
+        });
+    }
+
+    private cherrypick(HEAD: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             resolve(true);
         });
