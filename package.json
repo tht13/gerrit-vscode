@@ -31,6 +31,11 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.cherrypickRevision",
+                "title": "Cherrypick revision",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.commit",
                 "title": "Commit",
                 "category": "Gerrit"
