@@ -5,14 +5,18 @@ export class Logger {
 
     static get logger() {
         if (Logger._logger === null) {
-            Logger._logger = new LoggerSingleton();
+            Logger._logger = new LoggerSingletonClass();
         }
         return Logger._logger;
     }
 
 }
 
-class LoggerSingleton {
+export interface LoggerSingleton {
+    log(value: string): void;
+}
+
+class LoggerSingletonClass implements LoggerSingleton {
     private outputChannel: OutputChannel;
     private visible: boolean = false;
     constructor() {

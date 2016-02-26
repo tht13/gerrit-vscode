@@ -1,10 +1,10 @@
 import { Ref } from "./ref";
-import { Logger } from "./logger";
+import { Logger, LoggerSingleton } from "./logger";
 
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
-    private logger: Logger;
+    private logger: LoggerSingleton;
 
     constructor(private workspace: string, private repo: string, ref: Ref = null) {
         this.logger = Logger.logger;
