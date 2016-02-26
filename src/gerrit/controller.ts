@@ -44,7 +44,7 @@ export class GerritController {
             window.showInputBox(patchsetOptions).then(patchString => {
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
-                this.gerrit.setCurrentRef(newRef);
+                this.gerrit.checkoutRef(newRef);
             }, reason => {
             });
         }, reason => {

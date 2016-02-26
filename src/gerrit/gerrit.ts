@@ -16,10 +16,7 @@ export class Gerrit {
         return this.currentRef;
     }
 
-    public setCurrentRef(ref: Ref) {
-        if (ref !== this.currentRef) {
-            this.checkoutRef(ref);
-        }
+    private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
     }
 
@@ -39,11 +36,12 @@ export class Gerrit {
         return this.checkout("origin/" + branch);
     }
 
-    private checkoutRef(ref?: Ref): Promise<boolean> {
+    public checkoutRef(ref: Ref): Promise<boolean> {
         if (this.isDirty()) {
             return;
         }
-        ref = (ref === undefined) ? this.currentRef : ref;
+
+        this.setCurrentRef(ref);
 
         return new Promise((resolve, reject) => {
             this.fetch(ref.getUrl()).then(value => {
