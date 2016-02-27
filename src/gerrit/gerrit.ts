@@ -1,12 +1,17 @@
 import { Ref } from "./ref";
 import { Logger, LoggerSingleton } from "./logger";
+import { GerritSettings } from "./settings";
+import { workspace } from "vscode";
 
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: LoggerSingleton;
+    private settings: GerritSettings;
 
-    constructor(private workspace: string, private repo: string, ref: Ref = null) {
+    constructor(private workspaceRoot: string, private repo: string, ref: Ref = null) {
+        let settings: any = workspace.getConfiguration("gerrit");
+        this.settings = <GerritSettings>settings;
         this.logger = Logger.logger;
         this.logger.log("Activating Gerrit...");
         if (ref !== null) {

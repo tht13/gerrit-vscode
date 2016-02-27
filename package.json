@@ -51,7 +51,22 @@
                 "title": "Rebase from branch",
                 "category": "Gerrit"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Gerrit configuration",
+            "properties": {
+                "gerrit.host": {
+                    "type": "string",
+                    "description": "The Gerrit host url"
+                },
+                "gerrit.version": {
+                    "type": "number",
+                    "default": 2.0,
+                    "description": "The version of Gerrit in use by the server."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
