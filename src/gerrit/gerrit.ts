@@ -8,6 +8,7 @@ export class Gerrit {
 
     constructor(private workspace: string, private repo: string, ref: Ref = null) {
         this.logger = Logger.logger;
+        this.logger.log("Activating Gerrit...");
         if (ref !== null) {
             this.currentRef = ref;
         }
