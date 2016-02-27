@@ -20,9 +20,16 @@ export class Gerrit {
 
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
+        this.logger.log(`New Ref:
+    ID: ${this.currentRef.getId()}
+    Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
     public commit(msg: string, files: string[], ammend: boolean): Promise<boolean> {
+        this.logger.log(`Commit:
+    Message: ${msg}
+    Files: ${files}
+    Ammend: ${ammend}`);
         return new Promise((resolve, reject) => {
             resolve(true);
         });
@@ -35,15 +42,23 @@ export class Gerrit {
     }
 
     public checkoutBranch(branch: string): Promise<boolean> {
+        this.logger.log(`Checkout Branch:
+    Branch: origin/${branch}`);
         this.branch = branch;
         return this.checkout("origin/" + branch);
     }
 
     public checkoutRef(ref: Ref): Promise<boolean> {
+        this.logger.log(`Checkout Branch:
+    ID: ${ref.getId()}
+    Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.checkout);
     }
 
     public cherrypickRef(ref: Ref): Promise<boolean> {
+        this.logger.log(`Cherrypick Branch:
+    ID: ${ref.getId()}
+    Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.cherrypick);
     }
 
@@ -92,6 +107,8 @@ export class Gerrit {
     }
 
     public rebase(branch: string): Promise<boolean> {
+        this.logger.log(`Rebase Branch:
+    Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
             let url = "" + branch;
             this.fetch(url).then(value => {
