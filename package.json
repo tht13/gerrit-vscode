@@ -11,11 +11,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:gerrit.checkoutBranch",
-        "onCommand:gerrit.checkoutRevision",
-        "onCommand:gerrit.commit",
-        "onCommand:gerrit.commitAmend",
-        "onCommand:gerrit.pushBranch"
+        "*"
     ],
     "main": "./out/src/extension",
     "contributes": {
