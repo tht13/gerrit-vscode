@@ -110,10 +110,20 @@ export class Gerrit {
         });
     }
 
-    // TODO: fetch
-    private fetch(url: string): Promise<boolean> {
+    private fetch(url: string, options?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
+            let args: string[] = [
+                "fetch",
+                url
+            ];
+            if (options !== null) {
+                args = args.concat(options);
+            }
+            this.git(args).then(value => {
             resolve(true);
+            }, reason => {
+                reject(reason);
+            });
         });
     }
 
