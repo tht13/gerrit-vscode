@@ -2,6 +2,7 @@ import { Ref } from "./ref";
 import { Logger, LoggerSingleton } from "./logger";
 import { GerritSettings } from "./settings";
 import { workspace } from "vscode";
+import { exec } from "child_process";
 
 export class Gerrit {
     private branch: string;
@@ -120,6 +121,20 @@ export class Gerrit {
                 resolve(true);
             }, reason => {
                 reject(reason);
+            });
+        });
+    }
+
+    private git(args: string[]): Promise<string> {
+        return new Promise((resolve, reject) => {
+            args.unshift("git");
+            let cmd = args.join(" ");
+            exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
+                if (error === null) {
+                    resolve(stdout);
+                } else {
+                    reject({ error: error, stderr: stderr });
+                }
             });
         });
     }
