@@ -5,7 +5,7 @@ import { GerritController } from "./gerrit/controller";
 
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
-    let gerrit: Gerrit = new Gerrit("", "");
+    let gerrit: Gerrit = new Gerrit(vscode.workspace.rootPath, "");
     let controller: GerritController = new GerritController(gerrit);
 
     commands.push(
