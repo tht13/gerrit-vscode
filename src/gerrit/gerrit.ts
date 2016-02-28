@@ -129,10 +129,18 @@ export class Gerrit {
         });
     }
 
-    // TODO: cherrypick
+    // TODO: Add cherry-pick --continue
     private cherrypick(HEAD: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            resolve(true);
+            let args = [
+                "cherry-pick",
+                HEAD
+            ];
+            this.git(args).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
         });
     }
 
