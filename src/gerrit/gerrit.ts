@@ -37,7 +37,25 @@ export class Gerrit {
     Files: ${files}
     Amend: ${amend}`);
         return new Promise((resolve, reject) => {
-            resolve(true);
+            let args: string[] = [
+                "commit",
+            ];
+            if (amend) {
+                args.push("--amend", "--no-edit");
+            } else {
+                if (msg.length === 0) {
+                    reject("Requires a message to commit with");
+                }
+                // TODO: make it work with spaces
+                args.push("-m", msg);
+            }
+            this.git(args).then(value => {
+                this.logger.log(value);
+                resolve(true);
+            }, reason => {
+                console.warn(reason);
+                reject(reason);
+            })
         });
     }
 
@@ -129,6 +147,7 @@ export class Gerrit {
         return new Promise((resolve, reject) => {
             args.unshift("git");
             let cmd = args.join(" ");
+            this.logger.log(cmd);
             exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
                 if (error === null) {
                     resolve(stdout);
