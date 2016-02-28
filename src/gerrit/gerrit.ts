@@ -136,10 +136,18 @@ export class Gerrit {
         });
     }
 
-    // TODO: push
     public push(): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            resolve(true);
+            let args = [
+                "push",
+                "origin",
+                "HEAD:refs/for/" + this.branch
+            ];
+            this.git(args).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
         });
     }
 
