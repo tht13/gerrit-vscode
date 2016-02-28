@@ -112,7 +112,15 @@ export class Gerrit {
 
     private checkout(HEAD: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            resolve(true);
+            let args = [
+                "checkout",
+                HEAD
+            ];
+            this.git(args).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
         });
     }
 
