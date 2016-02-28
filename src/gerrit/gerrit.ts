@@ -3,6 +3,8 @@ import { Logger, LoggerSingleton } from "./logger";
 import { GerritSettings } from "./settings";
 import { workspace } from "vscode";
 import { exec } from "child_process";
+import * as http from "http";
+import * as https from "https";
 
 export class Gerrit {
     private branch: string;
@@ -189,6 +191,40 @@ export class Gerrit {
                     reject(reason);
                 }
             });
+        });
+    }
+
+    private get(path: string): Promise<Object> {
+        let options: https.RequestOptions = {
+            host: this.settings.host,
+            port: 443,
+            path: path,
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+        return new Promise((resolve, reject) => {
+            let req = https.get(options, res => {
+                let output = "";
+                console.log(options.host + ":" + res.statusCode);
+                res.setEncoding("utf8");
+
+                res.on("data", (chunk: string) => {
+                    output += chunk;
+                });
+
+                res.on("end", () => {
+                    let data = JSON.parse(output);
+                    resolve(data);
+                });
+            });
+
+            req.on("error", function(err) {
+                reject(err);
+            });
+
+            req.end();
         });
     }
 }
