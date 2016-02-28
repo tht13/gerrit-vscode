@@ -50,10 +50,8 @@ export class Gerrit {
                 args.push("-m", msg);
             }
             this.git(args).then(value => {
-                this.logger.log(value);
                 resolve(true);
             }, reason => {
-                console.warn(reason);
                 reject(reason);
             })
         });
@@ -150,9 +148,13 @@ export class Gerrit {
             this.logger.log(cmd);
             exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
                 if (error === null) {
-                    resolve(stdout);
+                    this.logger.log(stdout.toString());
+                    resolve(stdout.toString());
                 } else {
-                    reject({ error: error, stderr: stderr });
+                    let reason = { error: error, stderr: stderr };
+                    console.warn(reason);
+                    this.logger.log([error.name, error.message].join("\n"));
+                    reject(reason);
                 }
             });
         });
