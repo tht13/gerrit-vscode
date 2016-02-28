@@ -63,6 +63,7 @@ export class Gerrit {
         return false;
     }
 
+    // TODO: checkoutBranch, get branch list
     public checkoutBranch(branch: string): Promise<boolean> {
         this.logger.log(`Checkout Branch:
     Branch: origin/${branch}`);
@@ -70,6 +71,7 @@ export class Gerrit {
         return this.checkout("origin/" + branch);
     }
 
+    // TODO: checkoutRef
     public checkoutRef(ref: Ref): Promise<boolean> {
         this.logger.log(`Checkout Branch:
     ID: ${ref.getId()}
@@ -77,6 +79,7 @@ export class Gerrit {
         return this.fetchRef(ref, this.checkout);
     }
 
+    // TODO: cherrypickRef
     public cherrypickRef(ref: Ref): Promise<boolean> {
         this.logger.log(`Cherrypick Branch:
     ID: ${ref.getId()}
@@ -84,6 +87,7 @@ export class Gerrit {
         return this.fetchRef(ref, this.cherrypick);
     }
 
+    // TODO: fetchRef
     private fetchRef(ref: Ref, resolver: (url: string) => Promise<boolean>): Promise<boolean> {
         return new Promise((resolve, reject) => {
             if (this.isDirty()) {
@@ -104,6 +108,7 @@ export class Gerrit {
         });
     }
 
+    // TODO: fetch
     private fetch(url: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             resolve(true);
@@ -124,18 +129,21 @@ export class Gerrit {
         });
     }
 
+    // TODO: cherrypick
     private cherrypick(HEAD: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             resolve(true);
         });
     }
 
+    // TODO: push
     public push(): Promise<boolean> {
         return new Promise((resolve, reject) => {
             resolve(true);
         });
     }
 
+    // TODO: rebase
     public rebase(branch: string): Promise<boolean> {
         this.logger.log(`Rebase Branch:
     Branch: origin/${branch}`);
