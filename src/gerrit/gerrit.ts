@@ -31,11 +31,11 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
-    public commit(msg: string, files: string[], ammend: boolean): Promise<boolean> {
+    public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
         this.logger.log(`Commit:
     Message: ${msg}
     Files: ${files}
-    Ammend: ${ammend}`);
+    Amend: ${amend}`);
         return new Promise((resolve, reject) => {
             resolve(true);
         });
