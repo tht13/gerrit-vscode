@@ -70,7 +70,7 @@ export class Gerrit {
         this.logger.log(`Checkout Branch:
     Branch: origin/${branch}`);
         this.branch = branch;
-        return this.checkout("origin/" + branch);
+        return this.checkout(`origin/${branch}`);
     }
 
     // TODO: checkoutRef
@@ -161,7 +161,7 @@ export class Gerrit {
             let args = [
                 "push",
                 "origin",
-                "HEAD:refs/for/" + this.branch
+                `HEAD:refs/for/${this.branch}`
             ];
             this.git(args).then(value => {
                 resolve(true);
