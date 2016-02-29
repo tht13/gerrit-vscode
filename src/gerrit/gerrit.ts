@@ -6,12 +6,14 @@ import { exec } from "child_process";
 import * as http from "http";
 import * as https from "https";
 
+// TODO: convert logger.log info messages at function start to debug only
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: LoggerSingleton;
     private settings: GerritSettings;
 
+    // TODO: load current branch at activation
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         let settings: any = workspace.getConfiguration("gerrit");
         this.settings = <GerritSettings>settings;
@@ -33,6 +35,8 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
+    // TODO: stage files for commit
+    // TODO: stage current file
     public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
         this.logger.log(`Commit:
     Message: ${msg}
@@ -194,7 +198,7 @@ export class Gerrit {
         });
     }
 
-    // TODO: rebase
+    // TODO: rebase, rebase --continue
     public rebase(branch: string): Promise<boolean> {
         this.logger.log(`Rebase Branch:
     Branch: origin/${branch}`);
