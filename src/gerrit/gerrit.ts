@@ -13,7 +13,6 @@ export class Gerrit {
     private logger: LoggerSingleton;
     private settings: GerritSettings;
 
-    // TODO: load current branch at activation
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         this.settings = new GerritSettings();
         this.logger = Logger.logger;
@@ -212,14 +211,16 @@ export class Gerrit {
         });
     }
 
-    public push(): Promise<boolean> {
+    // add option to push to current branch in use
+    public push(branch: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             let args = [
                 "push",
                 "origin",
-                `HEAD:refs/for/${this.branch}`
+                `HEAD:refs/for/${branch}`
             ];
             this.git(args).then(value => {
+                this.branch = branch;
                 resolve(true);
             }, reason => {
                 reject(reason);

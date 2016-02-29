@@ -103,7 +103,15 @@ export class GerritController {
     }
 
     public push() {
-        this.gerrit.push();
+        let options: InputBoxOptions = {
+            value: "master",
+            prompt: "The branch to push"
+        };
+
+        window.showInputBox(options).then(branch => {
+            this.gerrit.push(branch);
+        }, reason => {
+        });
     }
 
     public rebase() {
