@@ -23,8 +23,11 @@ export class Ref {
         this.patchSet = patchSet;
     }
 
+    // TODO: Find what happens when ID is less than two digits long
     public getUrl(): string {
-        return "";
+        let idString = this.id.toString();
+        let lastTwo = parseInt(idString.substr(idString.length - 2));
+        return `refs/changes/${lastTwo}/${idString}/${this.patchSet.toString()}`;
     }
 
 }
