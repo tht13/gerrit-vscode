@@ -79,6 +79,10 @@
                     "type": "string",
                     "description": "Gerrit username, Required"
                 },
+                "gerrit.project": {
+                    "type": "string",
+                    "description": "Gerrit project, Required"
+                },
                 "gerrit.version": {
                     "type": "number",
                     "default": 2.0,

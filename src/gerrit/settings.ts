@@ -9,5 +9,8 @@ export interface GerritSettings {
 
     username: string;
 
+    // TODO: Get this automatically?
+    project: string;
+
     version: string;
 }
