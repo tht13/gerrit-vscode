@@ -58,7 +58,26 @@
             "properties": {
                 "gerrit.host": {
                     "type": "string",
-                    "description": "The Gerrit host url"
+                    "description": "The Gerrit host url, Required"
+                },
+                "gerrit.protocol": {
+                    "type": "string",
+                    "default": "http",
+                    "description": "The protocol used for fetch, ssh or http, Default=http"
+                },
+                "gerrit.httpPort": {
+                    "type": "number",
+                    "default": 80,
+                    "description": "The port used for http access, Default=80"
+                },
+                "gerrit.sshPort": {
+                    "type": "number",
+                    "default": 443,
+                    "description": "The port used for ssh access, Default=443"
+                },
+                "gerrit.username": {
+                    "type": "string",
+                    "description": "Gerrit username, Required"
                 },
                 "gerrit.version": {
                     "type": "number",
