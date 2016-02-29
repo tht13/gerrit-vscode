@@ -65,12 +65,22 @@ export class Gerrit {
         return false;
     }
 
-    // TODO: checkoutBranch, get branch list
+    // TODO: get branch list??
     public checkoutBranch(branch: string): Promise<boolean> {
         this.logger.log(`Checkout Branch:
     Branch: origin/${branch}`);
         this.branch = branch;
-        return this.checkout(`origin/${branch}`);
+        return new Promise((resolve, reject) => {
+            this.fetch("", ["-fv"]).then(fetch_value => {
+                this.checkout(`origin/${branch}`).then(checkout_value => {
+                    resolve(true);
+                }, checkout_reason => {
+                    reject(checkout_reason);
+                });
+            }, fetch_reason => {
+                reject(fetch_reason);
+            });
+        });
     }
 
     // TODO: checkoutRef
