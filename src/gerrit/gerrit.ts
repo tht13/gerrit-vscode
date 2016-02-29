@@ -176,8 +176,7 @@ export class Gerrit {
         this.logger.log(`Rebase Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
-            let url = "" + branch;
-            this.fetch(url).then(value => {
+            this.fetch("origin").then(value => {
                 resolve(true);
             }, reason => {
                 reject(reason);
