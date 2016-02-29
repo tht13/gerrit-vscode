@@ -109,7 +109,6 @@ export class Gerrit {
         });
     }
 
-    // TODO: cherrypickRef
     public cherrypickRef(ref: Ref): Promise<boolean> {
         this.logger.log(`Cherrypick Branch:
     ID: ${ref.getId()}
