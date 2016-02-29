@@ -15,8 +15,7 @@ export class Gerrit {
 
     // TODO: load current branch at activation
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
-        let settings: any = workspace.getConfiguration("gerrit");
-        this.settings = <GerritSettings>settings;
+        this.settings = new GerritSettings();
         this.logger = Logger.logger;
         this.logger.log("Activating Gerrit...");
         if (ref !== null) {
