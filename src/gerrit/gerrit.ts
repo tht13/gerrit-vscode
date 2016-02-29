@@ -55,7 +55,7 @@ export class Gerrit {
                 resolve(true);
             }, reason => {
                 reject(reason);
-        });
+            });
         });
     }
 
@@ -120,7 +120,7 @@ export class Gerrit {
                 args = args.concat(options);
             }
             this.git(args).then(value => {
-            resolve(true);
+                resolve(true);
             }, reason => {
                 reject(reason);
             });
@@ -176,9 +176,17 @@ export class Gerrit {
         this.logger.log(`Rebase Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
-            let url = "" + branch;
-            this.fetch(url).then(value => {
-                resolve(true);
+            let url = branch;
+            this.fetch(url, ["-fv"]).then(value => {
+                let args: string[] = [
+                    "rebase",
+                    `origin/${branch}`
+                ];
+                this.git(args).then(value => {
+                    resolve(true);
+                }, reason => {
+                    reject(reason);
+                });
             }, reason => {
                 reject(reason);
             });
