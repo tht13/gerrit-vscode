@@ -6,7 +6,6 @@ import { exec } from "child_process";
 import * as http from "http";
 import * as https from "https";
 
-// TODO: convert logger.log info messages at function start to debug only
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
@@ -16,6 +15,7 @@ export class Gerrit {
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         this.settings = new GerritSettings();
         this.logger = Logger.logger;
+        this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...");
         if (ref !== null) {
             this.currentRef = ref;
@@ -28,7 +28,7 @@ export class Gerrit {
 
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
-        this.logger.log(`New Ref:
+        this.logger.debug(`New Ref:
     ID: ${this.currentRef.getId()}
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
@@ -36,7 +36,7 @@ export class Gerrit {
     // TODO: stage files for commit
     // TODO: stage current file
     public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
-        this.logger.log(`Commit:
+        this.logger.debug(`Commit:
     Message: ${msg}
     Files: ${files}
     Amend: ${amend}`);
@@ -69,7 +69,7 @@ export class Gerrit {
 
     // TODO: get branch list??
     public checkoutBranch(branch: string): Promise<boolean> {
-        this.logger.log(`Checkout Branch:
+        this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
             this.fetch("", ["-fv"]).then(fetch_value => {
@@ -86,7 +86,7 @@ export class Gerrit {
     }
 
     public checkoutRef(ref: Ref): Promise<boolean> {
-        this.logger.log(`Checkout Branch:
+        this.logger.debug(`Checkout Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
@@ -109,7 +109,7 @@ export class Gerrit {
     }
 
     public cherrypickRef(ref: Ref): Promise<boolean> {
-        this.logger.log(`Cherrypick Branch:
+        this.logger.debug(`Cherrypick Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
@@ -230,7 +230,7 @@ export class Gerrit {
 
     // TODO: rebase, rebase --continue
     public rebase(branch: string): Promise<boolean> {
-        this.logger.log(`Rebase Branch:
+        this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
             this.fetch("", ["-fv"]).then(value => {

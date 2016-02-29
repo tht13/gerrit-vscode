@@ -13,14 +13,22 @@ export class Logger {
 }
 
 export interface LoggerSingleton {
+    setDebug(value: boolean): void;
     log(value: string): void;
+    debug(value: string): void;
 }
 
 class LoggerSingletonClass implements LoggerSingleton {
     private outputChannel: OutputChannel;
     private visible: boolean = false;
+    private debugMode: boolean = false;
+
     constructor() {
         this.outputChannel = window.createOutputChannel("Gerrit");
+    }
+
+    setDebug(value: boolean) {
+        this.debugMode = value;
     }
 
     log(value: string) {
@@ -28,6 +36,13 @@ class LoggerSingletonClass implements LoggerSingleton {
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
         }
+    }
+
+    debug(value: string) {
+        if (!this.debugMode) {
+            return;
+        }
+        this.log(value);
     }
 
 }
