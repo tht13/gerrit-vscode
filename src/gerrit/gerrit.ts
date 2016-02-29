@@ -120,12 +120,15 @@ export class Gerrit {
             ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
-    private fetch(url: string, options?: string[]): Promise<boolean> {
+    private fetch(url: string = "", options?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
             let args: string[] = [
                 "fetch",
-                url
+                "origin"
             ];
+            if (url.length > 0) {
+                args.push(url);
+            }
             if (options !== null) {
                 args = args.concat(options);
             }
@@ -186,7 +189,7 @@ export class Gerrit {
         this.logger.log(`Rebase Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
-            this.fetch("origin", ["-fv"]).then(value => {
+            this.fetch("", ["-fv"]).then(value => {
                 let args: string[] = [
                     "rebase",
                     `origin/${branch}`
