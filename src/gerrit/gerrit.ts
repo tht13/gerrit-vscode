@@ -92,19 +92,6 @@ export class Gerrit {
         this.logger.log(`Checkout Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.checkout);
-    }
-
-    // TODO: cherrypickRef
-    public cherrypickRef(ref: Ref): Promise<boolean> {
-        this.logger.log(`Cherrypick Branch:
-    ID: ${ref.getId()}
-    Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.cherrypick);
-    }
-
-    // TODO: fetchRef
-    private fetchRef(ref: Ref, resolver: (url: string) => Promise<boolean>): Promise<boolean> {
         return new Promise((resolve, reject) => {
             if (this.isDirty()) {
                 reject("Dirty");
@@ -113,7 +100,7 @@ export class Gerrit {
             this.setCurrentRef(ref);
 
             this.fetch(ref.getUrl()).then(value => {
-                resolver("FETCH_HEAD").then(value => {
+                this.checkout("FETCH_HEAD").then(value => {
                     resolve(true);
                 }, reason => {
                     reject(reason);
@@ -123,6 +110,51 @@ export class Gerrit {
             });
         });
     }
+
+    // TODO: cherrypickRef
+    public cherrypickRef(ref: Ref): Promise<boolean> {
+        this.logger.log(`Cherrypick Branch:
+    ID: ${ref.getId()}
+    Patch Set: ${ref.getPatchSet()}`);
+        return new Promise((resolve, reject) => {
+            if (this.isDirty()) {
+                reject("Dirty");
+            }
+
+            this.setCurrentRef(ref);
+
+            this.fetch(ref.getUrl()).then(value => {
+                this.cherrypick("FETCH_HEAD").then(value => {
+                    resolve(true);
+                }, reason => {
+                    reject(reason);
+                });
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    // TODO: fetchRef, using resolver loses `this` instance, find solution
+    // private fetchRef(ref: Ref, resolver: (url: string) => Promise<boolean>): Promise<boolean> {
+    //     return new Promise((resolve, reject) => {
+    //         if (this.isDirty()) {
+    //             reject("Dirty");
+    //         }
+
+    //         this.setCurrentRef(ref);
+
+    //         this.fetch(ref.getUrl()).then(value => {
+    //             resolver("FETCH_HEAD").then(value => {
+    //                 resolve(true);
+    //             }, reason => {
+    //                 reject(reason);
+    //             });
+    //         }, reason => {
+    //             reject(reason);
+    //         });
+    //     });
+    // }
 
     private generateFetchUrl(): string {
         if (["http", "ssh"].indexOf(this.settings.protocol) === -1) {
