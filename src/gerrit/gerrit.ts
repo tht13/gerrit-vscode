@@ -87,7 +87,6 @@ export class Gerrit {
         });
     }
 
-    // TODO: checkoutRef
     public checkoutRef(ref: Ref): Promise<boolean> {
         this.logger.log(`Checkout Branch:
     ID: ${ref.getId()}
