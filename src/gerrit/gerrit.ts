@@ -12,7 +12,7 @@ export class Gerrit {
     private logger: LoggerSingleton;
     private settings: GerritSettings;
 
-    constructor(private workspaceRoot: string, private repo: string, ref: Ref = null) {
+    constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         let settings: any = workspace.getConfiguration("gerrit");
         this.settings = <GerritSettings>settings;
         this.logger = Logger.logger;
@@ -130,13 +130,13 @@ export class Gerrit {
             ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
-    private fetch(url: string = "", options?: string[]): Promise<boolean> {
+    private fetch(url: string, options?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
             let args: string[] = [
                 "fetch",
                 "origin"
             ];
-            if (url.length > 0) {
+            if (url !== null && url.length > 0) {
                 args.push(url);
             }
             if (options !== null) {
