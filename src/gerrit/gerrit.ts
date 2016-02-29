@@ -98,8 +98,8 @@ export class Gerrit {
 
             this.setCurrentRef(ref);
 
-            resolver(ref.getUrl()).then(value => {
-                this.cherrypick("FETCH_HEAD").then(value => {
+            this.fetch(ref.getUrl()).then(value => {
+                resolver("FETCH_HEAD").then(value => {
                     resolve(true);
                 }, reason => {
                     reject(reason);
