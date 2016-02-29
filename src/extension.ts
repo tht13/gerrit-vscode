@@ -3,10 +3,13 @@ import * as vscode from "vscode";
 import { Gerrit } from "./gerrit/gerrit";
 import { GerritController } from "./gerrit/controller";
 
+let gerrit: Gerrit;
+let controller: GerritController;
+
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
-    let gerrit: Gerrit = new Gerrit(vscode.workspace.rootPath, "");
-    let controller: GerritController = new GerritController(gerrit);
+    gerrit = new Gerrit(vscode.workspace.rootPath, "");
+    controller = new GerritController(gerrit);
 
     commands.push(
         vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
