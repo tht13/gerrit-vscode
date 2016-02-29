@@ -110,6 +110,16 @@ export class Gerrit {
         });
     }
 
+    private generateFetchUrl(): string {
+        if (["http", "ssh"].indexOf(this.settings.protocol) === -1) {
+            this.logger.log("Incorrect protocol specified");
+            this.logger.log("Must be http or ssh");
+            throw new Error("Incorrect protocol specified");
+        }
+        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "http")
+            ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
+    }
+
     private fetch(url: string, options?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
             let args: string[] = [
