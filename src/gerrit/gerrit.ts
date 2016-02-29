@@ -55,7 +55,7 @@ export class Gerrit {
                 resolve(true);
             }, reason => {
                 reject(reason);
-            })
+        });
         });
     }
 
