@@ -129,4 +129,8 @@ export class GerritController {
         }, reason => {
         });
     }
+
+    public rebasentinue() {
+        this.gerrit.rebaseContinue();
+    }
 }

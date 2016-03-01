@@ -242,7 +242,7 @@ export class Gerrit {
         });
     }
 
-    // TODO: rebase, rebase --continue
+    // TODO: rebase
     public rebase(branch: string): Promise<boolean> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
@@ -257,6 +257,21 @@ export class Gerrit {
                 }, reason => {
                     reject(reason);
                 });
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    // TODO: add check for running rebase
+    public rebaseContinue(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let args = [
+                "rebase",
+                "--continue"
+            ];
+            this.git(args).then(value => {
+                resolve(true);
             }, reason => {
                 reject(reason);
             });

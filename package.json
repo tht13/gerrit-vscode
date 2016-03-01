@@ -55,6 +55,11 @@
                 "command": "gerrit.rebaseBranch",
                 "title": "Rebase from branch",
                 "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.rebaseContinue",
+                "title": "Rebase continue",
+                "category": "Gerrit"
             }
         ],
         "configuration": {

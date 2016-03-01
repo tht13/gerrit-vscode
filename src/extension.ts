@@ -59,6 +59,12 @@ export function activate(context: vscode.ExtensionContext) {
             controller.rebase();
         })
     );
+    commands.push(
+        vscode.commands.registerCommand("gerrit.rebaseContinue", () => {
+            vscode.window.showInformationMessage("Gerrit: Rebase continue");
+            controller.rebase();
+        })
+    );
 
     context.subscriptions.concat(commands);
 }
