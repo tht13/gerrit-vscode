@@ -30,6 +30,12 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.cherrypickContinue", () => {
+            vscode.window.showInformationMessage("Gerrit: Cherrypick continue");
+            controller.cherrypickContinue();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.commit", () => {
             vscode.window.showInformationMessage("Gerrit: Commit");
             controller.commit();

@@ -84,6 +84,10 @@ export class GerritController {
         }, reason => {
         });
     }
+    
+    public cherrypickContinue() {
+        this.gerrit.cherrypickContinue();
+    }
 
     public commitAmend() {
         // TODO: should not require new commit message

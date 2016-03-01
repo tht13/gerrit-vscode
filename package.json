@@ -32,6 +32,11 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.cherrypickContinue",
+                "title": "Cherrypick continue",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.commit",
                 "title": "Commit",
                 "category": "Gerrit"
