@@ -84,7 +84,7 @@ export class GerritController {
         }, reason => {
         });
     }
-    
+
     public cherrypickContinue() {
         this.gerrit.cherrypickContinue();
     }

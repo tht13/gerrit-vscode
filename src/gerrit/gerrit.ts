@@ -209,7 +209,7 @@ export class Gerrit {
             });
         });
     }
-    
+
     // TODO: add check for running cherrypick
     public cherrypickContinue(): Promise<boolean> {
         return new Promise((resolve, reject) => {
