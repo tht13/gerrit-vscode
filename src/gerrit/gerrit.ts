@@ -50,7 +50,7 @@ export class Gerrit {
                 if (msg.length === 0) {
                     reject("Requires a message to commit with");
                 }
-                // TODO: make it work with spaces
+                // TODO: make it work with spaces, find what vscode uses
                 args.push("-m", msg);
             }
             this.git(args).then(value => {
@@ -249,6 +249,7 @@ export class Gerrit {
         });
     }
 
+    // TODO: return Promise<boolean> or accept string in calling functions to reduce promise call stack
     private git(args: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
             args.unshift("git");
