@@ -40,6 +40,23 @@ export class Gerrit {
         return false;
     }
 
+    public stage(path: string): Promise<boolean> {
+        this.logger.debug(`Stage:
+    Message: ${path}`);
+        return new Promise((resolve, reject) => {
+            let args = [
+                "add",
+                path
+            ];
+            this.git(args).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    // TODO: Use quick pick during commit for staging files
     // TODO: stage files for commit
     // TODO: stage current file
     public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {

@@ -11,6 +11,11 @@ export class GerritController {
         this.logger = Logger.logger;
     }
 
+    public stageCurrentFile() {
+        let path: string = window.activeTextEditor.document.fileName;
+        this.gerrit.stage(path);
+    }
+
     public commit() {
         let options: InputBoxOptions = {
             placeHolder: "Commit Message",

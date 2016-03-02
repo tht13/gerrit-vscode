@@ -17,6 +17,11 @@
     "contributes": {
         "commands": [
             {
+                "command": "gerrit.stageCurrentFile",
+                "title": "Stage current file",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.checkoutBranch",
                 "title": "Checkout branch",
                 "category": "Gerrit"
