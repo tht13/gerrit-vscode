@@ -11,6 +11,23 @@ export class GerritController {
         this.logger = Logger.logger;
     }
 
+    public commit() {
+        let options: InputBoxOptions = {
+            placeHolder: "Commit Message",
+            prompt: "The commit description"
+        };
+
+        window.showInputBox(options).then(message => {
+            this.gerrit.commit(message, [""], false);
+        }, reason => {
+        });
+    }
+
+    public commitAmend() {
+        // TODO: should not require new commit message
+        this.gerrit.commit("", [""], true);
+    }
+
     public checkoutBranch() {
         let options: InputBoxOptions = {
             value: "master",
@@ -87,23 +104,6 @@ export class GerritController {
 
     public cherrypickContinue() {
         this.gerrit.cherrypickContinue();
-    }
-
-    public commitAmend() {
-        // TODO: should not require new commit message
-        this.gerrit.commit("", [""], true);
-    }
-
-    public commit() {
-        let options: InputBoxOptions = {
-            placeHolder: "Commit Message",
-            prompt: "The commit description"
-        };
-
-        window.showInputBox(options).then(message => {
-            this.gerrit.commit(message, [""], false);
-        }, reason => {
-        });
     }
 
     public push() {
