@@ -22,6 +22,11 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.stageFile",
+                "title": "Stage file",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.checkoutBranch",
                 "title": "Checkout branch",
                 "category": "Gerrit"

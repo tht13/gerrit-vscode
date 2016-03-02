@@ -40,6 +40,24 @@ export class Gerrit {
         return false;
     }
 
+    public getDirtyFiles(): Promise<String[]> {
+        return new Promise((resolve, reject) => {
+            let args = [
+                "ls-files",
+                "-mo",
+                "--exclude-standard"
+            ];
+            this.git(args).then(result => {
+                let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
+                    return value.length !== 0;
+                });
+                resolve(files);
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
     public stage(path: string): Promise<boolean> {
         this.logger.debug(`Stage:
     Message: ${path}`);

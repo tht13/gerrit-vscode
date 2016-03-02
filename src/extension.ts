@@ -17,6 +17,11 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.stageFile", () => {
+            controller.stageFile();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
             controller.checkoutBranch();
         })
