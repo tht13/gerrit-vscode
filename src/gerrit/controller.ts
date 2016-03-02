@@ -12,6 +12,7 @@ export class GerritController {
         this.logger = Logger.logger;
     }
 
+    // TODO: stage all files
     public stageCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
         this.gerrit.stage(path);
