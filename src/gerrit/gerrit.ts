@@ -44,12 +44,12 @@ export class Gerrit {
         return new Promise((resolve, reject) => {
             let args = [
                 "ls-files",
-                "-mo",
+                "-dmo",
                 "--exclude-standard"
             ];
             this.git(args).then(result => {
                 let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
-                    return value.length !== 0;
+                    return value.length !== 0 && array.lastIndexOf(value) === index ;
                 });
                 resolve(files);
             }, reason => {
