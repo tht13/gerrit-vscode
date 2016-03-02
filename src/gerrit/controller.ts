@@ -13,6 +13,7 @@ export class GerritController {
     }
 
     // TODO: stage all files
+    // TODO: reset files
     public stageCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
         this.gerrit.stage(path);
