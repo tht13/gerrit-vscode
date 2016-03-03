@@ -17,6 +17,11 @@
     "contributes": {
         "commands": [
             {
+                "command": "gerrit.stageAll",
+                "title": "Stage all files",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.stageCurrentFile",
                 "title": "Stage current file",
                 "category": "Gerrit"

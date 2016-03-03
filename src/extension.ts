@@ -12,6 +12,11 @@ export function activate(context: vscode.ExtensionContext) {
     controller = new GerritController(gerrit);
 
     commands.push(
+        vscode.commands.registerCommand("gerrit.stageAll", () => {
+            controller.stageAll();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.stageCurrentFile", () => {
             controller.stageCurrentFile();
         })
