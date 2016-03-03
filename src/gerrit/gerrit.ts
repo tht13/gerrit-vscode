@@ -62,24 +62,18 @@ export class Gerrit {
         });
     }
 
-    public stage(path: string): Promise<boolean> {
+    public stage(path: string): Promise<string> {
         this.logger.debug(`Stage:
     Message: ${path}`);
-        return new Promise((resolve, reject) => {
-            let args = [
-                "add",
-                path
-            ];
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+        let args = [
+            "add",
+            path
+        ];
+        return this.git(args);
     }
 
     // TODO: Use quick pick during commit for staging files
-    public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
+    public commit(msg: string, files: string[], amend: boolean): Promise<string> {
         this.logger.debug(`Commit:
     Message: ${msg}
     Files: ${files}
@@ -98,7 +92,7 @@ export class Gerrit {
                 args.push("-m", msg);
             }
             this.git(args).then(value => {
-                resolve(true);
+                resolve(value);
             }, reason => {
                 reject(reason);
             });
@@ -106,14 +100,14 @@ export class Gerrit {
     }
 
     // TODO: get branch list??
-    public checkoutBranch(branch: string): Promise<boolean> {
+    public checkoutBranch(branch: string): Promise<string> {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
             this.fetch("", ["-fv"]).then(fetchValue => {
                 this.checkout(`origin/${branch}`).then(checkoutValue => {
                     this.branch = branch;
-                    resolve(true);
+                    resolve(checkoutValue);
                 }, checkoutReason => {
                     reject(checkoutReason);
                 });
@@ -123,7 +117,7 @@ export class Gerrit {
         });
     }
 
-    public checkoutRef(ref: Ref): Promise<boolean> {
+    public checkoutRef(ref: Ref): Promise<string> {
         this.logger.debug(`Checkout Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
@@ -136,7 +130,7 @@ export class Gerrit {
 
             this.fetch(ref.getUrl()).then(fetchValue => {
                 this.checkout("FETCH_HEAD").then(checkoutValue => {
-                    resolve(true);
+                    resolve(checkoutValue);
                 }, checkoutReason => {
                     reject(checkoutReason);
                 });
@@ -146,7 +140,7 @@ export class Gerrit {
         });
     }
 
-    public cherrypickRef(ref: Ref): Promise<boolean> {
+    public cherrypickRef(ref: Ref): Promise<string> {
         this.logger.debug(`Cherrypick Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
@@ -159,7 +153,7 @@ export class Gerrit {
 
             this.fetch(ref.getUrl()).then(fetchValue => {
                 this.cherrypick("FETCH_HEAD").then(checkoutValue => {
-                    resolve(true);
+                    resolve(checkoutValue);
                 }, checkoutReason => {
                     reject(checkoutReason);
                 });
@@ -170,7 +164,7 @@ export class Gerrit {
     }
 
     // TODO: fetchRef, using resolver loses `this` instance, find solution
-    // private fetchRef(ref: Ref, resolver: (url: string) => Promise<boolean>): Promise<boolean> {
+    // private fetchRef(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
     //     return new Promise((resolve, reject) => {
     //         if (this.isDirty()) {
     //             reject("Dirty");
@@ -180,7 +174,7 @@ export class Gerrit {
 
     //         this.fetch(ref.getUrl()).then(value => {
     //             resolver("FETCH_HEAD").then(value => {
-    //                 resolve(true);
+    //                 resolve(value);
     //             }, reason => {
     //                 reject(reason);
     //             });
@@ -190,87 +184,57 @@ export class Gerrit {
     //     });
     // }
 
-    private fetch(url: string, options?: string[]): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args: string[] = [
-                "fetch",
-                "origin"
-            ];
-            if (url !== null && url.length > 0) {
-                args.push(url);
-            }
-            if (options !== null) {
-                args = args.concat(options);
-            }
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    private fetch(url: string, options?: string[]): Promise<string> {
+        let args: string[] = [
+            "fetch",
+            "origin"
+        ];
+        if (url !== null && url.length > 0) {
+            args.push(url);
+        }
+        if (options !== null) {
+            args = args.concat(options);
+        }
+        return this.git(args);
     }
 
-    private checkout(HEAD: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "checkout",
-                HEAD
-            ];
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    private checkout(HEAD: string): Promise<string> {
+        let args = [
+            "checkout",
+            HEAD
+        ];
+        return this.git(args);
     }
 
-    private cherrypick(HEAD: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "cherry-pick",
-                HEAD
-            ];
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    private cherrypick(HEAD: string): Promise<string> {
+        let args = [
+            "cherry-pick",
+            HEAD
+        ];
+        return this.git(args);
     }
 
     // TODO: add check for running cherrypick
-    public cherrypickContinue(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "cherry-pick",
-                "--continue"
-            ];
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    public cherrypickContinue(): Promise<string> {
+        let args = [
+            "cherry-pick",
+            "--continue"
+        ];
+        return this.git(args);
     }
 
     // add option to push to current branch in use
-    public push(branch: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "push",
-                "origin",
-                `HEAD:refs/for/${branch}`
-            ];
-            this.git(args).then(value => {
-                this.branch = branch;
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    public push(branch: string): Promise<string> {
+        let args = [
+            "push",
+            "origin",
+            `HEAD:refs/for/${branch}`
+        ];
+        return this.git(args);
     }
 
-    public rebase(branch: string): Promise<boolean> {
+    // TODO: check how rejections are passed through
+    public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
@@ -280,7 +244,7 @@ export class Gerrit {
                     `origin/${branch}`
                 ];
                 this.git(args).then(value => {
-                    resolve(true);
+                    resolve(value);
                 }, reason => {
                     reject(reason);
                 });
@@ -291,21 +255,14 @@ export class Gerrit {
     }
 
     // TODO: add check for running rebase
-    public rebaseContinue(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "rebase",
-                "--continue"
-            ];
-            this.git(args).then(value => {
-                resolve(true);
-            }, reason => {
-                reject(reason);
-            });
-        });
+    public rebaseContinue(): Promise<string> {
+        let args = [
+            "rebase",
+            "--continue"
+        ];
+        return this.git(args);
     }
 
-    // TODO: return Promise<boolean> or accept string in calling functions to reduce promise call stack
     private git(args: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
             args.unshift("git");
