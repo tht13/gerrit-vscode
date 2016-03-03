@@ -12,6 +12,16 @@ export function activate(context: vscode.ExtensionContext) {
     controller = new GerritController(gerrit);
 
     commands.push(
+        vscode.commands.registerCommand("gerrit.stageCurrentFile", () => {
+            controller.stageCurrentFile();
+        })
+    );
+    commands.push(
+        vscode.commands.registerCommand("gerrit.stageFile", () => {
+            controller.stageFile();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
             controller.checkoutBranch();
         })

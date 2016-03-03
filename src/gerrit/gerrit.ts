@@ -18,6 +18,7 @@ export class Gerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...");
         if (ref !== null) {
+            // TODO: determine ref at start
             this.currentRef = ref;
         }
     }
@@ -33,6 +34,47 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
+    // TODO: isDirty maybe return Promise?
+    private isDirty(): boolean {
+
+        return false;
+    }
+
+    public getDirtyFiles(): Promise<String[]> {
+        return new Promise((resolve, reject) => {
+            let args = [
+                "ls-files",
+                "-dmo",
+                "--exclude-standard"
+            ];
+            this.git(args).then(result => {
+                let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
+                    return value.length !== 0 && array.lastIndexOf(value) === index ;
+                });
+                resolve(files);
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    public stage(path: string): Promise<boolean> {
+        this.logger.debug(`Stage:
+    Message: ${path}`);
+        return new Promise((resolve, reject) => {
+            let args = [
+                "add",
+                path
+            ];
+            this.git(args).then(value => {
+                resolve(true);
+            }, reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    // TODO: Use quick pick during commit for staging files
     // TODO: stage files for commit
     // TODO: stage current file
     public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
@@ -59,12 +101,6 @@ export class Gerrit {
                 reject(reason);
             });
         });
-    }
-
-    // TODO: isDirty maybe return Promise?
-    private isDirty(): boolean {
-
-        return false;
     }
 
     // TODO: get branch list??
@@ -151,16 +187,6 @@ export class Gerrit {
     //         });
     //     });
     // }
-
-    private generateFetchUrl(): string {
-        if (["http", "ssh"].indexOf(this.settings.protocol) === -1) {
-            this.logger.log("Incorrect protocol specified");
-            this.logger.log("Must be http or ssh");
-            throw new Error("Incorrect protocol specified");
-        }
-        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "http")
-            ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
-    }
 
     private fetch(url: string, options?: string[]): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -296,6 +322,16 @@ export class Gerrit {
                 }
             });
         });
+    }
+
+    private generateFetchUrl(): string {
+        if (["http", "ssh"].indexOf(this.settings.protocol) === -1) {
+            this.logger.log("Incorrect protocol specified");
+            this.logger.log("Must be http or ssh");
+            throw new Error("Incorrect protocol specified");
+        }
+        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "http")
+            ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
     private get(path: string): Promise<Object> {

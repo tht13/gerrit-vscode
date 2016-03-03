@@ -1,14 +1,55 @@
-import { window, InputBoxOptions } from "vscode";
+import { window, workspace, InputBoxOptions } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
 import { Logger } from "./logger";
 import * as utils from "./utils";
+import * as path from "path";
 
 export class GerritController {
     private logger: Logger;
 
     constructor(private gerrit: Gerrit) {
         this.logger = Logger.logger;
+    }
+
+    // TODO: stage all files
+    // TODO: reset files
+    public stageCurrentFile() {
+        let path: string = window.activeTextEditor.document.fileName;
+        this.gerrit.stage(path);
+    }
+
+    // TODO: extend show quick pick with custom type and show message if no dirty files
+    public stageFile() {
+        window.showQuickPick(new Promise((resolve, reject) => {
+            this.gerrit.getDirtyFiles().then(value => {
+                resolve(value);
+            }, reason => {
+                reject(reason);
+            });
+        }), { placeHolder: "File to stage" }).then(value => {
+            let filePath = path.join(workspace.rootPath, value);
+            this.gerrit.stage(filePath).then(value => {
+            }, reason => {
+            });
+        }, reason => {
+        });
+    }
+
+    public commit() {
+        let options: InputBoxOptions = {
+            placeHolder: "Commit Message",
+            prompt: "The commit description"
+        };
+
+        window.showInputBox(options).then(message => {
+            this.gerrit.commit(message, [""], false);
+        }, reason => {
+        });
+    }
+
+    public commitAmend() {
+        this.gerrit.commit(null, [""], true);
     }
 
     public checkoutBranch() {
@@ -87,22 +128,6 @@ export class GerritController {
 
     public cherrypickContinue() {
         this.gerrit.cherrypickContinue();
-    }
-
-    public commitAmend() {
-        this.gerrit.commit(null, [""], true);
-    }
-
-    public commit() {
-        let options: InputBoxOptions = {
-            placeHolder: "Commit Message",
-            prompt: "The commit description"
-        };
-
-        window.showInputBox(options).then(message => {
-            this.gerrit.commit(message, [""], false);
-        }, reason => {
-        });
     }
 
     public push() {
