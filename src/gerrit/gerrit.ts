@@ -53,7 +53,7 @@ export class Gerrit {
             ];
             this.git(args).then(result => {
                 let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
-                    return value.length !== 0 && array.lastIndexOf(value) === index ;
+                    return value.length !== 0 && array.lastIndexOf(value) === index;
                 });
                 resolve(files);
             }, reason => {
@@ -110,15 +110,15 @@ export class Gerrit {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
         return new Promise((resolve, reject) => {
-            this.fetch("", ["-fv"]).then(fetch_value => {
-                this.checkout(`origin/${branch}`).then(checkout_value => {
+            this.fetch("", ["-fv"]).then(fetchValue => {
+                this.checkout(`origin/${branch}`).then(checkoutValue => {
                     this.branch = branch;
                     resolve(true);
-                }, checkout_reason => {
-                    reject(checkout_reason);
+                }, checkoutReason => {
+                    reject(checkoutReason);
                 });
-            }, fetch_reason => {
-                reject(fetch_reason);
+            }, fetchReason => {
+                reject(fetchReason);
             });
         });
     }
@@ -134,14 +134,14 @@ export class Gerrit {
 
             this.setCurrentRef(ref);
 
-            this.fetch(ref.getUrl()).then(value => {
-                this.checkout("FETCH_HEAD").then(value => {
+            this.fetch(ref.getUrl()).then(fetchValue => {
+                this.checkout("FETCH_HEAD").then(checkoutValue => {
                     resolve(true);
-                }, reason => {
-                    reject(reason);
+                }, checkoutReason => {
+                    reject(checkoutReason);
                 });
-            }, reason => {
-                reject(reason);
+            }, fetchReason => {
+                reject(fetchReason);
             });
         });
     }
@@ -157,14 +157,14 @@ export class Gerrit {
 
             this.setCurrentRef(ref);
 
-            this.fetch(ref.getUrl()).then(value => {
-                this.cherrypick("FETCH_HEAD").then(value => {
+            this.fetch(ref.getUrl()).then(fetchValue => {
+                this.cherrypick("FETCH_HEAD").then(checkoutValue => {
                     resolve(true);
-                }, reason => {
-                    reject(reason);
+                }, checkoutReason => {
+                    reject(checkoutReason);
                 });
-            }, reason => {
-                reject(reason);
+            }, fetchRreason => {
+                reject(fetchRreason);
             });
         });
     }
