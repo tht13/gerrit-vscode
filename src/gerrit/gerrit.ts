@@ -79,8 +79,6 @@ export class Gerrit {
     }
 
     // TODO: Use quick pick during commit for staging files
-    // TODO: stage files for commit
-    // TODO: stage current file
     public commit(msg: string, files: string[], amend: boolean): Promise<boolean> {
         this.logger.debug(`Commit:
     Message: ${msg}
@@ -272,7 +270,6 @@ export class Gerrit {
         });
     }
 
-    // TODO: rebase
     public rebase(branch: string): Promise<boolean> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
