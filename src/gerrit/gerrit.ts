@@ -34,10 +34,14 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
-    // TODO: isDirty maybe return Promise?
-    private isDirty(): boolean {
-
-        return false;
+    private isDirty(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.getDirtyFiles().then(value => {
+                resolve(value.length !== 0);
+            }, reason => {
+                reject(reason);
+            });
+        });
     }
 
     public getDirtyFiles(): Promise<String[]> {
