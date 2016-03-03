@@ -47,7 +47,7 @@ export class Gerrit {
             if (amend) {
                 args.push("--amend", "--no-edit");
             } else {
-                if (msg.length === 0) {
+                if (msg === null || msg.length === 0) {
                     reject("Requires a message to commit with");
                 }
                 // TODO: make it work with spaces, find what vscode uses

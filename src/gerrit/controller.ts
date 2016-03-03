@@ -90,8 +90,7 @@ export class GerritController {
     }
 
     public commitAmend() {
-        // TODO: should not require new commit message
-        this.gerrit.commit("", [""], true);
+        this.gerrit.commit(null, [""], true);
     }
 
     public commit() {
