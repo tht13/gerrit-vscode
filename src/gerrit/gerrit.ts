@@ -45,20 +45,16 @@ export class Gerrit {
     }
 
     public getDirtyFiles(): Promise<String[]> {
-        return new Promise((resolve, reject) => {
-            let args = [
-                "ls-files",
-                "-dmo",
-                "--exclude-standard"
-            ];
-            this.git(args).then(result => {
-                let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
-                    return value.length !== 0 && array.lastIndexOf(value) === index;
-                });
-                resolve(files);
-            }, reason => {
-                reject(reason);
+        let args = [
+            "ls-files",
+            "-dmo",
+            "--exclude-standard"
+        ];
+        return this.git(args).then(result => {
+            let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
+                return value.length !== 0 && array.lastIndexOf(value) === index;
             });
+            return files;
         });
     }
 
@@ -237,20 +233,12 @@ export class Gerrit {
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
-        return new Promise((resolve, reject) => {
-            this.fetch("", ["-fv"]).then(value => {
-                let args: string[] = [
-                    "rebase",
-                    `origin/${branch}`
-                ];
-                this.git(args).then(value => {
-                    resolve(value);
-                }, reason => {
-                    reject(reason);
-                });
-            }, reason => {
-                reject(reason);
-            });
+        return this.fetch("", ["-fv"]).then(value => {
+            let args: string[] = [
+                "rebase",
+                `origin/${branch}`
+            ];
+            return this.git(args);
         });
     }
 
