@@ -5,6 +5,7 @@ import { Logger } from "./logger";
 import * as utils from "./utils";
 import * as path from "path";
 
+// TODO: Define a reject reason interface
 export class GerritController {
     private logger: Logger;
 
