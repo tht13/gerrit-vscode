@@ -114,7 +114,29 @@
                     "description": "The version of Gerrit in use by the server."
                 }
             }
-        }
+        },
+        "keybindings": [
+            {
+                "command": "gerrit.stageAll",
+                "key": "ctrl+shift+alt+s"
+            },
+            {
+                "command": "gerrit.stageCurrentFile",
+                "key": "ctrl+alt+s"
+            },
+            {
+                "command": "gerrit.commit",
+                "key": "ctrl+alt+c"
+            },
+            {
+                "command": "gerrit.commitAmend",
+                "key": "ctrl+shift+alt+c"
+            },
+            {
+                "command": "gerrit.pushBranch",
+                "key": "ctrl+alt+p"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
