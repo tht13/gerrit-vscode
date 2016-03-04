@@ -44,6 +44,7 @@ export class GerritController {
             }, reason => {
             });
         }, reason => {
+            // TODO: handle exception thrown here 
             if (reason.noDirtyFiles && reason.displayInfo) {
                 window.showInformationMessage(reason.msg);
             }
