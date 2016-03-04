@@ -23,10 +23,17 @@ export class GerritController {
         this.gerrit.stage(path);
     }
 
-    // TODO: extend show quick pick with custom type and show message if no dirty files
+    // TODO: extend show quick pick with custom type
     public stageFile() {
         window.showQuickPick(new Promise((resolve, reject) => {
             this.gerrit.getDirtyFiles().then(value => {
+                if (value.length === 0) {
+                    reject({
+                        noDirtyFiles: true,
+                        displayInfo: true,
+                        msg: "No files to stage"
+                    });
+                }
                 resolve(value);
             }, reason => {
                 reject(reason);
@@ -37,6 +44,9 @@ export class GerritController {
             }, reason => {
             });
         }, reason => {
+            if (reason.noDirtyFiles && reason.displayInfo) {
+                window.showInformationMessage(reason.msg);
+            }
         });
     }
 
