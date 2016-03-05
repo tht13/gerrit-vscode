@@ -58,7 +58,7 @@ export class Gerrit {
         };
         let container = new common.DirtyFilesContainter();
         return this.git(args.concat([options.deleted])).then(result => {
-            let files: string[] = result.split(/\n\r??/gmi).filter(utils.filterDuplicates);
+            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addDeleted({
                     path: files[i]
@@ -66,7 +66,7 @@ export class Gerrit {
             }
             return this.git(args.concat([options.modified]));
         }).then(result => {
-            let files: string[] = result.split(/\n\r??/gmi).filter(utils.filterDuplicates);
+            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addModified({
                     path: files[i]
@@ -74,7 +74,7 @@ export class Gerrit {
             }
             return this.git(args.concat([options.untracked]));
         }).then(result => {
-            let files: string[] = result.split(/\n\r??/gmi).filter(utils.filterDuplicates);
+            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addUntrackedFile({
                     path: files[i]

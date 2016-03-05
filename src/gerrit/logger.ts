@@ -1,4 +1,5 @@
 import { window, OutputChannel } from "vscode";
+import * as utils from "./utils";
 
 export class Logger {
     private static _logger: LoggerSingleton = null;
@@ -32,7 +33,7 @@ class LoggerSingletonClass implements LoggerSingleton {
     }
 
     log(value: string) {
-        let lines: string[] = value.split(new RegExp("\\n\\r?", "gmi"));
+        let lines: string[] = value.split(utils.SPLIT_LINE);
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
         }
