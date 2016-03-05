@@ -87,3 +87,20 @@ export class DirtyFilesContainter {
         return this.deletedFiles.length + this.untrackedFiles.length + this.modifiedFiles.length;
     }
 }
+
+export interface RejectReason {
+    message: string;
+
+    showInformation?: boolean;
+
+    type: RejectType;
+
+    attributes?: {};
+}
+
+export enum RejectType {
+    DEFAULT,
+    GIT,
+    GET,
+    NO_DIRTY
+}

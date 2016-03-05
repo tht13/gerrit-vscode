@@ -6,7 +6,6 @@ import * as utils from "./utils";
 import * as common from "./common";
 import * as path from "path";
 
-// TODO: Define a reject reason interface
 export class GerritController {
     private logger: Logger;
 
@@ -28,11 +27,12 @@ export class GerritController {
         window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
             this.gerrit.getDirtyFiles().then(value => {
                 if (value.length === 0) {
-                    reject({
-                        noDirtyFiles: true,
-                        displayInfo: true,
-                        msg: "No files to stage"
-                    });
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "No files to stage",
+                        type: common.RejectType.NO_DIRTY
+                    };
+                    reject(reason);
                 }
                 resolve(value.getDescriptors());
             }, reason => {
@@ -46,10 +46,10 @@ export class GerritController {
             this.gerrit.stage(filePath).then(value => {
             }, reason => {
             });
-        }, reason => {
+        }, (reason: common.RejectReason) => {
             // TODO: handle exception thrown here 
-            if (reason.noDirtyFiles && reason.displayInfo) {
-                window.showInformationMessage(reason.msg);
+            if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+                window.showInformationMessage(reason.message);
             }
         });
     }

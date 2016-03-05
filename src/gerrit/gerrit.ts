@@ -108,7 +108,12 @@ export class Gerrit {
                 args.push("--amend", "--no-edit");
             } else {
                 if (msg === null || msg.length === 0) {
-                    reject("Requires a message to commit with");
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "Requires a message to commit with",
+                        type: common.RejectType.DEFAULT
+                    };
+                    reject(reason);
                 }
                 // TODO: make it work with spaces, find what vscode uses
                 args.push("-m", msg);
@@ -145,7 +150,12 @@ export class Gerrit {
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
             if (this.isDirty()) {
-                reject("Dirty");
+                let reason: common.RejectReason = {
+                    showInformation: false,
+                    message: "Dirty Head",
+                    type: common.RejectType.DEFAULT
+                };
+                reject(reason);
             }
 
             this.setCurrentRef(ref);
@@ -168,7 +178,12 @@ export class Gerrit {
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
             if (this.isDirty()) {
-                reject("Dirty");
+                let reason: common.RejectReason = {
+                    showInformation: false,
+                    message: "Dirty Head",
+                    type: common.RejectType.DEFAULT
+                };
+                reject(reason);
             }
 
             this.setCurrentRef(ref);
@@ -287,7 +302,12 @@ export class Gerrit {
                     this.logger.log(stdout.toString());
                     resolve(stdout.toString());
                 } else {
-                    let reason = { error: error, stderr: stderr };
+                    let reason: common.RejectReason = {
+                        showInformation: false,
+                        message: "Failed Git",
+                        type: common.RejectType.GIT,
+                        attributes: { error: error, stderr: stderr }
+                    };
                     console.warn(reason);
                     this.logger.log([error.name, error.message].join("\n"));
                     reject(reason);
@@ -333,6 +353,12 @@ export class Gerrit {
             });
 
             req.on("error", function(err) {
+                let reason: common.RejectReason = {
+                    showInformation: false,
+                    message: "Failed GET",
+                    type: common.RejectType.GET,
+                    attributes: { error: err }
+                };
                 reject(err);
             });
 
