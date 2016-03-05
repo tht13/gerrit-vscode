@@ -149,25 +149,29 @@ export class Gerrit {
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
-            if (this.isDirty()) {
-                let reason: common.RejectReason = {
-                    showInformation: false,
-                    message: "Dirty Head",
-                    type: common.RejectType.DEFAULT
-                };
-                reject(reason);
-            }
+            this.isDirty().then(clean => {
+                if (!clean) {
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "Dirty Head",
+                        type: common.RejectType.DEFAULT
+                    };
+                    reject(reason);
+                }
 
-            this.setCurrentRef(ref);
+                this.setCurrentRef(ref);
 
-            this.fetch(ref.getUrl()).then(fetchValue => {
-                this.checkout("FETCH_HEAD").then(checkoutValue => {
-                    resolve(checkoutValue);
-                }, checkoutReason => {
-                    reject(checkoutReason);
+                this.fetch(ref.getUrl()).then(fetchValue => {
+                    this.checkout("FETCH_HEAD").then(checkoutValue => {
+                        resolve(checkoutValue);
+                    }, checkoutReason => {
+                        reject(checkoutReason);
+                    });
+                }, fetchReason => {
+                    reject(fetchReason);
                 });
-            }, fetchReason => {
-                reject(fetchReason);
+            }, reason => {
+                reject(reason);
             });
         });
     }
@@ -177,25 +181,29 @@ export class Gerrit {
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return new Promise((resolve, reject) => {
-            if (this.isDirty()) {
-                let reason: common.RejectReason = {
-                    showInformation: false,
-                    message: "Dirty Head",
-                    type: common.RejectType.DEFAULT
-                };
-                reject(reason);
-            }
+            this.isDirty().then(clean => {
+                if (!clean) {
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "Dirty Head",
+                        type: common.RejectType.DEFAULT
+                    };
+                    reject(reason);
+                }
 
-            this.setCurrentRef(ref);
+                this.setCurrentRef(ref);
 
-            this.fetch(ref.getUrl()).then(fetchValue => {
-                this.cherrypick("FETCH_HEAD").then(checkoutValue => {
-                    resolve(checkoutValue);
-                }, checkoutReason => {
-                    reject(checkoutReason);
+                this.fetch(ref.getUrl()).then(fetchValue => {
+                    this.cherrypick("FETCH_HEAD").then(checkoutValue => {
+                        resolve(checkoutValue);
+                    }, checkoutReason => {
+                        reject(checkoutReason);
+                    });
+                }, fetchRreason => {
+                    reject(fetchRreason);
                 });
-            }, fetchRreason => {
-                reject(fetchRreason);
+            }, reason => {
+                reject(reason);
             });
         });
     }
