@@ -3,6 +3,7 @@ import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
 import { Logger } from "./logger";
 import * as utils from "./utils";
+import * as common from "./common";
 import * as path from "path";
 
 // TODO: Define a reject reason interface
@@ -23,9 +24,8 @@ export class GerritController {
         this.gerrit.stage(path);
     }
 
-    // TODO: extend show quick pick with custom type
     public stageFile() {
-        window.showQuickPick(new Promise((resolve, reject) => {
+        window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
             this.gerrit.getDirtyFiles().then(value => {
                 if (value.length === 0) {
                     reject({
@@ -34,12 +34,15 @@ export class GerritController {
                         msg: "No files to stage"
                     });
                 }
-                resolve(value);
+                resolve(value.getDescriptors());
             }, reason => {
                 reject(reason);
             });
         }), { placeHolder: "File to stage" }).then(value => {
-            let filePath = path.join(workspace.rootPath, value);
+            if (value === undefined) {
+                return;
+            }
+            let filePath = path.join(workspace.rootPath, value.path);
             this.gerrit.stage(filePath).then(value => {
             }, reason => {
             });

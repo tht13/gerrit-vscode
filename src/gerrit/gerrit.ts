@@ -3,6 +3,7 @@ import { Logger, LoggerSingleton } from "./logger";
 import { GerritSettings } from "./settings";
 import { workspace } from "vscode";
 import { exec } from "child_process";
+import * as common from "./common";
 import * as http from "http";
 import * as https from "https";
 
@@ -44,17 +45,47 @@ export class Gerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<String[]> {
+    public getDirtyFiles(): Promise<common.DirtyFilesContainter> {
         let args = [
             "ls-files",
-            "-dmo",
             "--exclude-standard"
         ];
-        return this.git(args).then(result => {
+        let options = {
+            deleted: "-d",
+            modified: "-m",
+            untracked: "-o"
+        };
+        let container = new common.DirtyFilesContainter();
+        return this.git(args.concat([options.deleted])).then(result => {
             let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
                 return value.length !== 0 && array.lastIndexOf(value) === index;
             });
-            return files;
+            for (let i in files) {
+                container.addDeleted({
+                    path: files[i]
+                });
+            }
+            return this.git(args.concat([options.modified]));
+        }).then(result => {
+            let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
+                return value.length !== 0 && array.lastIndexOf(value) === index;
+            });
+            for (let i in files) {
+                container.addModified({
+                    path: files[i]
+                });
+            }
+            return this.git(args.concat([options.untracked]));
+        }).then(result => {
+            let files: string[] = result.split(/\n\r??/gmi).filter((value: string, index: number, array: string[]): boolean => {
+                return value.length !== 0 && array.lastIndexOf(value) === index;
+            });
+            for (let i in files) {
+                container.addUntrackedFile({
+                    path: files[i]
+                });
+            }
+            return container;
         });
     }
 
