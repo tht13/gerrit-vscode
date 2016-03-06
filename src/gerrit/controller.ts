@@ -1,4 +1,5 @@
-import { window, workspace, InputBoxOptions } from "vscode";
+import { window, workspace, InputBoxOptions,
+    StatusBarItem, StatusBarAlignment } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
 import { Logger } from "./logger";
@@ -8,9 +9,22 @@ import * as path from "path";
 
 export class GerritController {
     private logger: Logger;
+    private statusBarItem: StatusBarItem;
 
     constructor(private gerrit: Gerrit) {
         this.logger = Logger.logger;
+        this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
+        this.statusBarItem.command = "gerrit.checkoutRevision";
+        this.updateStatusBarItem();
+    }
+
+    private updateStatusBarItem() {
+        if (utils.isNull(this.gerrit.getCurrentRef())) {
+            this.statusBarItem.hide();
+        } else {
+            this.statusBarItem.text = this.gerrit.getCurrentRef().text;
+            this.statusBarItem.show();
+        }
     }
 
     public stageAll() {
