@@ -65,15 +65,22 @@ export class GerritController {
     }
 
     // TODO: clean file from quick pick, requires getStagedFiles
-    // TODO: add yes/no check to confirm action
     // TODO: clean untracked files with git clean -f <path>
     public cleanAll() {
-        this.gerrit.clean(".");
+        common.confirm("Clean all files? This cannot be undone").then(value => {
+            if (value) {
+                this.gerrit.clean(".");
+            }
+        });
     }
 
     public cleanCurrentFile() {
-        let path: string = window.activeTextEditor.document.fileName;
-        this.gerrit.clean(path);
+        let filePath: string = window.activeTextEditor.document.fileName;
+        common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
+            if (value) {
+                this.gerrit.clean(filePath);
+            }
+        });
     }
 
     public commit() {

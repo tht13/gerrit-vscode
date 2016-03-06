@@ -1,4 +1,4 @@
-import { QuickPickItem } from "vscode";
+import { QuickPickItem, window } from "vscode";
 
 export interface FileStageQuickPick extends QuickPickItem, DirtyFile {
     path: string;
@@ -103,4 +103,10 @@ export enum RejectType {
     GIT,
     GET,
     NO_DIRTY
+}
+
+export function confirm(message: string): Thenable<boolean> {
+    return window.showInformationMessage(message, "Yes", "No").then(value => {
+        return value === "Yes";
+    });
 }
