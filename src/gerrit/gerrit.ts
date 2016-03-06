@@ -5,6 +5,7 @@ import { workspace } from "vscode";
 import { exec } from "child_process";
 import * as common from "./common";
 import * as utils from "./utils";
+import { Event } from "./event";
 import * as http from "http";
 import * as https from "https";
 
@@ -31,6 +32,7 @@ export class Gerrit {
 
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
+        Event.event.emit("ref.change");
         this.logger.debug(`New Ref:
     ID: ${this.currentRef.getId()}
     Patch Set: ${this.currentRef.getPatchSet()}`);

@@ -5,6 +5,7 @@ import { Ref } from "./ref";
 import { Logger } from "./logger";
 import * as utils from "./utils";
 import * as common from "./common";
+import { Event } from "./event";
 import * as path from "path";
 
 export class GerritController {
@@ -16,6 +17,7 @@ export class GerritController {
         this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
         this.statusBarItem.command = "gerrit.checkoutRevision";
         this.updateStatusBarItem();
+        Event.event.on("ref.change", this.updateStatusBarItem);
     }
 
     private updateStatusBarItem() {
