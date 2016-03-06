@@ -42,6 +42,11 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.resetFile",
+                "title": "Reset file",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.cleanAll",
                 "title": "Clean all files",
                 "category": "Gerrit"

@@ -37,6 +37,11 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.resetFile", () => {
+            controller.resetFile();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.cleanAll", () => {
             controller.cleanAll();
         })

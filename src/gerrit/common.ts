@@ -4,8 +4,14 @@ export interface FileStageQuickPick extends QuickPickItem, DirtyFile {
     path: string;
 }
 
-interface DirtyFile {
+interface File {
     path: string;
+}
+
+interface DirtyFile extends File {
+}
+
+interface StagedFile extends File {
 }
 
 interface ModifiedFile extends DirtyFile {
@@ -85,6 +91,43 @@ export class DirtyFilesContainter {
 
     get length(): number {
         return this.deletedFiles.length + this.untrackedFiles.length + this.modifiedFiles.length;
+    }
+}
+
+export class StagedFilesContainter {
+    private stagedFiles: StagedFile[];
+
+    constructor() {
+        this.stagedFiles = [];
+    }
+
+    addStaged(file: StagedFile) {
+        this.stagedFiles.push(file);
+    }
+
+    getFilePaths(): string[] {
+        let paths: string[] = [];
+        let joined: StagedFile[] = this.stagedFiles;
+        for (let i in joined) {
+            paths.push(joined[i].path);
+        }
+        return paths;
+    }
+
+    getDescriptors(): FileStageQuickPick[] {
+        let descriptors: FileStageQuickPick[] = [];
+        for (let i in this.stagedFiles) {
+            descriptors.push({
+                label: this.stagedFiles[i].path,
+                path: this.stagedFiles[i].path,
+                description: "Staged"
+            });
+        }
+        return descriptors;
+    }
+
+    get length(): number {
+        return this.stagedFiles.length;
     }
 }
 

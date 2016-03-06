@@ -69,7 +69,6 @@ export class GerritController {
         });
     }
 
-    // TODO: reset file from quick pick, requires getStagedFiles
     public resetAll() {
         this.gerrit.reset(".");
     }
@@ -78,6 +77,37 @@ export class GerritController {
     public resetCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
         this.gerrit.reset(path);
+    }
+
+    public resetFile() {
+        window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
+            this.gerrit.getStagedFiles().then(value => {
+                if (value.length === 0) {
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "No staged files",
+                        type: common.RejectType.NO_DIRTY
+                    };
+                    reject(reason);
+                }
+                resolve(value.getDescriptors());
+            }, reason => {
+                reject(reason);
+            });
+        }), { placeHolder: "File to reset" }).then(value => {
+            if (value === undefined) {
+                return;
+            }
+            let filePath = path.join(workspace.rootPath, value.path);
+            this.gerrit.reset(filePath).then(value => {
+            }, reason => {
+            });
+        }, (reason: common.RejectReason) => {
+            // TODO: handle exception thrown here 
+            if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+                window.showInformationMessage(reason.message);
+            }
+        });
     }
 
     // TODO: clean file from quick pick, requires getStagedFiles

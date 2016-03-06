@@ -85,6 +85,23 @@ export class Gerrit {
         });
     }
 
+    public getStagedFiles(): Promise<common.StagedFilesContainter> {
+        let options = [
+            "--name-only",
+            "--cached"
+        ];
+        let container = new common.StagedFilesContainter();
+        return this.git("diff", options).then(result => {
+            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
+            for (let i in files) {
+                container.addStaged({
+                    path: files[i]
+                });
+            }
+            return container;
+        });
+    }
+
     public stage(path: string): Promise<string> {
         this.logger.debug(`Stage:
     Message: ${path}`);
