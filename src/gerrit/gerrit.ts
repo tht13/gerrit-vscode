@@ -108,6 +108,10 @@ export class Gerrit {
         return this.git(args);
     }
 
+    public clean(path: string): Promise<string> {
+        return this.checkout(path);
+    }
+
     // TODO: Use quick pick during commit for staging files
     public commit(msg: string, files: string[], amend: boolean): Promise<string> {
         this.logger.debug(`Commit:

@@ -64,6 +64,18 @@ export class GerritController {
         this.gerrit.reset(path);
     }
 
+    // TODO: clean file from quick pick, requires getStagedFiles
+    // TODO: add yes/no check to confirm action
+    // TODO: clean untracked files with git clean -f <path>
+    public cleanAll() {
+        this.gerrit.clean(".");
+    }
+
+    public cleanCurrentFile() {
+        let path: string = window.activeTextEditor.document.fileName;
+        this.gerrit.clean(path);
+    }
+
     public commit() {
         let options: InputBoxOptions = {
             placeHolder: "Commit Message",

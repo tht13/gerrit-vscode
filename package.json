@@ -42,6 +42,16 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.cleanAll",
+                "title": "Clean all files",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.cleanCurrentFile",
+                "title": "Clean current file",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.checkoutBranch",
                 "title": "Checkout branch",
                 "category": "Gerrit"

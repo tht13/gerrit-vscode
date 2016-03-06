@@ -37,6 +37,16 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.cleanAll", () => {
+            controller.cleanAll();
+        })
+    );
+    commands.push(
+        vscode.commands.registerCommand("gerrit.cleanCurrentFile", () => {
+            controller.cleanCurrentFile();
+        })
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
             controller.checkoutBranch();
         })
