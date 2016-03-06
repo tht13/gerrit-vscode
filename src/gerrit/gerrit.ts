@@ -230,16 +230,16 @@ export class Gerrit {
     // }
 
     private fetch(url: string, options?: string[]): Promise<string> {
+        url = utils.setDefault(url, "");
+        options = utils.setDefault(options, []);
         let args: string[] = [
             "fetch",
             "origin"
         ];
-        if (url !== null && url.length > 0) {
+        if (url.length > 0) {
             args.push(url);
         }
-        if (options !== null) {
             args = args.concat(options);
-        }
         return this.git(args);
     }
 

@@ -10,4 +10,8 @@ export function filterDuplicates(value: string, index: number, array: string[]):
     return value.length !== 0 && array.lastIndexOf(value) === index;
 }
 
+export function setDefault<T>(variable: T, defaultValue: T): T {
+    return (variable === null || variable === undefined) ? defaultValue : variable;
+}
+
 export const SPLIT_LINE = /\n\r??/gmi;
