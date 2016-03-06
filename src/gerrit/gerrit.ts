@@ -94,6 +94,20 @@ export class Gerrit {
         return this.git(args);
     }
 
+    public reset(path: string, hard?: boolean) {
+        hard = utils.setDefault(hard, false);
+        this.logger.debug(`Stage:
+    Message: ${path}`);
+        let args: string[] = [
+            "reset",
+            path
+        ];
+        if (hard) {
+            args.push("--hard");
+        }
+        return this.git(args);
+    }
+
     // TODO: Use quick pick during commit for staging files
     public commit(msg: string, files: string[], amend: boolean): Promise<string> {
         this.logger.debug(`Commit:
@@ -239,7 +253,7 @@ export class Gerrit {
         if (url.length > 0) {
             args.push(url);
         }
-            args = args.concat(options);
+        args = args.concat(options);
         return this.git(args);
     }
 

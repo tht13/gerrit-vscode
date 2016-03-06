@@ -32,6 +32,16 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.resetAll",
+                "title": "Reset all files",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.resetCurrentFile",
+                "title": "Reset current file",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.checkoutBranch",
                 "title": "Checkout branch",
                 "category": "Gerrit"
@@ -123,6 +133,14 @@
             {
                 "command": "gerrit.stageCurrentFile",
                 "key": "ctrl+alt+s"
+            },
+            {
+                "command": "gerrit.resetAll",
+                "key": "ctrl+shift+alt+r"
+            },
+            {
+                "command": "gerrit.resetCurrentFile",
+                "key": "ctrl+alt+r"
             },
             {
                 "command": "gerrit.commit",

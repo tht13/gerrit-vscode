@@ -17,7 +17,6 @@ export class GerritController {
         this.gerrit.stage(".");
     }
 
-    // TODO: reset files
     public stageCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
         this.gerrit.stage(path);
@@ -52,6 +51,17 @@ export class GerritController {
                 window.showInformationMessage(reason.message);
             }
         });
+    }
+
+    // TODO: reset file from quick pick, requires getStagedFiles
+    public resetAll() {
+        this.gerrit.reset(".");
+    }
+
+    // TODO: need to check is valid path, f.exs if in git diff mode then invalid file path is given (can also apply to other functions)
+    public resetCurrentFile() {
+        let path: string = window.activeTextEditor.document.fileName;
+        this.gerrit.reset(path);
     }
 
     public commit() {
