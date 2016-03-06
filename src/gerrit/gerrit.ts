@@ -94,7 +94,7 @@ export class Gerrit {
         return this.git(args);
     }
 
-    public reset(path: string, hard?: boolean) {
+    public reset(path: string, hard?: boolean): Promise<string> {
         hard = utils.setDefault(hard, false);
         this.logger.debug(`Stage:
     Message: ${path}`);
