@@ -61,16 +61,6 @@
                 "title": "Reset file",
                 "category": "Gerrit"
             },
-            // {
-            //     "command": "gerrit.cleanAll",
-            //     "title": "Clean all files",
-            //     "category": "Gerrit"
-            // },
-            // {
-            //     "command": "gerrit.cleanCurrentFile",
-            //     "title": "Clean current file",
-            //     "category": "Gerrit"
-            // },
             {
                 "command": "gerrit.checkoutBranch",
                 "title": "Checkout branch",
@@ -117,44 +107,6 @@
                 "category": "Gerrit"
             }
         ],
-        // "configuration": {
-        //     "type": "object",
-        //     "title": "Gerrit configuration",
-        //     "properties": {
-        //         "gerrit.host": {
-        //             "type": "string",
-        //             "description": "The Gerrit host url, Required"
-        //         },
-        //         "gerrit.protocol": {
-        //             "type": "string",
-        //             "default": "http",
-        //             "description": "The protocol used for fetch, ssh or http, Default=http"
-        //         },
-        //         "gerrit.httpPort": {
-        //             "type": "number",
-        //             "default": 80,
-        //             "description": "The port used for http access, Default=80"
-        //         },
-        //         "gerrit.sshPort": {
-        //             "type": "number",
-        //             "default": 443,
-        //             "description": "The port used for ssh access, Default=443"
-        //         },
-        //         "gerrit.username": {
-        //             "type": "string",
-        //             "description": "Gerrit username, Required"
-        //         },
-        //         "gerrit.project": {
-        //             "type": "string",
-        //             "description": "Gerrit project, Required"
-        //         },
-        //         "gerrit.version": {
-        //             "type": "number",
-        //             "default": 2.0,
-        //             "description": "The version of Gerrit in use by the server."
-        //         }
-        //     }
-        // },
         "keybindings": [
             {
                 "command": "gerrit.stageAll",
@@ -194,5 +146,57 @@
     "devDependencies": {
         "typescript": "^1.8.7",
         "vscode": "^0.11.4"
+    },
+    "//": {
+        "commands": [
+            {
+                "command": "gerrit.cleanAll",
+                "title": "Clean all files",
+                "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.cleanCurrentFile",
+                "title": "Clean current file",
+                "category": "Gerrit"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Gerrit configuration",
+            "properties": {
+                "gerrit.host": {
+                    "type": "string",
+                    "description": "The Gerrit host url, Required"
+                },
+                "gerrit.protocol": {
+                    "type": "string",
+                    "default": "http",
+                    "description": "The protocol used for fetch, ssh or http, Default=http"
+                },
+                "gerrit.httpPort": {
+                    "type": "number",
+                    "default": 80,
+                    "description": "The port used for http access, Default=80"
+                },
+                "gerrit.sshPort": {
+                    "type": "number",
+                    "default": 443,
+                    "description": "The port used for ssh access, Default=443"
+                },
+                "gerrit.username": {
+                    "type": "string",
+                    "description": "Gerrit username, Required"
+                },
+                "gerrit.project": {
+                    "type": "string",
+                    "description": "Gerrit project, Required"
+                },
+                "gerrit.version": {
+                    "type": "number",
+                    "default": 2.0,
+                    "description": "The version of Gerrit in use by the server."
+                }
+            }
+        }
     }
 }
