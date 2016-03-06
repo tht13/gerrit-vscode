@@ -47,24 +47,23 @@ export class Gerrit {
     }
 
     public getDirtyFiles(): Promise<common.DirtyFilesContainter> {
-        let args = [
-            "ls-files",
+        let options = [
             "--exclude-standard"
         ];
-        let options = {
+        let dirtyTypes = {
             deleted: "-d",
             modified: "-m",
             untracked: "-o"
         };
         let container = new common.DirtyFilesContainter();
-        return this.git(args.concat([options.deleted])).then(result => {
+        return this.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addDeleted({
                     path: files[i]
                 });
             }
-            return this.git(args.concat([options.modified]));
+            return this.git("ls-files", options.concat([dirtyTypes.modified]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -72,7 +71,7 @@ export class Gerrit {
                     path: files[i]
                 });
             }
-            return this.git(args.concat([options.untracked]));
+            return this.git("ls-files", options.concat([dirtyTypes.untracked]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -88,10 +87,9 @@ export class Gerrit {
         this.logger.debug(`Stage:
     Message: ${path}`);
         let args = [
-            "add",
             path
         ];
-        return this.git(args);
+        return this.git("add", [], args);
     }
 
     public reset(path: string, hard?: boolean): Promise<string> {
@@ -99,13 +97,13 @@ export class Gerrit {
         this.logger.debug(`Stage:
     Message: ${path}`);
         let args: string[] = [
-            "reset",
             path
         ];
+        let options: string[] = [];
         if (hard) {
-            args.push("--hard");
+            options.push("--hard");
         }
-        return this.git(args);
+        return this.git("reset", options, args);
     }
 
     public clean(path: string): Promise<string> {
@@ -119,11 +117,11 @@ export class Gerrit {
     Files: ${files}
     Amend: ${amend}`);
         return new Promise((resolve, reject) => {
-            let args: string[] = [
+            let options: string[] = [
                 "commit",
             ];
             if (amend) {
-                args.push("--amend", "--no-edit");
+                options.push("--amend", "--no-edit");
             } else {
                 if (msg === null || msg.length === 0) {
                     let reason: common.RejectReason = {
@@ -134,9 +132,9 @@ export class Gerrit {
                     reject(reason);
                 }
                 // TODO: make it work with spaces, find what vscode uses
-                args.push("-m", msg);
+                options.push("-m", msg);
             }
-            this.git(args).then(value => {
+            this.git("commit", options).then(value => {
                 resolve(value);
             }, reason => {
                 reject(reason);
@@ -251,49 +249,43 @@ export class Gerrit {
         url = utils.setDefault(url, "");
         options = utils.setDefault(options, []);
         let args: string[] = [
-            "fetch",
             "origin"
         ];
         if (url.length > 0) {
             args.push(url);
         }
-        args = args.concat(options);
-        return this.git(args);
+        return this.git("fetch", options, args);
     }
 
     private checkout(HEAD: string): Promise<string> {
         let args = [
-            "checkout",
             HEAD
         ];
-        return this.git(args);
+        return this.git("checkout", [], args);
     }
 
     private cherrypick(HEAD: string): Promise<string> {
         let args = [
-            "cherry-pick",
             HEAD
         ];
-        return this.git(args);
+        return this.git("cherry-pick", [], args);
     }
 
     // TODO: add check for running cherrypick
     public cherrypickContinue(): Promise<string> {
-        let args = [
-            "cherry-pick",
+        let options = [
             "--continue"
         ];
-        return this.git(args);
+        return this.git("cherry-pick", options);
     }
 
     // add option to push to current branch in use
     public push(branch: string): Promise<string> {
         let args = [
-            "push",
             "origin",
             `HEAD:refs/for/${branch}`
         ];
-        return this.git(args);
+        return this.git("push", [], args);
     }
 
     // TODO: check how rejections are passed through
@@ -302,26 +294,29 @@ export class Gerrit {
     Branch: origin/${branch}`);
         return this.fetch("", ["-fv"]).then(value => {
             let args: string[] = [
-                "rebase",
                 `origin/${branch}`
             ];
-            return this.git(args);
+            return this.git("rebase", [], args);
         });
     }
 
     // TODO: add check for running rebase
     public rebaseContinue(): Promise<string> {
-        let args = [
-            "rebase",
+        let options = [
             "--continue"
         ];
-        return this.git(args);
+        return this.git("rebase", options);
     }
 
-    private git(args: string[]): Promise<string> {
+    private git(command: string, options?: string[], args?: string[]): Promise<string> {
+        options = utils.setDefault(options, []);
+        args = utils.setDefault(args, []);
         return new Promise((resolve, reject) => {
-            args.unshift("git");
-            let cmd = args.join(" ");
+            let fullCmd: string[] = ["git", command];
+            fullCmd = fullCmd.concat(options);
+            fullCmd.push("--");
+            fullCmd = fullCmd.concat(args);
+            let cmd = fullCmd.join(" ");
             this.logger.log(cmd);
             exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
                 if (error === null) {
