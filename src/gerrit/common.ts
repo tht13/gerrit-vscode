@@ -1,6 +1,7 @@
 import { QuickPickItem, window } from "vscode";
+import * as utils from "./utils";
 
-export interface FileStageQuickPick extends QuickPickItem, DirtyFile {
+export interface FileStageQuickPick extends QuickPickItem, File {
     path: string;
 }
 
@@ -8,126 +9,138 @@ interface File {
     path: string;
 }
 
-interface DirtyFile extends File {
-}
-
-interface StagedFile extends File {
-}
-
-interface ModifiedFile extends DirtyFile {
-}
-
-interface DeletedFile extends DirtyFile {
-}
-
-interface UntrackedFile extends DirtyFile {
-}
-
-export class DirtyFilesContainter {
-    private modifiedFiles: ModifiedFile[];
-    private deletedFiles: DeletedFile[];
-    private untrackedFiles: UntrackedFile[];
+export class FileContainer {
+    private container: Map<FileTypes, File[]>;
 
     constructor() {
-        this.modifiedFiles = [];
-        this.deletedFiles = [];
-        this.untrackedFiles = [];
+        this.container = new Map<FileTypes, File[]>();
     }
 
-    addModified(file: ModifiedFile) {
-        this.modifiedFiles.push(file);
+    protected addTypeContainer(type: FileTypes, container?: File[]) {
+        container = utils.setDefault(container, []);
+        this.container.set(type, container);
     }
 
-    addDeleted(file: DeletedFile) {
-        this.deletedFiles.push(file);
+    protected getTypeContainer(type: FileTypes): File[] {
+        return this.container.get(type);
     }
 
-    addUntrackedFile(file: UntrackedFile) {
-        this.untrackedFiles.push(file);
+    protected pushType(type: FileTypes, ...items: File[]) {
+        for (let i in items) {
+            this.container.get(type).push(items[i]);
+        }
     }
 
     getFilePaths(): string[] {
         let paths: string[] = [];
-        let joined: DirtyFile[] = this.modifiedFiles.concat(this.deletedFiles, this.untrackedFiles);
-        for (let i in joined) {
-            paths.push(joined[i].path);
-        }
+        this.container.forEach((value, index, map) => {
+            for (let i in value) {
+                paths.push(value[i].path);
+            }
+        });
         return paths;
     }
 
-    private removeByPath(container: FileStageQuickPick[], path: string): FileStageQuickPick[] {
+    protected removeByPath(container: FileStageQuickPick[], path: string): FileStageQuickPick[] {
         container = container.filter((value, index, array) => {
             return value.path !== path;
         });
         return container;
     }
 
+    get length(): number {
+        let count = 0;
+        this.container.forEach((value, index, map) => {
+            count += value.length;
+        });
+        return count;
+    }
+}
+
+enum FileTypes {
+    MODIFIED,
+    DELETED,
+    UNTRACKED,
+    STAGED,
+    DEFAULT
+}
+
+export class DirtyFileContainter extends FileContainer {
+
+    constructor() {
+        super();
+        this.addTypeContainer(FileTypes.MODIFIED);
+        this.addTypeContainer(FileTypes.DELETED);
+        this.addTypeContainer(FileTypes.UNTRACKED);
+    }
+
+    addModified(file: File) {
+        this.pushType(FileTypes.MODIFIED, file);
+    }
+
+    addDeleted(file: File) {
+        this.pushType(FileTypes.DELETED, file);
+    }
+
+    addUntrackedFile(file: File) {
+        this.pushType(FileTypes.UNTRACKED, file);
+    }
+
     getDescriptors(): FileStageQuickPick[] {
         let descriptors: FileStageQuickPick[] = [];
-        for (let i in this.modifiedFiles) {
+
+        let modifiedFiles = this.getTypeContainer(FileTypes.MODIFIED);
+        for (let i in modifiedFiles) {
             descriptors.push({
-                label: this.modifiedFiles[i].path,
-                path: this.modifiedFiles[i].path,
+                label: modifiedFiles[i].path,
+                path: modifiedFiles[i].path,
                 description: "Modified"
             });
         }
-        for (let i in this.deletedFiles) {
-            descriptors = this.removeByPath(descriptors, this.deletedFiles[i].path);
+        let deletedFiles = this.getTypeContainer(FileTypes.DELETED);
+        for (let i in deletedFiles) {
+            descriptors = this.removeByPath(descriptors, deletedFiles[i].path);
             descriptors.push({
-                label: this.deletedFiles[i].path,
-                path: this.deletedFiles[i].path,
+                label: deletedFiles[i].path,
+                path: deletedFiles[i].path,
                 description: "Deleted"
             });
         }
-        for (let i in this.untrackedFiles) {
+        let untrackedFiles = this.getTypeContainer(FileTypes.UNTRACKED);
+        for (let i in untrackedFiles) {
             descriptors.push({
-                label: this.untrackedFiles[i].path,
-                path: this.untrackedFiles[i].path,
+                label: untrackedFiles[i].path,
+                path: untrackedFiles[i].path,
                 description: "Untracked"
             });
         }
         return descriptors;
     }
-
-    get length(): number {
-        return this.deletedFiles.length + this.untrackedFiles.length + this.modifiedFiles.length;
-    }
 }
 
-export class StagedFilesContainter {
-    private stagedFiles: StagedFile[];
+export class StagedFileContainter extends FileContainer {
 
     constructor() {
-        this.stagedFiles = [];
+        super();
+        this.addTypeContainer(FileTypes.STAGED);
     }
 
-    addStaged(file: StagedFile) {
-        this.stagedFiles.push(file);
-    }
-
-    getFilePaths(): string[] {
-        let paths: string[] = [];
-        let joined: StagedFile[] = this.stagedFiles;
-        for (let i in joined) {
-            paths.push(joined[i].path);
-        }
-        return paths;
+    addStaged(file: File) {
+        this.pushType(FileTypes.STAGED, file);
     }
 
     getDescriptors(): FileStageQuickPick[] {
         let descriptors: FileStageQuickPick[] = [];
-        for (let i in this.stagedFiles) {
+
+        let stagedFiles = this.getTypeContainer(FileTypes.STAGED);
+        for (let i in stagedFiles) {
             descriptors.push({
-                label: this.stagedFiles[i].path,
-                path: this.stagedFiles[i].path,
+                label: stagedFiles[i].path,
+                path: stagedFiles[i].path,
                 description: "Staged"
             });
         }
         return descriptors;
-    }
-
-    get length(): number {
-        return this.stagedFiles.length;
     }
 }
 

@@ -48,7 +48,7 @@ export class Gerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<common.DirtyFilesContainter> {
+    public getDirtyFiles(): Promise<common.DirtyFileContainter> {
         let options = [
             "--exclude-standard"
         ];
@@ -57,7 +57,7 @@ export class Gerrit {
             modified: "-m",
             untracked: "-o"
         };
-        let container = new common.DirtyFilesContainter();
+        let container = new common.DirtyFileContainter();
         return this.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -85,12 +85,12 @@ export class Gerrit {
         });
     }
 
-    public getStagedFiles(): Promise<common.StagedFilesContainter> {
+    public getStagedFiles(): Promise<common.StagedFileContainter> {
         let options = [
             "--name-only",
             "--cached"
         ];
-        let container = new common.StagedFilesContainter();
+        let container = new common.StagedFileContainter();
         return this.git("diff", options).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
