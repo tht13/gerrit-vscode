@@ -30,4 +30,8 @@ export class Ref {
         return `refs/changes/${lastTwo}/${idString}/${this.patchSet.toString()}`;
     }
 
+    public get text(): string {
+        return `Ref ${this.id}:${this.patchSet}`;
+    }
+
 }
