@@ -11,7 +11,11 @@ export function filterDuplicates(value: string, index: number, array: string[]):
 }
 
 export function setDefault<T>(variable: T, defaultValue: T): T {
-    return (variable === null || variable === undefined) ? defaultValue : variable;
+    return (isNull(variable)) ? defaultValue : variable;
+}
+
+export function isNull(variable: any): boolean {
+    return variable === null || variable === undefined;
 }
 
 export const SPLIT_LINE = /\n\r??/gmi;
