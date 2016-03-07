@@ -136,9 +136,7 @@ export class Gerrit {
     Files: ${files}
     Amend: ${amend}`);
         return new Promise((resolve, reject) => {
-            let options: string[] = [
-                "commit",
-            ];
+            let options: string[] = [];
             if (amend) {
                 options.push("--amend", "--no-edit");
             } else {
