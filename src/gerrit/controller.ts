@@ -10,23 +10,23 @@ import * as path from "path";
 
 export class GerritController {
     private logger: Logger;
-    private statusBarItem: StatusBarItem;
+    // private statusBarItem: StatusBarItem;
 
     constructor(private gerrit: Gerrit) {
         this.logger = Logger.logger;
-        this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
-        this.statusBarItem.command = "gerrit.checkoutRevision";
-        this.updateStatusBarItem();
+        // this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
+        // this.statusBarItem.command = "gerrit.checkoutRevision";
+        // this.updateStatusBarItem();
         Event.event.on("ref.change", this.updateStatusBarItem);
     }
 
     private updateStatusBarItem() {
-        if (utils.isNull(this.gerrit.getCurrentRef())) {
-            this.statusBarItem.hide();
-        } else {
-            this.statusBarItem.text = this.gerrit.getCurrentRef().text;
-            this.statusBarItem.show();
-        }
+        // if (utils.isNull(this.gerrit.getCurrentRef())) {
+        //     this.statusBarItem.hide();
+        // } else {
+        //     this.statusBarItem.text = this.gerrit.getCurrentRef().text;
+        //     this.statusBarItem.show();
+        // }
     }
 
     public stageAll() {
