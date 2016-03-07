@@ -116,6 +116,11 @@ export class DirtyFileContainter extends FileContainer {
         }
         return descriptors;
     }
+
+    isDirty(): boolean {
+        return this.getTypeContainer(FileTypes.MODIFIED).length +
+            this.getTypeContainer(FileTypes.DELETED).length !== 0;
+    }
 }
 
 export class StagedFileContainter extends FileContainer {

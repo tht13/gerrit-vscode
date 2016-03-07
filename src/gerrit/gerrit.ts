@@ -41,7 +41,7 @@ export class Gerrit {
     private isDirty(): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.getDirtyFiles().then(value => {
-                resolve(value.length !== 0);
+                resolve(value.isDirty());
             }, reason => {
                 reject(reason);
             });
