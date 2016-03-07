@@ -277,17 +277,17 @@ export class Gerrit {
     }
 
     private checkout(HEAD: string): Promise<string> {
-        let args = [
+        let options = [
             HEAD
         ];
-        return this.git("checkout", [], args);
+        return this.git("checkout", options);
     }
 
     private cherrypick(HEAD: string): Promise<string> {
-        let args = [
+        let options = [
             HEAD
         ];
-        return this.git("cherry-pick", [], args);
+        return this.git("cherry-pick", options);
     }
 
     // TODO: add check for running cherrypick
