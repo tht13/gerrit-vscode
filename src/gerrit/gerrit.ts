@@ -181,38 +181,17 @@ export class Gerrit {
         this.logger.debug(`Checkout Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return new Promise((resolve, reject) => {
-            this.isDirty().then(clean => {
-                if (!clean) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Dirty Head",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                }
-
-                this.setCurrentRef(ref);
-
-                this.fetch(ref.getUrl()).then(fetchValue => {
-                    this.checkout("FETCH_HEAD").then(checkoutValue => {
-                        resolve(checkoutValue);
-                    }, checkoutReason => {
-                        reject(checkoutReason);
-                    });
-                }, fetchReason => {
-                    reject(fetchReason);
-                });
-            }, reason => {
-                reject(reason);
-            });
-        });
+        return this.fetchRef(ref, this.checkout);
     }
 
     public cherrypickRef(ref: Ref): Promise<string> {
         this.logger.debug(`Cherrypick Branch:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
+        return this.fetchRef(ref, this.cherrypick);
+    }
+
+    private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
         return new Promise((resolve, reject) => {
             this.isDirty().then(clean => {
                 if (!clean) {
@@ -226,41 +205,20 @@ export class Gerrit {
 
                 this.setCurrentRef(ref);
 
-                this.fetch(ref.getUrl()).then(fetchValue => {
-                    this.cherrypick("FETCH_HEAD").then(checkoutValue => {
-                        resolve(checkoutValue);
-                    }, checkoutReason => {
-                        reject(checkoutReason);
+                this.fetch(ref.getUrl()).then(value => {
+                    resolver.apply(this, ["FETCH_HEAD"]).then(value => {
+                        resolve(value);
+                    }, reason => {
+                        reject(reason);
                     });
-                }, fetchRreason => {
-                    reject(fetchRreason);
+                }, reason => {
+                    reject(reason);
                 });
             }, reason => {
                 reject(reason);
             });
         });
     }
-
-    // TODO: fetchRef, using resolver loses `this` instance, find solution
-    // private fetchRef(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
-    //     return new Promise((resolve, reject) => {
-    //         if (this.isDirty()) {
-    //             reject("Dirty");
-    //         }
-
-    //         this.setCurrentRef(ref);
-
-    //         this.fetch(ref.getUrl()).then(value => {
-    //             resolver("FETCH_HEAD").then(value => {
-    //                 resolve(value);
-    //             }, reason => {
-    //                 reject(reason);
-    //             });
-    //         }, reason => {
-    //             reject(reason);
-    //         });
-    //     });
-    // }
 
     private fetch(url: string, options?: string[]): Promise<string> {
         url = utils.setDefault(url, "");
