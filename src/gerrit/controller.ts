@@ -247,6 +247,10 @@ export class GerritController {
         });
     }
 
+    public rebaseContinue() {
+        this.gerrit.rebaseContinue();
+    }
+
     public rebasentinue() {
         this.gerrit.rebaseContinue();
     }

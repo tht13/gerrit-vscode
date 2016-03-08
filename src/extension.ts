@@ -93,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
     commands.push(
         vscode.commands.registerCommand("gerrit.rebaseContinue", () => {
-            controller.rebase();
+            controller.rebaseContinue();
         })
     );
 
