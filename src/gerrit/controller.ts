@@ -256,6 +256,7 @@ export class GerritController {
 
     private aquireLock<T, U>(func: (...args: U[]) => Promise<T>, args?: U[]): Promise<T> {
         if (this.lock) {
+            window.showInformationMessage("Gerrit command in progress...");
             return  new Promise<T>((resolve, reject) => reject("Locked"));
         } else {
             args = utils.setDefault(args, []);
