@@ -32,17 +32,17 @@ export class GerritController {
     }
 
     public stageAll() {
-        this.aquireLock(this.gerrit.stage, ["."]);
+        this.aquireLock(this.gerrit, this.gerrit.stage, ["."]);
     }
 
     public stageCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
-        this.aquireLock(this.gerrit.stage, [path]);
+        this.aquireLock(this.gerrit, this.gerrit.stage, [path]);
     }
 
     public stageFile() {
         window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
-            this.aquireLock(this.gerrit.getDirtyFiles).then(value => {
+            this.aquireLock(this.gerrit, this.gerrit.getDirtyFiles).then(value => {
                 if (value.length === 0) {
                     let reason: common.RejectReason = {
                         showInformation: true,
@@ -60,7 +60,7 @@ export class GerritController {
                 return;
             }
             let filePath = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.gerrit.stage, [filePath]).then(value => {
+            this.aquireLock(this.gerrit, this.gerrit.stage, [filePath]).then(value => {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
@@ -72,18 +72,18 @@ export class GerritController {
     }
 
     public resetAll() {
-        this.aquireLock(this.gerrit.reset, [".", false]);
+        this.aquireLock(this.gerrit, this.gerrit.reset, [".", false]);
     }
 
     // TODO: need to check is valid path, f.exs if in git diff mode then invalid file path is given (can also apply to other functions)
     public resetCurrentFile() {
         let path: string = window.activeTextEditor.document.fileName;
-        this.aquireLock(this.gerrit.reset, [path, false]);
+        this.aquireLock(this.gerrit, this.gerrit.reset, [path, false]);
     }
 
     public resetFile() {
         window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
-            this.aquireLock(this.gerrit.getStagedFiles).then(value => {
+            this.aquireLock(this.gerrit, this.gerrit.getStagedFiles).then(value => {
                 if (value.length === 0) {
                     let reason: common.RejectReason = {
                         showInformation: true,
@@ -101,7 +101,7 @@ export class GerritController {
                 return;
             }
             let filePath: string = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.gerrit.reset, [filePath, false]).then(value => {
+            this.aquireLock(this.gerrit, this.gerrit.reset, [filePath, false]).then(value => {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
@@ -117,7 +117,7 @@ export class GerritController {
     public cleanAll() {
         common.confirm("Clean all files? This cannot be undone").then(value => {
             if (value) {
-                this.aquireLock(this.gerrit.clean, ["."]);
+                this.aquireLock(this.gerrit, this.gerrit.clean, ["."]);
             }
         });
     }
@@ -126,7 +126,7 @@ export class GerritController {
         let filePath: string = window.activeTextEditor.document.fileName;
         common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
             if (value) {
-                this.aquireLock(this.gerrit.clean, [filePath]);
+                this.aquireLock(this.gerrit, this.gerrit.clean, [filePath]);
             }
         });
     }
@@ -138,13 +138,13 @@ export class GerritController {
         };
 
         window.showInputBox(options).then(message => {
-            this.aquireLock(this.gerrit.commit, [message, [""], false]);
+            this.aquireLock(this.gerrit, this.gerrit.commit, [message, [""], false]);
         }, reason => {
         });
     }
 
     public commitAmend() {
-        this.aquireLock(this.gerrit.commit, ["", [""], true]);
+        this.aquireLock(this.gerrit, this.gerrit.commit, ["", [""], true]);
     }
 
     public checkoutBranch() {
@@ -154,7 +154,7 @@ export class GerritController {
         };
 
         window.showInputBox(options).then(branch => {
-            this.aquireLock(this.gerrit.checkoutBranch, [branch]);
+            this.aquireLock(this.gerrit, this.gerrit.checkoutBranch, [branch]);
         }, reason => {
         });
     }
@@ -183,7 +183,7 @@ export class GerritController {
                 }
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
-                this.aquireLock(this.gerrit.checkoutRef, [newRef]);
+                this.aquireLock(this.gerrit, this.gerrit.checkoutRef, [newRef]);
             }, reason => {
             });
         }, reason => {
@@ -214,7 +214,7 @@ export class GerritController {
                 }
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
-                this.aquireLock(this.gerrit.cherrypickRef, [newRef]);
+                this.aquireLock(this.gerrit, this.gerrit.cherrypickRef, [newRef]);
             }, reason => {
             });
         }, reason => {
@@ -222,7 +222,7 @@ export class GerritController {
     }
 
     public cherrypickContinue() {
-        this.aquireLock(this.gerrit.cherrypickContinue, []);
+        this.aquireLock(this.gerrit, this.gerrit.cherrypickContinue, []);
     }
 
     public push() {
@@ -232,7 +232,7 @@ export class GerritController {
         };
 
         window.showInputBox(options).then(branch => {
-            this.aquireLock(this.gerrit.push, [branch]);
+            this.aquireLock(this.gerrit, this.gerrit.push, [branch]);
         }, reason => {
         });
     }
@@ -244,24 +244,24 @@ export class GerritController {
         };
 
         window.showInputBox(rebaseOptions).then(branch => {
-            this.aquireLock(this.gerrit.rebase, [branch]);
+            this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]);
         }, reason => {
         });
     }
 
     public rebaseContinue() {
         this.gerrit.rebaseContinue();
-        this.aquireLock(this.gerrit.rebaseContinue, []);
+        this.aquireLock(this.gerrit, this.gerrit.rebaseContinue, []);
     }
 
-    private aquireLock<T, U>(func: (...args: U[]) => Promise<T>, args?: U[]): Promise<T> {
+    private aquireLock<T, U, V>(thisArg: V, func: (...args: U[]) => Promise<T>, args?: U[]): Promise<T> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");
             return  new Promise<T>((resolve, reject) => reject("Locked"));
         } else {
             args = utils.setDefault(args, []);
             this.lock = true;
-            return func(...args).then(value => {
+            return func.apply(thisArg, args).then(value => {
                 this.lock = false;
                 return value;
             }, reason => {
