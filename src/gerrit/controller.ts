@@ -10,25 +10,39 @@ import * as path from "path";
 
 export class GerritController {
     private logger: Logger;
-    // private statusBarItem: StatusBarItem;
+    private statusBarText: common.StatusBarFormat;
+    private statusBarItem: StatusBarItem;
     private lock: boolean;
 
     constructor(private gerrit: Gerrit) {
         this.logger = Logger.logger;
         this.lock = false;
-        // this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
-        // this.statusBarItem.command = "gerrit.checkoutRevision";
-        // this.updateStatusBarItem();
-        Event.event.on("ref.change", this.updateStatusBarItem);
+        this.statusBarText = {
+            icon: "",
+            ref: "",
+            branch: ""
+        };
+        this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
+        this.statusBarItem.command = "gerrit.checkoutRevision";
+        this.updateStatusBar();
+        Event.event.on("ref.change", this.updateStatusBarRef);
     }
 
-    private updateStatusBarItem() {
-        // if (utils.isNull(this.gerrit.getCurrentRef())) {
-        //     this.statusBarItem.hide();
-        // } else {
-        //     this.statusBarItem.text = this.gerrit.getCurrentRef().text;
-        //     this.statusBarItem.show();
-        // }
+    private updateStatusBar() {
+        this.setStatusBarText();
+    }
+
+    private updateStatusBarRef() {
+        if (!utils.isNull(this.gerrit.getCurrentRef())) {
+            this.statusBarText.ref = this.gerrit.getCurrentRef().text;
+            this.setStatusBarText();
+        }
+    }
+
+    private setStatusBarText() {
+        let text = `Gerrit: ${this.statusBarText.icon}${this.statusBarText.branch}:${this.statusBarText.ref}`;
+        this.statusBarItem.text = text;
+        this.statusBarItem.show();
     }
 
     public stageAll() {
@@ -257,7 +271,7 @@ export class GerritController {
     private aquireLock<T, U, V>(thisArg: V, func: (...args: U[]) => Promise<T>, args?: U[]): Promise<T> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");
-            return  new Promise<T>((resolve, reject) => reject("Locked"));
+            return new Promise<T>((resolve, reject) => reject("Locked"));
         } else {
             args = utils.setDefault(args, []);
             this.lock = true;

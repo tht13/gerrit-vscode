@@ -171,3 +171,9 @@ export function confirm(message: string): Thenable<boolean> {
         return value === "Yes";
     });
 }
+
+export interface StatusBarFormat {
+    icon: string;
+    ref: string;
+    branch: string;
+}
