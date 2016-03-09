@@ -18,9 +18,9 @@ export class GerritController {
         this.logger = Logger.logger;
         this.lock = false;
         this.statusBarText = {
-            icon: "",
-            ref: "",
-            branch: ""
+            icon: "bell",
+            ref: "19250/4",
+            branch: "master"
         };
         this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
         this.statusBarItem.command = "gerrit.checkoutRevision";
@@ -40,7 +40,7 @@ export class GerritController {
     }
 
     private setStatusBarText() {
-        let text = `Gerrit: ${this.statusBarText.icon}${this.statusBarText.branch}:${this.statusBarText.ref}`;
+        let text = `Gerrit: $(${this.statusBarText.icon}) ${this.statusBarText.branch}:${this.statusBarText.ref}`;
         this.statusBarItem.text = text;
         this.statusBarItem.show();
     }
