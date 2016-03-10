@@ -8,64 +8,18 @@ import * as common from "./common";
 import { Event } from "./event";
 import * as path from "path";
 import * as octicon from "./octicons";
+import { StatusBar } from "./statusBar";
 
 export class GerritController {
     private logger: Logger;
-    private statusBarText: common.StatusBarFormat;
-    private statusBarItem: StatusBarItem;
-    private statusBarIcon: octicon.OCTICONS;
+    private statusBar: StatusBar;
     private lock: boolean;
 
     constructor(private gerrit: Gerrit) {
-        this.gerrit.setController(this);
+        this.statusBar = new StatusBar();
+        this.gerrit.setStatusBar(this.statusBar);
         this.logger = Logger.logger;
         this.lock = false;
-        this.statusBarIcon = octicon.OCTICONS.CHECK;
-        this.statusBarText = {
-            icon: octicon.getOcticon(this.statusBarIcon),
-            ref: "19250/4",
-            branch: "master"
-        };
-        this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
-        this.statusBarItem.command = "gerrit.checkoutRevision";
-        this.updateStatusBar();
-        Event.on("ref.change", this.updateStatusBarText);
-    }
-
-    private updateStatusBar() {
-        this.setStatusBarText();
-    }
-
-    private updateStatusBarText(_this: GerritController) {
-        let updated = false;
-        if (!utils.isNull(_this.gerrit.getCurrentRef()) && _this.statusBarText.ref !== _this.gerrit.getCurrentRef().text) {
-            _this.statusBarText.ref = _this.gerrit.getCurrentRef().text;
-            updated = true;
-        }
-        if (!utils.isNull(_this.gerrit.getBranch()) && _this.statusBarText.branch !== _this.gerrit.getBranch()) {
-            _this.statusBarText.ref = _this.gerrit.getBranch();
-            updated = true;
-        }
-        if (!utils.isNull(_this.gerrit.getBranch()) && _this.statusBarText.branch !== _this.gerrit.getBranch()) {
-            _this.statusBarText.ref = _this.gerrit.getBranch();
-            updated = true;
-        }
-        if (!utils.isNull(_this.statusBarIcon) && _this.statusBarText.icon !== octicon.getOcticon(_this.statusBarIcon)) {
-            _this.statusBarText.icon = octicon.getOcticon(_this.statusBarIcon);
-            updated = true;
-        }
-        if (updated) {
-            _this.setStatusBarText();
-        }
-    }
-
-    private setStatusBarText() {
-        let icon = (this.statusBarText.icon.length > 0) ? ` $(${this.statusBarText.icon})` : "";
-        let branch = this.statusBarText.branch;
-        let ref = this.statusBarText.ref;
-        let text = `Gerrit:${branch}:${ref}${icon} `;
-        this.statusBarItem.text = text;
-        this.statusBarItem.show();
     }
 
     public stageAll() {
@@ -296,19 +250,16 @@ export class GerritController {
             window.showInformationMessage("Gerrit command in progress...");
             return new Promise<T>((resolve, reject) => reject("Locked"));
         } else {
-            this.statusBarIcon = octicon.OCTICONS.SYNC;
-            this.updateStatusBarText(this);
+            this.statusBar.updateStatusBarIcon(this.statusBar, octicon.OCTICONS.SYNC);
             args = utils.setDefault(args, []);
             this.lock = true;
             return func.apply(thisArg, args).then(value => {
                 this.lock = false;
-                this.statusBarIcon = octicon.OCTICONS.CHECK;
-                this.updateStatusBarText(this);
+                this.statusBar.updateStatusBarIcon(this.statusBar, octicon.OCTICONS.CHECK);
                 return value;
             }, reason => {
                 this.lock = false;
-                this.statusBarIcon = octicon.OCTICONS.STOP;
-                this.updateStatusBarText(this);
+                this.statusBar.updateStatusBarIcon(this.statusBar, octicon.OCTICONS.STOP);
                 return reason;
             });
         }

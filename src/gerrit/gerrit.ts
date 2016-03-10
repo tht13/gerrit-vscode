@@ -1,7 +1,7 @@
 import { Ref } from "./ref";
 import { Logger, LoggerSingleton } from "./logger";
 import { GerritSettings } from "./settings";
-import { GerritController } from "./controller";
+import { StatusBar } from "./statusbar";
 import { workspace } from "vscode";
 import { exec } from "child_process";
 import * as common from "./common";
@@ -15,7 +15,7 @@ export class Gerrit {
     private currentRef: Ref;
     private logger: LoggerSingleton;
     private settings: GerritSettings;
-    private controller: GerritController;
+    private statusBar: StatusBar;
 
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         this.settings = new GerritSettings();
@@ -28,8 +28,8 @@ export class Gerrit {
         }
     }
 
-    public setController(controller: GerritController) {
-        this.controller = controller;
+    public setStatusBar(statusBar: StatusBar) {
+        this.statusBar = statusBar;
     }
 
     public getCurrentRef(): Ref {
@@ -42,7 +42,7 @@ export class Gerrit {
 
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
-        Event.emit("ref.change", this.controller);
+        Event.emit("ref.change", this.statusBar, ref);
         this.logger.debug(`New Ref:
     ID: ${this.currentRef.getId()}
     Patch Set: ${this.currentRef.getPatchSet()}`);
