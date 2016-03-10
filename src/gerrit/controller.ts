@@ -15,6 +15,7 @@ export class GerritController {
     private lock: boolean;
 
     constructor(private gerrit: Gerrit) {
+        this.gerrit.setController(this);
         this.logger = Logger.logger;
         this.lock = false;
         this.statusBarText = {
@@ -32,10 +33,10 @@ export class GerritController {
         this.setStatusBarText();
     }
 
-    private updateStatusBarRef() {
-        if (!utils.isNull(this.gerrit.getCurrentRef())) {
-            this.statusBarText.ref = this.gerrit.getCurrentRef().text;
-            this.setStatusBarText();
+    private updateStatusBarRef(_this: GerritController) {
+        if (!utils.isNull(_this.gerrit.getCurrentRef())) {
+            _this.statusBarText.ref = _this.gerrit.getCurrentRef().text;
+            _this.setStatusBarText();
         }
     }
 
