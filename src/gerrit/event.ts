@@ -12,4 +12,5 @@ class EventSingleton {
 
 }
 
-export const Event = EventSingleton.event;
+const Event = EventSingleton.event;
+export default Event;

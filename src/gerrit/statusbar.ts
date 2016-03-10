@@ -1,7 +1,7 @@
 import { window, StatusBarItem, StatusBarAlignment } from "vscode";
 import * as octicon from "./octicons";
 import * as utils from "./utils";
-import { Event } from "./event";
+import Event from "./event";
 import { Ref } from"./ref";
 
 export class StatusBar {

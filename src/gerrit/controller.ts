@@ -5,7 +5,6 @@ import { Ref } from "./ref";
 import { Logger } from "./logger";
 import * as utils from "./utils";
 import * as common from "./common";
-import { Event } from "./event";
 import * as path from "path";
 import * as octicon from "./octicons";
 import { StatusBar } from "./statusBar";

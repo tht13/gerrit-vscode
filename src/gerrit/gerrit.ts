@@ -6,7 +6,7 @@ import { workspace } from "vscode";
 import { exec } from "child_process";
 import * as common from "./common";
 import * as utils from "./utils";
-import { Event } from "./event";
+import Event from "./event";
 import * as http from "http";
 import * as https from "https";
 
