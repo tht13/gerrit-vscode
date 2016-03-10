@@ -34,8 +34,16 @@ export class GerritController {
     }
 
     private updateStatusBarRef(_this: GerritController) {
+        let updated = false;
         if (!utils.isNull(_this.gerrit.getCurrentRef())) {
             _this.statusBarText.ref = _this.gerrit.getCurrentRef().text;
+            updated = true;
+        }
+        if (!utils.isNull(_this.gerrit.getBranch())) {
+            _this.statusBarText.ref = _this.gerrit.getBranch();
+            updated = true;
+        }
+        if (updated) {
             _this.setStatusBarText();
         }
     }

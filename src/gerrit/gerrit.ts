@@ -36,6 +36,10 @@ export class Gerrit {
         return this.currentRef;
     }
 
+    public getBranch(): string {
+        return this.branch;
+    }
+
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
         Event.event.emit("ref.change", this.controller);
