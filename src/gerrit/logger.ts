@@ -33,6 +33,7 @@ class LoggerSingletonClass implements LoggerSingleton {
     }
 
     log(value: string) {
+        this.outputChannel.show(true);
         let lines: string[] = value.split(utils.SPLIT_LINE);
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
