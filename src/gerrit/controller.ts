@@ -41,7 +41,10 @@ export class GerritController {
     }
 
     private setStatusBarText() {
-        let text = `Gerrit: $(${this.statusBarText.icon}) ${this.statusBarText.branch}:${this.statusBarText.ref}`;
+        let icon = (this.statusBarText.icon.length > 0) ? ` $(${this.statusBarText.icon})` : "";
+        let branch = this.statusBarText.branch;
+        let ref = this.statusBarText.ref;
+        let text = `Gerrit:${icon} ${branch}:${ref}`;
         this.statusBarItem.text = text;
         this.statusBarItem.show();
     }
