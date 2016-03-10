@@ -42,7 +42,7 @@ export class Gerrit {
 
     private setCurrentRef(ref: Ref) {
         this.currentRef = ref;
-        Event.event.emit("ref.change", this.controller);
+        Event.emit("ref.change", this.controller);
         this.logger.debug(`New Ref:
     ID: ${this.currentRef.getId()}
     Patch Set: ${this.currentRef.getPatchSet()}`);

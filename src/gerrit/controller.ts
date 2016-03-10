@@ -29,7 +29,7 @@ export class GerritController {
         this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
         this.statusBarItem.command = "gerrit.checkoutRevision";
         this.updateStatusBar();
-        Event.event.on("ref.change", this.updateStatusBarText);
+        Event.on("ref.change", this.updateStatusBarText);
     }
 
     private updateStatusBar() {

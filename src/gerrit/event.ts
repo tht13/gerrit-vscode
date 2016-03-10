@@ -1,13 +1,15 @@
 import * as events from "events";
 
-export class Event {
+class EventSingleton {
     private static _event: events.EventEmitter = null;
 
     static get event() {
-        if (Event._event === null) {
-            Event._event = new events.EventEmitter();
+        if (EventSingleton._event === null) {
+            EventSingleton._event = new events.EventEmitter();
         }
-        return Event._event;
+        return EventSingleton._event;
     }
 
 }
+
+export const Event = EventSingleton.event;
