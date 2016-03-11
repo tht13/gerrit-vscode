@@ -13,8 +13,8 @@ export class StatusBar {
         this.statusBarIcon = octicon.OCTICONS.CHECK;
         this.statusBarText = {
             icon: octicon.getOcticon(this.statusBarIcon),
-            ref: "19250/4",
-            branch: "master"
+            ref: "",
+            branch: ""
         };
         this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 10);
         this.statusBarItem.command = "gerrit.checkoutRevision";
