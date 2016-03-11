@@ -203,8 +203,8 @@ export class Gerrit {
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.isDirty().then(clean => {
-                if (!clean) {
+            this.isDirty().then(dirty => {
+                if (dirty) {
                     let reason: common.RejectReason = {
                         showInformation: true,
                         message: "Dirty Head",
