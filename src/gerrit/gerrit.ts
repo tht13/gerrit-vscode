@@ -177,6 +177,7 @@ export class Gerrit {
             this.fetch("", ["-fv"]).then(fetchValue => {
                 this.checkout(`origin/${branch}`).then(checkoutValue => {
                     this.branch = branch;
+                    Event.emit("branch.change", this.statusBar, this.branch);
                     resolve(checkoutValue);
                 }, checkoutReason => {
                     reject(checkoutReason);
@@ -188,14 +189,14 @@ export class Gerrit {
     }
 
     public checkoutRef(ref: Ref): Promise<string> {
-        this.logger.debug(`Checkout Branch:
+        this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.checkout);
     }
 
     public cherrypickRef(ref: Ref): Promise<string> {
-        this.logger.debug(`Cherrypick Branch:
+        this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.cherrypick);
