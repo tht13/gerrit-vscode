@@ -21,7 +21,7 @@ export class Gerrit {
         this.settings = new GerritSettings();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
-        this.logger.log("Activating Gerrit...");
+        this.logger.log("Activating Gerrit...", false);
         if (ref !== null) {
             // TODO: determine ref at start
             this.currentRef = ref;

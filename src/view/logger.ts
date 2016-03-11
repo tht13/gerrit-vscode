@@ -15,7 +15,7 @@ export class Logger {
 
 export interface LoggerSingleton {
     setDebug(value: boolean): void;
-    log(value: string): void;
+    log(value: string, show?: boolean): void;
     debug(value: string): void;
 }
 
@@ -32,8 +32,11 @@ class LoggerSingletonClass implements LoggerSingleton {
         this.debugMode = value;
     }
 
-    log(value: string) {
-        this.outputChannel.show(true);
+    log(value: string, show?: boolean) {
+        show = utils.setDefault(show, true);
+        if (show) {
+            this.outputChannel.show(true);
+        }
         let lines: string[] = value.split(utils.SPLIT_LINE);
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
