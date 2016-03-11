@@ -2,12 +2,12 @@ import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
-import { Logger } from "./logger";
-import * as utils from "./utils";
-import * as common from "./common";
+import { Logger } from "../view/logger";
+import * as utils from "../common/utils";
+import * as common from "../common/common";
 import * as path from "path";
-import * as octicon from "./octicons";
-import { StatusBar } from "./statusbar";
+import * as octicon from "../common/octicons";
+import { StatusBar } from "../view/statusbar";
 
 export class GerritController {
     private logger: Logger;

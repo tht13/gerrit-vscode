@@ -1,8 +1,8 @@
 import { window, StatusBarItem, StatusBarAlignment } from "vscode";
-import * as octicon from "./octicons";
-import * as utils from "./utils";
-import Event from "./event";
-import { Ref } from"./ref";
+import * as octicon from "../common/octicons";
+import * as utils from "../common/utils";
+import Event from "../common/event";
+import { Ref } from"../gerrit/ref";
 
 export class StatusBar {
     private statusBarText: StatusBarFormat;

@@ -1,12 +1,12 @@
 import { Ref } from "./ref";
-import { Logger, LoggerSingleton } from "./logger";
-import { GerritSettings } from "./settings";
-import { StatusBar } from "./statusbar";
+import { Logger, LoggerSingleton } from "../view/logger";
+import { GerritSettings } from "../common/settings";
+import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
 import { exec } from "child_process";
-import * as common from "./common";
-import * as utils from "./utils";
-import Event from "./event";
+import * as common from "../common/common";
+import * as utils from "../common/utils";
+import Event from "../common/event";
 import * as http from "http";
 import * as https from "https";
 

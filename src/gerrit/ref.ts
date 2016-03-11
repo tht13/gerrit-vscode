@@ -1,4 +1,4 @@
-import { Logger } from "./logger";
+import { Logger } from "../view/logger";
 
 export class Ref {
     private logger: Logger;

@@ -1,5 +1,5 @@
 import { window, OutputChannel } from "vscode";
-import * as utils from "./utils";
+import * as utils from "../common/utils";
 
 export class Logger {
     private static _logger: LoggerSingleton = null;
