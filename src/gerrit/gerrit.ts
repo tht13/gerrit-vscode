@@ -177,6 +177,7 @@ export class Gerrit {
             this.fetch("", ["-fv"]).then(fetchValue => {
                 this.checkout(`origin/${branch}`).then(checkoutValue => {
                     this.branch = branch;
+                    Event.emit("branch.change", this.statusBar, this.branch);
                     resolve(checkoutValue);
                 }, checkoutReason => {
                     reject(checkoutReason);

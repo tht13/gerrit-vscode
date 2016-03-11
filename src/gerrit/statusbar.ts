@@ -20,6 +20,7 @@ export class StatusBar {
         this.statusBarItem.command = "gerrit.checkoutRevision";
         this.updateStatusBar();
         Event.on("ref.change", this.updateStatusBarRef);
+        Event.on("branch.change", this.updateStatusBarBranch);
 
     }
 
