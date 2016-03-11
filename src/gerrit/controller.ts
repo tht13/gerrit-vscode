@@ -7,7 +7,7 @@ import * as utils from "./utils";
 import * as common from "./common";
 import * as path from "path";
 import * as octicon from "./octicons";
-import { StatusBar } from "./statusBar";
+import { StatusBar } from "./statusbar";
 
 export class GerritController {
     private logger: Logger;
