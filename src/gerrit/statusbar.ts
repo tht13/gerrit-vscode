@@ -41,7 +41,8 @@ export class StatusBar {
         }
     }
     public updateStatusBarIcon(_this: StatusBar, icon: octicon.OCTICONS) {
-        if (!utils.isNull(_this.statusBarIcon) && _this.statusBarText.icon !== octicon.getOcticon(_this.statusBarIcon)) {
+        if (!utils.isNull(icon) && octicon.getOcticon(_this.statusBarIcon) !== octicon.getOcticon(icon)) {
+            _this.statusBarIcon = icon;
             _this.statusBarText.icon = octicon.getOcticon(_this.statusBarIcon);
             _this.updateStatusBar();
         }
