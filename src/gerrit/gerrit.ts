@@ -211,6 +211,7 @@ export class Gerrit {
                         type: common.RejectType.DEFAULT
                     };
                     reject(reason);
+                    return;
                 }
 
                 this.setCurrentRef(ref);
@@ -220,12 +221,15 @@ export class Gerrit {
                         resolve(value);
                     }, reason => {
                         reject(reason);
+                        return;
                     });
                 }, reason => {
                     reject(reason);
+                    return;
                 });
             }, reason => {
                 reject(reason);
+                return;
             });
         });
     }
@@ -317,6 +321,7 @@ export class Gerrit {
                     console.warn(reason);
                     this.logger.log([error.name, error.message].join("\n"));
                     reject(reason);
+                    return;
                 }
             });
         });
@@ -366,6 +371,7 @@ export class Gerrit {
                     attributes: { error: err }
                 };
                 reject(err);
+                return;
             });
 
             req.end();
