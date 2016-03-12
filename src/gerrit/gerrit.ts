@@ -23,6 +23,11 @@ export class Gerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         if (ref !== null) {
+            this.getGitLog(0).then(value => {
+                console.log(value);
+                // this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
+                // });
+            });
             // TODO: determine ref at start
             this.currentRef = ref;
         }
