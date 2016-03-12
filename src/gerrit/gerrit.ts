@@ -1,4 +1,5 @@
 import { Ref } from "./ref";
+import { createLog, GitLog } from "./gitLog";
 import { Logger, LoggerSingleton } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
@@ -296,6 +297,18 @@ export class Gerrit {
             "--continue"
         ];
         return this.git("rebase", options);
+    }
+
+    private getGitLog(index: number): Promise<GitLog> {
+        let options = [
+            "--skip",
+            index.toString(),
+            "-n",
+            "1"
+        ];
+        return this.git("log", options).then(value => {
+            return createLog(value);
+        });
     }
 
     private git(command: string, options?: string[], args?: string[]): Promise<string> {
