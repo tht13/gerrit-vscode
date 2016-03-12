@@ -8,8 +8,7 @@ import { exec } from "child_process";
 import * as common from "../common/common";
 import * as utils from "../common/utils";
 import Event from "../common/event";
-import * as http from "http";
-import * as https from "https";
+let rp = require("request-promise");
 
 export class Gerrit {
     private branch: string;
@@ -352,43 +351,12 @@ export class Gerrit {
     }
 
     private get(path: string): Promise<Object> {
-        let options: https.RequestOptions = {
-            host: this.settings.host,
-            port: 443,
-            path: path,
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        };
-        return new Promise((resolve, reject) => {
-            let req = https.get(options, res => {
-                let output = "";
-                console.log(options.host + ":" + res.statusCode);
-                res.setEncoding("utf8");
-
-                res.on("data", (chunk: string) => {
-                    output += chunk;
-                });
-
-                res.on("end", () => {
-                    let data = JSON.parse(output);
-                    resolve(data);
-                });
-            });
-
-            req.on("error", function(err) {
-                let reason: common.RejectReason = {
-                    showInformation: false,
-                    message: "Failed GET",
-                    type: common.RejectType.GET,
-                    attributes: { error: err }
-                };
-                reject(err);
-                return;
-            });
-
-            req.end();
+        let url = `http://${this.settings.host}:${this.settings.httpPort}/${path}`;
+        console.log(url);
+        return rp.get(url).then(value => {
+            return value;
+        }, reason => {
+            console.log(reason);
         });
     }
 }
