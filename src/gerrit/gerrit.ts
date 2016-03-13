@@ -25,8 +25,10 @@ export class Gerrit {
         if (ref !== null) {
             this.getGitLog(0).then(value => {
                 console.log(value);
-                // this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
-                // });
+                if (value.change_id !== null) {
+                    // this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
+                    // });
+                }
             });
             // TODO: determine ref at start
             this.currentRef = ref;

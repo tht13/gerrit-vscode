@@ -18,21 +18,26 @@ export interface Author {
 
 export function createLog(input: string): GitLog {
     let lines: string[] = input.split(utils.SPLIT_LINE);
-    let commit = lines.shift().replace("commit ", "");
-    let author_raw = lines.shift().replace("Author: ", "");
-    let author_name = author_raw.substring(0, author_raw.indexOf("<") - 1);
-    let author__email = author_raw.substring(author_raw.indexOf("<") + 1, author_raw.indexOf(">"));
+    let commit = lines.shift().replace("commit ", "").trim();
+    let author_raw = lines.shift().replace("Author: ", "").trim();
+    let author_name = author_raw.substring(0, author_raw.indexOf("<") - 1).trim();
+    let author__email = author_raw.substring(author_raw.indexOf("<") + 1, author_raw.indexOf(">")).trim();
     let date = lines.shift().replace("Date:", "").trim();
     let comment = "";
     let line = lines.shift();
-    while (line.indexOf("Change-Id:") === -1) {
+    while (line !== undefined && line.indexOf("Change-Id:") === -1) {
         if (comment.length > 0) {
             comment += "\n";
         }
-        comment += line;
+        comment += line.trim();
         line = lines.shift();
     }
-    let change_id = line.replace("Change-Id:", "").trim();
+    let change_id: string;
+    if (line !== undefined) {
+        change_id = line.replace("Change-Id:", "").trim();
+    } else {
+        change_id = null;
+    }
     let gitLog: GitLog = {
         commit: commit,
         author: {
