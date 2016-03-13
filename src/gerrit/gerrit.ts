@@ -4,9 +4,9 @@ import { Logger, LoggerSingleton } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
-import { spawn, ChildProcess } from "child_process";
 import * as common from "../common/common";
 import * as utils from "../common/utils";
+import * as exec from "../common/exec";
 import Event from "../common/event";
 let rp = require("request-promise");
 
@@ -333,7 +333,7 @@ export class Gerrit {
                 runOptions["input"] = stdin + "\n";
             }
 
-            let child = this.run("git", fullArgs, runOptions).then(result => {
+            let child = exec.run("git", fullArgs, runOptions).then(result => {
                 if (result.error === null) {
                     this.logger.log(result.stdout.toString());
                     resolve(result.stdout.toString());
@@ -350,60 +350,6 @@ export class Gerrit {
                     return;
                 }
             });
-        });
-    }
-
-    private run(command: string, args: string[], options: any): Promise<{ error: Error, stdout: string, stderr: string }> {
-        let child = spawn(command, args, options);
-
-        if (options.input) {
-            child.stdin.end(options.input, "utf8");
-        }
-
-        return this.exec(child);
-
-    }
-
-    private exec(child: ChildProcess): Promise<{ error: Error, stdout: string, stderr: string }> {
-        return new Promise((resolve, reject) => {
-            let result = {
-                error: null,
-                stdout: "",
-                stderr: ""
-            };
-            let active = {
-                stdout: false,
-                stderr: false
-            };
-            let stdout: Buffer[] = [];
-            let stderr: Buffer[] = [];
-            child.on("error", e => {
-                result.error = e;
-                checkExit();
-            });
-            child.on("exit", checkExit);
-            child.stdout.on("data", b => stdout.push(b));
-            child.stdout.on("close", () => {
-                result.stdout = Buffer.concat(stdout).toString();
-                active.stdout = true;
-                checkExit();
-            });
-            child.stderr.on("data", b => stderr.push(b));
-            child.stderr.on("close", () => {
-                result.stderr = Buffer.concat(stderr).toString();
-                active.stderr = true;
-                checkExit();
-            });
-
-            function checkExit() {
-                for (let channel in active) {
-                    if (!active[channel]) {
-                        return;
-                    }
-                }
-                resolve(result);
-            }
-
         });
     }
 
