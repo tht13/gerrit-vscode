@@ -45,10 +45,9 @@ export class GerritController {
                         type: common.RejectType.NO_DIRTY
                     };
                     reject(reason);
+                    return;
                 }
                 resolve(value.getDescriptors());
-            }, reason => {
-                reject(reason);
             });
         }), { placeHolder: "File to stage" }).then(value => {
             if (value === undefined) {
@@ -59,7 +58,6 @@ export class GerritController {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
-            // TODO: handle exception thrown here 
             if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
                 window.showInformationMessage(reason.message);
             }
@@ -89,10 +87,9 @@ export class GerritController {
                         type: common.RejectType.NO_DIRTY
                     };
                     reject(reason);
+                    return;
                 }
                 resolve(value.getDescriptors());
-            }, reason => {
-                reject(reason);
             });
         }), { placeHolder: "File to reset" }).then(value => {
             if (value === undefined) {
@@ -103,7 +100,6 @@ export class GerritController {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
-            // TODO: handle exception thrown here 
             if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
                 window.showInformationMessage(reason.message);
             }
