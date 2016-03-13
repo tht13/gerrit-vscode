@@ -51,6 +51,11 @@ export class Gerrit {
         return this.currentRef;
     }
 
+    public setBranch(branch: string) {
+        this.branch = branch;
+        Event.emit("branch.change", this.statusBar, branch);
+    }
+
     public getBranch(): string {
         return this.branch;
     }
@@ -183,8 +188,7 @@ export class Gerrit {
     Branch: origin/${branch}`);
         return this.fetch("", ["-fv"]).then(fetchValue => {
             return this.checkout(`origin/${branch}`).then(checkoutValue => {
-                this.branch = branch;
-                Event.emit("branch.change", this.statusBar, this.branch);
+                this.setBranch(branch);
                 return checkoutValue;
             });
         });
@@ -287,7 +291,7 @@ export class Gerrit {
             `HEAD:refs/for/${branch}`
         ];
         return this.git("push", [], args).then(value => {
-            this.branch = branch;
+            this.setBranch(branch);
             return value;
         });
     }
@@ -301,7 +305,7 @@ export class Gerrit {
                 `origin/${branch}`
             ];
             return this.git("rebase", [], args).then(value => {
-                this.branch = branch;
+                this.setBranch(branch);
                 return value;
             }, reason => {
                 this.rebaseActive = true;
