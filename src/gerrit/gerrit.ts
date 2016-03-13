@@ -335,8 +335,8 @@ export class Gerrit {
 
             let child = exec.run("git", fullArgs, runOptions).then(result => {
                 if (result.error === null) {
-                    this.logger.log(result.stdout.toString());
-                    resolve(result.stdout.toString());
+                    this.logger.log(result.stdout);
+                    resolve(result.stdout);
                 } else {
                     let reason: common.RejectReason = {
                         showInformation: false,
