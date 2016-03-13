@@ -29,6 +29,10 @@ export class Gerrit {
                     // this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
                     // });
                 }
+            }, (reason: common.RejectReason) => {
+                if (reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                    this.logger.log("No commits on branch");
+                }
             });
             // TODO: determine ref at start
             this.currentRef = ref;

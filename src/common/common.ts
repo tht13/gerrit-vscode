@@ -156,7 +156,7 @@ export interface RejectReason {
 
     type: RejectType;
 
-    attributes?: {};
+    attributes?: any;
 }
 
 export enum RejectType {
