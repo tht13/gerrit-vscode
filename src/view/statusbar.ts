@@ -37,7 +37,7 @@ export class StatusBar {
 
     public updateStatusBarBranch(_this: StatusBar, branch: string) {
         if (!utils.isNull(branch) && _this.statusBarText.branch !== branch) {
-            _this.statusBarText.ref = branch;
+            _this.statusBarText.branch = branch;
             _this.updateStatusBar();
         }
     }
