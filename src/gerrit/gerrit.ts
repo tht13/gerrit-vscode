@@ -16,12 +16,16 @@ export class Gerrit {
     private logger: LoggerSingleton;
     private settings: GerritSettings;
     private statusBar: StatusBar;
+    private cherrypickActive: boolean;
+    private rebaseActive: boolean;
 
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         this.settings = new GerritSettings();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
+        this.cherrypickActive = false;
+        this.rebaseActive = false;
         if (ref !== null) {
             this.getGitLog(0).then(value => {
                 console.log(value);
@@ -258,15 +262,25 @@ export class Gerrit {
         let options = [
             HEAD
         ];
-        return this.git("cherry-pick", options);
+        return this.git("cherry-pick", options).then(value => {
+            return value;
+        }, reason => {
+            this.cherrypickActive = true;
+            return reason;
+        });
     }
 
-    // TODO: add check for running cherrypick
     public cherrypickContinue(): Promise<string> {
+        if (!this.cherrypickActive) {
+            return;
+        }
         let options = [
             "--continue"
         ];
-        return this.git("cherry-pick", options);
+        return this.git("cherry-pick", options).then(value => {
+            this.cherrypickActive = false;
+            return value;
+        });
     }
 
     public push(branch: string): Promise<string> {
@@ -291,16 +305,24 @@ export class Gerrit {
             return this.git("rebase", [], args).then(value => {
                 this.branch = branch;
                 return value;
+            }, reason => {
+                this.rebaseActive = true;
+                return reason;
             });
         });
     }
 
-    // TODO: add check for running rebase
     public rebaseContinue(): Promise<string> {
+        if (!this.rebaseActive) {
+            return;
+        }
         let options = [
             "--continue"
         ];
-        return this.git("rebase", options);
+        return this.git("rebase", options).then(value => {
+            this.rebaseActive = false;
+            return value;
+        });
     }
 
     private getGitLog(index: number): Promise<GitLog> {
