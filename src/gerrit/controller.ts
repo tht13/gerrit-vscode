@@ -6,6 +6,7 @@ import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
 import * as common from "../common/common";
 import * as path from "path";
+import * as fs from "fs";
 import * as octicon from "../common/octicons";
 import { StatusBar } from "../view/statusbar";
 
@@ -26,8 +27,12 @@ export class GerritController {
     }
 
     public stageCurrentFile() {
-        let path: string = window.activeTextEditor.document.fileName;
-        this.aquireLock(this.gerrit, this.gerrit.stage, [path]);
+        let filePath: string = window.activeTextEditor.document.fileName;
+        fs.stat(filePath, (err, stats) => {
+            if (!err) {
+                this.aquireLock(this.gerrit, this.gerrit.stage, [filePath]);
+            }
+        });
     }
 
     public stageFile() {
@@ -65,10 +70,13 @@ export class GerritController {
         this.aquireLock(this.gerrit, this.gerrit.reset, [".", false]);
     }
 
-    // TODO: need to check is valid path, f.exs if in git diff mode then invalid file path is given (can also apply to other functions)
     public resetCurrentFile() {
-        let path: string = window.activeTextEditor.document.fileName;
-        this.aquireLock(this.gerrit, this.gerrit.reset, [path, false]);
+        let filePath: string = window.activeTextEditor.document.fileName;
+        fs.stat(filePath, (err, stats) => {
+            if (!err) {
+                this.aquireLock(this.gerrit, this.gerrit.reset, [filePath, false]);
+            }
+        });
     }
 
     public resetFile() {
@@ -114,9 +122,13 @@ export class GerritController {
 
     public cleanCurrentFile() {
         let filePath: string = window.activeTextEditor.document.fileName;
-        common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
-            if (value) {
-                this.aquireLock(this.gerrit, this.gerrit.clean, [filePath]);
+        fs.stat(filePath, (err, stats) => {
+            if (!err) {
+                common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
+                    if (value) {
+                        this.aquireLock(this.gerrit, this.gerrit.clean, [filePath]);
+                    }
+                });
             }
         });
     }
