@@ -212,7 +212,10 @@ export class GerritController {
                 }
                 let patchId = parseInt(patchString);
                 let newRef: Ref = new Ref(refId, patchId);
-                this.aquireLock(this.gerrit, this.gerrit.cherrypickRef, [newRef]);
+                this.aquireLock(this.gerrit, this.gerrit.cherrypickRef, [newRef]).then(value => {
+                }, reason => {
+                    window.showWarningMessage("Resolve conflicts in cherry-pick");
+                });
             }, reason => {
             });
         }, reason => {
@@ -242,7 +245,10 @@ export class GerritController {
         };
 
         window.showInputBox(rebaseOptions).then(branch => {
-            this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]);
+            this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]).then(value => {
+            }, reason => {
+                window.showWarningMessage("Resolve conflicts in rebase");
+            });;
         }, reason => {
         });
     }
