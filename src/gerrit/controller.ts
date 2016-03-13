@@ -151,7 +151,7 @@ export class GerritController {
 
     public checkoutBranch() {
         let options: InputBoxOptions = {
-            value: "master",
+            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
             prompt: "The branch to checkout"
         };
 
@@ -229,7 +229,7 @@ export class GerritController {
 
     public push() {
         let options: InputBoxOptions = {
-            value: "master",
+            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
             prompt: "The branch to push"
         };
 
@@ -241,7 +241,7 @@ export class GerritController {
 
     public rebase() {
         let rebaseOptions: InputBoxOptions = {
-            placeHolder: "master",
+            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
             prompt: "The branch to rebase"
         };
 

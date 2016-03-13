@@ -280,13 +280,15 @@ export class Gerrit {
         return this.git("cherry-pick", options);
     }
 
-    // add option to push to current branch in use
     public push(branch: string): Promise<string> {
         let args = [
             "origin",
             `HEAD:refs/for/${branch}`
         ];
-        return this.git("push", [], args);
+        return this.git("push", [], args).then(value => {
+            this.branch = branch;
+            return value;
+        });
     }
 
     // TODO: check how rejections are passed through
@@ -297,7 +299,10 @@ export class Gerrit {
             let args: string[] = [
                 `origin/${branch}`
             ];
-            return this.git("rebase", [], args);
+            return this.git("rebase", [], args).then(value => {
+                this.branch = branch;
+                return value;
+            });
         });
     }
 
