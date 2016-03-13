@@ -150,11 +150,9 @@ export class Gerrit {
         return this.checkout(path);
     }
 
-    // TODO: Use quick pick during commit for staging files
-    public commit(msg: string, files: string[], amend: boolean): Promise<string> {
+    public commit(msg: string, amend: boolean): Promise<string> {
         this.logger.debug(`Commit:
     Message: ${msg}
-    Files: ${files}
     Amend: ${amend}`);
         return new Promise((resolve, reject) => {
             let options: string[] = [];

@@ -136,13 +136,13 @@ export class GerritController {
         };
 
         window.showInputBox(options).then(message => {
-            this.aquireLock(this.gerrit, this.gerrit.commit, [message, [""], false]);
+            this.aquireLock(this.gerrit, this.gerrit.commit, [message, false]);
         }, reason => {
         });
     }
 
     public commitAmend() {
-        this.aquireLock(this.gerrit, this.gerrit.commit, ["", [""], true]);
+        this.aquireLock(this.gerrit, this.gerrit.commit, ["", true]);
     }
 
     public checkoutBranch() {
