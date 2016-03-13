@@ -258,10 +258,10 @@ export class GerritController {
         this.aquireLock(this.gerrit, this.gerrit.rebaseContinue, []);
     }
 
-    private aquireLock<T, U, V>(thisArg: V, func: (...args: U[]) => Promise<T>, args?: U[]): Promise<T> {
+    private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V>, args?: U[]): Promise<V> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");
-            return new Promise<T>((resolve, reject) => reject("Locked"));
+            return new Promise<V>((resolve, reject) => reject("Locked"));
         } else {
             this.statusBar.updateStatusBarIcon(this.statusBar, octicon.OCTICONS.SYNC);
             args = utils.setDefault(args, []);
