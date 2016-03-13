@@ -60,12 +60,8 @@ export class Gerrit {
     }
 
     private isDirty(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            this.getDirtyFiles().then(value => {
-                resolve(value.isDirty());
-            }, reason => {
-                reject(reason);
-            });
+        return this.getDirtyFiles().then(value => {
+            return value.isDirty();
         });
     }
 
@@ -184,17 +180,11 @@ export class Gerrit {
     public checkoutBranch(branch: string): Promise<string> {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
-        return new Promise((resolve, reject) => {
-            this.fetch("", ["-fv"]).then(fetchValue => {
-                this.checkout(`origin/${branch}`).then(checkoutValue => {
-                    this.branch = branch;
-                    Event.emit("branch.change", this.statusBar, this.branch);
-                    resolve(checkoutValue);
-                }, checkoutReason => {
-                    reject(checkoutReason);
-                });
-            }, fetchReason => {
-                reject(fetchReason);
+        return this.fetch("", ["-fv"]).then(fetchValue => {
+            return this.checkout(`origin/${branch}`).then(checkoutValue => {
+                this.branch = branch;
+                Event.emit("branch.change", this.statusBar, this.branch);
+                return checkoutValue;
             });
         });
     }
