@@ -165,8 +165,7 @@ export class Gerrit {
                     };
                     reject(reason);
                 }
-                // TODO: make it work with spaces, find what vscode uses
-                options.push("-m", msg);
+                options.push("--file", "-");
             }
             this.git("commit", options).then(value => {
                 resolve(value);
@@ -316,9 +315,10 @@ export class Gerrit {
         });
     }
 
-    private git(command: string, options?: string[], args?: string[]): Promise<string> {
+    private git(command: string, options?: string[], args?: string[], stdin?: string): Promise<string> {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
+        stdin = utils.setDefault(stdin, "");
         return new Promise((resolve, reject) => {
             let fullCmd: string[] = ["git", command];
             fullCmd = fullCmd.concat(options);
@@ -326,7 +326,7 @@ export class Gerrit {
             fullCmd = fullCmd.concat(args);
             let cmd = fullCmd.join(" ");
             this.logger.log(cmd);
-            exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
+            let child = exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
                 if (error === null) {
                     this.logger.log(stdout.toString());
                     resolve(stdout.toString());
@@ -343,6 +343,9 @@ export class Gerrit {
                     return;
                 }
             });
+            if (stdin.length > 0) {
+                child.stdin.write(stdin);
+            }
         });
     }
 
