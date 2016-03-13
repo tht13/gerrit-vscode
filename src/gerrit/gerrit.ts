@@ -30,8 +30,12 @@ export class Gerrit {
             this.getGitLog(0).then(value => {
                 console.log(value);
                 if (value.change_id !== null) {
-                    // this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
-                    // });
+                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
+                        // TODO: add return type interface
+                        this.setBranch(value.branch);
+                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                        this.setCurrentRef(ref);
+                    });
                 }
             }, (reason: common.RejectReason) => {
                 if (reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
@@ -387,11 +391,20 @@ export class Gerrit {
             ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
-    private get(path: string): Promise<Object> {
-        let url = `http://${this.settings.host}:${this.settings.httpPort}/${path}`;
+    // TODO: implement rest api interfaces and type the return
+    private get(path: string): Promise<any> {
+        let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
         console.log(url);
-        return rp.get(url).then(value => {
-            return value;
+        let options = {
+            url: url,
+            auth: {
+                user: this.settings.username,
+                pass: this.settings.httpPassword,
+                sendImmediately: false
+            }
+        };
+        return rp(options).then(value => {
+            return JSON.parse(value.replace(")]}'\n", ""));
         }, reason => {
             console.log(reason);
         });

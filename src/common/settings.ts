@@ -8,6 +8,7 @@ export class GerritSettings {
     private _username: string;
     private _project: string;
     private _version: string;
+    private _httpPassword: string;
 
     constructor() {
         this.loadSettings();
@@ -25,6 +26,7 @@ export class GerritSettings {
         this._username = settings.username;
         this._project = settings.project;
         this._version = settings.version;
+        this._httpPassword = settings.httpPassword;
     }
 
     get host(): string {
@@ -54,5 +56,9 @@ export class GerritSettings {
 
     get version(): string {
         return this._version;
+    }
+
+    get httpPassword(): string {
+        return this._httpPassword;
     }
 }
