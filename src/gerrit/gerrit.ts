@@ -4,7 +4,7 @@ import { Logger, LoggerSingleton } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
-import { exec } from "child_process";
+import { spawn, ChildProcess } from "child_process";
 import * as common from "../common/common";
 import * as utils from "../common/utils";
 import Event from "../common/event";
@@ -167,7 +167,7 @@ export class Gerrit {
                 }
                 options.push("--file", "-");
             }
-            this.git("commit", options).then(value => {
+            this.git("commit", options, [], (!amend) ? msg : null).then(value => {
                 resolve(value);
             }, reason => {
                 reject(reason);
@@ -315,37 +315,95 @@ export class Gerrit {
         });
     }
 
-    private git(command: string, options?: string[], args?: string[], stdin?: string): Promise<string> {
+    private git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string> {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
         stdin = utils.setDefault(stdin, "");
         return new Promise((resolve, reject) => {
-            let fullCmd: string[] = ["git", command];
-            fullCmd = fullCmd.concat(options);
-            fullCmd.push("--");
-            fullCmd = fullCmd.concat(args);
-            let cmd = fullCmd.join(" ");
-            this.logger.log(cmd);
-            let child = exec(cmd, { cwd: this.workspaceRoot }, (error: Error, stdout: Buffer, stderr: Buffer) => {
-                if (error === null) {
-                    this.logger.log(stdout.toString());
-                    resolve(stdout.toString());
+            let fullArgs: string[] = [gitCommand];
+            fullArgs = fullArgs.concat(options);
+            fullArgs.push("--");
+            fullArgs = fullArgs.concat(args);
+            this.logger.log(fullArgs.join(" "));
+
+            let runOptions = {
+                cwd: this.workspaceRoot,
+            };
+            if (stdin.length > 0) {
+                runOptions["input"] = stdin + "\n";
+            }
+
+            let child = this.run("git", fullArgs, runOptions).then(result => {
+                if (result.error === null) {
+                    this.logger.log(result.stdout.toString());
+                    resolve(result.stdout.toString());
                 } else {
                     let reason: common.RejectReason = {
                         showInformation: false,
                         message: "Failed Git",
                         type: common.RejectType.GIT,
-                        attributes: { error: error, stderr: stderr }
+                        attributes: { error: result.error, stderr: result.stderr }
                     };
                     console.warn(reason);
-                    this.logger.log([error.name, error.message].join("\n"));
+                    this.logger.log([result.error.name, result.error.message].join("\n"));
                     reject(reason);
                     return;
                 }
             });
-            if (stdin.length > 0) {
-                child.stdin.write(stdin);
+        });
+    }
+
+    private run(command: string, args: string[], options: any): Promise<{ error: Error, stdout: string, stderr: string }> {
+        let child = spawn(command, args, options);
+
+        if (options.input) {
+            child.stdin.end(options.input, "utf8");
+        }
+
+        return this.exec(child);
+
+    }
+
+    private exec(child: ChildProcess): Promise<{ error: Error, stdout: string, stderr: string }> {
+        return new Promise((resolve, reject) => {
+            let result = {
+                error: null,
+                stdout: "",
+                stderr: ""
+            };
+            let active = {
+                stdout: false,
+                stderr: false
+            };
+            let stdout: Buffer[] = [];
+            let stderr: Buffer[] = [];
+            child.on("error", e => {
+                result.error = e;
+                checkExit();
+            });
+            child.on("exit", checkExit);
+            child.stdout.on("data", b => stdout.push(b));
+            child.stdout.on("close", () => {
+                result.stdout = Buffer.concat(stdout).toString();
+                active.stdout = true;
+                checkExit();
+            });
+            child.stderr.on("data", b => stderr.push(b));
+            child.stderr.on("close", () => {
+                result.stderr = Buffer.concat(stderr).toString();
+                active.stderr = true;
+                checkExit();
+            });
+
+            function checkExit() {
+                for (let channel in active) {
+                    if (!active[channel]) {
+                        return;
+                    }
+                }
+                resolve(result);
             }
+
         });
     }
 
