@@ -35,6 +35,7 @@ export class Gerrit {
                         this.setBranch(value.branch);
                         let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                         this.setCurrentRef(ref);
+                        this.settings.project = value.project;
                     });
                 }
             }, (reason: common.RejectReason) => {

@@ -49,9 +49,12 @@ export class GerritSettings {
         return this._username;
     }
 
-    // TODO: Get this automatically?
     get project(): string {
         return this._project;
+    }
+
+    set project(project: string) {
+        this._project = project;
     }
 
     get version(): string {
