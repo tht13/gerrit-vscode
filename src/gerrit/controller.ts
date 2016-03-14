@@ -243,12 +243,14 @@ export class GerritController {
     }
 
     public rebase() {
-        let rebaseOptions: InputBoxOptions = {
-            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
-            prompt: "The branch to rebase"
+        let rebaseOptions: QuickPickOptions = {
+            placeHolder: "The branch to rebase"
         };
 
-        window.showInputBox(rebaseOptions).then(branch => {
+        window.showQuickPick(this.gerrit.getBranches(), rebaseOptions).then(branch => {
+            if (utils.isNull(branch)) {
+                return;
+            }
             this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]).then(value => {
             }, reason => {
                 window.showWarningMessage("Resolve conflicts in rebase");
