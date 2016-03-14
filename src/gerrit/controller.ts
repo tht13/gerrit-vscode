@@ -162,20 +162,22 @@ export class GerritController {
     }
 
     public checkoutRevision() {
-        let revisionOptions: InputBoxOptions = {
+        let revisionOptions: QuickPickOptions = {
             placeHolder: "Ref Number",
-            validateInput: utils.isValidNumber,
-            prompt: "The revision to checkout"
+            matchOnDescription: true
         };
 
-        window.showInputBox(revisionOptions).then(refString => {
-            if (utils.isValidNumber(refString) !== null) {
+        window.showQuickPick(this.gerrit.getChanges(), revisionOptions).then(refValue => {
+            if (utils.isNull(refValue)) {
+                return;
+            }
+            let refId = refValue.change_number;
+            if (utils.isNull(refId)) {
                 window.showWarningMessage("Valid Ref number not entered");
                 return;
             }
-            let refId = parseInt(refString);
             let patchsetOptions: InputBoxOptions = revisionOptions;
-            patchsetOptions.placeHolder = `Patchset for Ref: ${refString}`;
+            patchsetOptions.placeHolder = `Patchset for Ref: ${refId}`;
             patchsetOptions.prompt = "The patchset to checkout";
 
             window.showInputBox(patchsetOptions).then(patchString => {
