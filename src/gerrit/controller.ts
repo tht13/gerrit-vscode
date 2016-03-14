@@ -231,12 +231,14 @@ export class GerritController {
     }
 
     public push() {
-        let options: InputBoxOptions = {
-            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
-            prompt: "The branch to push"
+        let options: QuickPickOptions = {
+            placeHolder: "The branch to push"
         };
 
-        window.showInputBox(options).then(branch => {
+        window.showQuickPick(this.gerrit.getBranches(), options).then(branch => {
+            if (utils.isNull(branch)) {
+                return;
+            }
             this.aquireLock(this.gerrit, this.gerrit.push, [branch]);
         }, reason => {
         });
