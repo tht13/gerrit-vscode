@@ -177,7 +177,7 @@ export class GerritController {
                 return;
             }
             let patchsetOptions: InputBoxOptions = revisionOptions;
-            patchsetOptions.placeHolder = `Patchset for Ref: ${refId}`;
+            patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
             patchsetOptions.prompt = "The patchset to checkout";
 
             window.showInputBox(patchsetOptions).then(patchString => {
