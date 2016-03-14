@@ -155,7 +155,6 @@ export class Gerrit {
         return this.get(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
             let changes: common.ChangeQuickPick[] = [];
             for (let item of value) {
-                console.log(item);
                 let change: common.ChangeQuickPick = {
                     change_id: item.change_id,
                     change_number: item._number,
