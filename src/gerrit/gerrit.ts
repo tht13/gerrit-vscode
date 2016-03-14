@@ -32,10 +32,10 @@ export class Gerrit {
                 console.log(value);
                 if (value.change_id !== null) {
                     this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                        this.settings.project = value.project;
                         this.setBranch(value.branch);
                         let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                         this.setCurrentRef(ref);
-                        this.settings.project = value.project;
                     });
                 }
             }, (reason: common.RejectReason) => {
