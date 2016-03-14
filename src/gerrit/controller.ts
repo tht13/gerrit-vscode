@@ -195,20 +195,22 @@ export class GerritController {
     }
 
     public cherrypickRevision() {
-        let revisionOptions: InputBoxOptions = {
-            placeHolder: "Ref Number",
-            validateInput: utils.isValidNumber,
-            prompt: "The revision to cherrypick"
+        let revisionOptions: QuickPickOptions = {
+            placeHolder: "The revision to cherrypick",
+            matchOnDescription: true
         };
 
-        window.showInputBox(revisionOptions).then(refString => {
-            if (utils.isValidNumber(refString) !== null) {
+        window.showQuickPick(this.gerrit.getChanges(), revisionOptions).then(refValue => {
+            if (utils.isNull(refValue)) {
+                return;
+            }
+            let refId = refValue.change_number;
+            if (utils.isNull(refId)) {
                 window.showWarningMessage("Valid Ref number not entered");
                 return;
             }
-            let refId = parseInt(refString);
             let patchsetOptions: InputBoxOptions = revisionOptions;
-            patchsetOptions.placeHolder = `Patchset for Ref: ${refString}`;
+            patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
             patchsetOptions.prompt = "The patchset to cherrypick";
 
             window.showInputBox(patchsetOptions).then(patchString => {
