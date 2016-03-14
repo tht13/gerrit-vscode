@@ -1,5 +1,6 @@
 import { window, workspace, InputBoxOptions,
-    StatusBarItem, StatusBarAlignment } from "vscode";
+    StatusBarItem, StatusBarAlignment,
+    QuickPickOptions } from "vscode";
 import { Gerrit } from "./gerrit";
 import { Ref } from "./ref";
 import { Logger } from "../view/logger";
@@ -146,14 +147,17 @@ export class GerritController {
     }
 
     public checkoutBranch() {
-        let options: InputBoxOptions = {
-            value: (utils.isNull(this.gerrit.getBranch())) ? "master" : this.gerrit.getBranch(),
-            prompt: "The branch to checkout"
+        let options: QuickPickOptions = {
+            placeHolder: "The branch to checkout"
         };
 
-        window.showInputBox(options).then(branch => {
+        window.showQuickPick(this.gerrit.getBranches(), options).then(branch => {
+            if (utils.isNull(branch)) {
+                return;
+            }
             this.aquireLock(this.gerrit, this.gerrit.checkoutBranch, [branch]);
         }, reason => {
+            console.log(reason);
         });
     }
 

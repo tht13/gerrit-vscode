@@ -5,6 +5,10 @@ export interface FileStageQuickPick extends QuickPickItem, File {
     path: string;
 }
 
+export interface BranchQuickPick extends QuickPickItem {
+    branch: string;
+}
+
 interface File {
     path: string;
 }
