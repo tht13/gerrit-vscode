@@ -7,6 +7,7 @@ import { workspace } from "vscode";
 import * as common from "../common/common";
 import * as utils from "../common/utils";
 import * as exec from "../common/exec";
+import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 let rp = require("request-promise");
 
@@ -30,8 +31,7 @@ export class Gerrit {
             this.getGitLog(0).then(value => {
                 console.log(value);
                 if (value.change_id !== null) {
-                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
-                        // TODO: add return type interface
+                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                         this.setBranch(value.branch);
                         let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                         this.setCurrentRef(ref);
