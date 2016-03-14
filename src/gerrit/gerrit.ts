@@ -34,6 +34,7 @@ export class Gerrit {
                     this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                         this.settings.project = value.project;
                         this.setBranch(value.branch);
+                        // TODO: handle case when merged adn ref does not exist
                         let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                         this.setCurrentRef(ref);
                     });
@@ -130,6 +131,22 @@ export class Gerrit {
                 });
             }
             return container;
+        });
+    }
+
+    public getBranches(): Promise<string[]> {
+        return this.get(`projects/${this.settings.project}/branches/`).then(value => {
+            if (utils.isNull(value)) {
+                return [(utils.isNull(this.getBranch())) ? "master" : this.getBranch()];
+            }
+            let branches: string[] = [];
+            for (let head of value) {
+                if (head["ref"].indexOf("refs/heads/") > -1) {
+                    branches.push(head["ref"].replace("refs/heads/", ""));
+                }
+            }
+            // Return branches if set, or this.branch or master if all other are null
+            return (branches.length > 0) ? branches : [(utils.isNull(this.getBranch())) ? "master" : this.getBranch()];
         });
     }
 
