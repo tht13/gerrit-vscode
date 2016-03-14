@@ -9,6 +9,11 @@ export interface BranchQuickPick extends QuickPickItem {
     branch: string;
 }
 
+export interface ChangeQuickPick extends QuickPickItem {
+    change_id: number;
+    change_number: number;
+}
+
 interface File {
     path: string;
 }

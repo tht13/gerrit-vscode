@@ -150,6 +150,24 @@ export class Gerrit {
         });
     }
 
+    public getChanges(count?: number): Promise<common.ChangeQuickPick[]> {
+        let countString = (utils.isNull(count)) ? "" : "&n=" + count;
+        return this.get(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
+            let changes: common.ChangeQuickPick[] = [];
+            for (let item of value) {
+                console.log(item);
+                let change: common.ChangeQuickPick = {
+                    change_id: item.change_id,
+                    change_number: item._number,
+                    label: item._number.toString(),
+                    description: item.subject
+                };
+                changes.push(change);
+            }
+            return changes;
+        });
+    }
+
     public stage(path: string): Promise<string> {
         this.logger.debug(`Stage:
     Message: ${path}`);
