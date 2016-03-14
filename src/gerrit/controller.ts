@@ -163,7 +163,7 @@ export class GerritController {
 
     public checkoutRevision() {
         let revisionOptions: QuickPickOptions = {
-            placeHolder: "Ref Number",
+            placeHolder: "The revision to checkout",
             matchOnDescription: true
         };
 
