@@ -212,16 +212,19 @@ export class GerritController {
                 window.showWarningMessage("Valid Ref number not entered");
                 return;
             }
-            let patchsetOptions: InputBoxOptions = revisionOptions;
-            patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
-            patchsetOptions.prompt = "The patchset to cherrypick";
 
-            window.showInputBox(patchsetOptions).then(patchString => {
-                if (utils.isValidNumber(patchString) !== null) {
-                    window.showWarningMessage("Valid PatchSetnumber not entered");
+            let patchsetOptions: QuickPickOptions = revisionOptions;
+            patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
+
+            window.showQuickPick(this.gerrit.getPachsets(refValue.change_number), patchsetOptions).then(patchValue => {
+                if (utils.isNull(refValue)) {
                     return;
                 }
-                let patchId = parseInt(patchString);
+                let patchId = patchValue.patchset;
+                if (utils.isNull(patchId)) {
+                    window.showWarningMessage("Valid PatchSet number not entered");
+                    return;
+                }
                 let newRef: Ref = new Ref(refId, patchId);
                 this.aquireLock(this.gerrit, this.gerrit.cherrypickRef, [newRef]).then(value => {
                 }, reason => {
