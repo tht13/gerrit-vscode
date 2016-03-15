@@ -185,7 +185,7 @@ export class GerritController {
                     return;
                 }
                 let patchId = patchValue.patchset;
-                if (utils.isNull(patchId) !== null) {
+                if (utils.isNull(patchId)) {
                     window.showWarningMessage("Valid PatchSet number not entered");
                     return;
                 }
