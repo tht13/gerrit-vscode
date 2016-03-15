@@ -167,12 +167,16 @@ export class Gerrit {
         });
     }
 
-    getPachsets(change_id: number): Promise<string[]> {
+    getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
         return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
             let revision_count: number = value.revisions[value.current_revision]._number;
-            let revisions: string[] = [];
+            let revisions: common.PatchsetQuickPick[] = [];
             for (let i = 0; i < revision_count; i++) {
-                revisions.push(i.toString());
+                revisions.push({
+                    patchset: i,
+                    label: i.toString(),
+                    description: ""
+                });
             }
             return revisions;
         });

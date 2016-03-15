@@ -14,6 +14,10 @@ export interface ChangeQuickPick extends QuickPickItem {
     change_number: number;
 }
 
+export interface PatchsetQuickPick extends QuickPickItem {
+    patchset: number;
+}
+
 interface File {
     path: string;
 }
