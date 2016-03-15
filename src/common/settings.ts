@@ -1,6 +1,25 @@
 import { workspace } from "vscode";
 
-export class GerritSettings {
+interface IGerritSettings {
+
+    host: string;
+
+    protocol: string;
+
+    httpPort: number;
+
+    sshPort: number;
+
+    username: string;
+
+    project: string;
+
+    version: string;
+
+    httpPassword: string;
+}
+
+class GerritSettingsClass implements IGerritSettings {
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -65,3 +84,18 @@ export class GerritSettings {
         return this._httpPassword;
     }
 }
+
+class GerritSettingsSingleton {
+    private static _gerritSettings: GerritSettingsClass = null;
+
+    static get gerritSettings() {
+        if (GerritSettingsSingleton._gerritSettings === null) {
+            GerritSettingsSingleton._gerritSettings = new GerritSettingsClass();
+        }
+        return GerritSettingsSingleton._gerritSettings;
+    }
+}
+
+const GerritSettings = GerritSettingsSingleton.gerritSettings;
+export default GerritSettings;
+export { GerritSettings, IGerritSettings };

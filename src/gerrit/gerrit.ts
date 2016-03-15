@@ -1,7 +1,7 @@
 import { Ref } from "./ref";
 import { createLog, GitLog } from "./gitLog";
 import { Logger, LoggerSingleton } from "../view/logger";
-import { GerritSettings } from "../common/settings";
+import { GerritSettings, IGerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
 import * as common from "../common/common";
@@ -15,13 +15,13 @@ export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: LoggerSingleton;
-    private settings: GerritSettings;
+    private settings: IGerritSettings;
     private statusBar: StatusBar;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
 
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
-        this.settings = new GerritSettings();
+        this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
