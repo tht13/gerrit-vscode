@@ -48,12 +48,13 @@ function exec(child: ChildProcess): Promise<{ error: Error, stdout: string, stde
                     return;
                 }
             }
-            if (result.stdout.length === 0 && result.stderr.length > 0) {
-                let error = new Error(result.stderr);
-                error.name = "Failed Command";
-                result.error = error;
-                console.log(error.stack);
-            }
+            // TODO: Fix error checking
+            // if (result.stdout.length === 0 && result.stderr.length > 0) {
+            //     let error = new Error(result.stderr);
+            //     error.name = "Failed Command";
+            //     result.error = error;
+            //     console.log(error.stack);
+            // }
             resolve(result);
         }
 
