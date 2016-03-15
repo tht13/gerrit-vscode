@@ -167,6 +167,17 @@ export class Gerrit {
         });
     }
 
+    getPachsets(change_id: number): Promise<string[]> {
+        return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
+            let revision_count: number = value.revisions[value.current_revision]._number;
+            let revisions: string[] = [];
+            for (let i = 0; i < revision_count; i++) {
+                revisions.push(i.toString());
+            }
+            return revisions;
+        });
+    }
+
     public stage(path: string): Promise<string> {
         this.logger.debug(`Stage:
     Message: ${path}`);
