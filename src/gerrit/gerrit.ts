@@ -407,7 +407,7 @@ export class Gerrit {
                         attributes: { error: result.error, stderr: result.stderr }
                     };
                     console.warn(reason);
-                    this.logger.log([result.error.name, result.error.message].join("\n"));
+                    this.logger.log(result.error.name);
                     reject(reason);
                     return;
                 }

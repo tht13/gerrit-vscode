@@ -2,15 +2,19 @@ import { spawn, ChildProcess } from "child_process";
 import { Logger } from "../view/logger";
 import * as utils from "./utils";
 
-export function run(command: string, args: string[], options: any): Promise<{ error: Error, stdout: string, stderr: string }> {
+export function run(command: string, args: string[], options: any): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
     let child = spawn(command, args, options);
 
     if (options.input) {
         child.stdin.end(options.input, "utf8");
     }
 
-    return exec(child);
-
+    return exec(child).then(value => {
+        if (!utils.isNull(value.error)) {
+            value.error.name = `Command ${command} ${args.join(" ")} failed with exit code: ${value.exit_code}`;
+        }
+        return value;
+    });
 }
 
 function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
@@ -62,13 +66,11 @@ function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, s
                     return;
                 }
             }
-            // TODO: Fix error checking
-            // if (result.stdout.length === 0 && result.stderr.length > 0) {
-            //     let error = new Error(result.stderr);
-            //     error.name = "Failed Command";
-            //     result.error = error;
-            //     console.log(error.stack);
-            // }
+            if (result.exit_code !== 0) {
+                let error = new Error(result.stderr);
+                result.error = error;
+                console.log(error.stack);
+            }
             resolve(result);
         }
 
