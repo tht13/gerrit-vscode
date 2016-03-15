@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from "child_process";
+import { Logger } from "../view/logger";
 
 export function run(command: string, args: string[], options: any): Promise<{ error: Error, stdout: string, stderr: string }> {
     let child = spawn(command, args, options);
@@ -29,13 +30,19 @@ function exec(child: ChildProcess): Promise<{ error: Error, stdout: string, stde
             checkExit();
         });
         child.on("exit", checkExit);
-        child.stdout.on("data", b => stdout.push(b));
+        child.stdout.on("data", (b: Buffer) => {
+            Logger.logger.log(b.toString());
+            stdout.push(b);
+        });
         child.stdout.on("close", () => {
             result.stdout = Buffer.concat(stdout).toString();
             active.stdout = true;
             checkExit();
         });
-        child.stderr.on("data", b => stderr.push(b));
+        child.stderr.on("data", (b: Buffer) => {
+            Logger.logger.log(b.toString());
+            stderr.push(b);
+        });
         child.stderr.on("close", () => {
             result.stderr = Buffer.concat(stderr).toString();
             active.stderr = true;
