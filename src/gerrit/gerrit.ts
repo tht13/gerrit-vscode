@@ -9,6 +9,7 @@ import * as utils from "../common/utils";
 import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
+import { Git } from "./git";
 let rp = require("request-promise");
 
 export class Gerrit {
@@ -17,16 +18,14 @@ export class Gerrit {
     private logger: LoggerSingleton;
     private settings: IGerritSettings;
     private statusBar: StatusBar;
-    private cherrypickActive: boolean;
-    private rebaseActive: boolean;
+    private git: Git;
 
     constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
-        this.cherrypickActive = false;
-        this.rebaseActive = false;
+        this.git = new Git(this.workspaceRoot, this);
         if (ref !== null) {
             this.getGitLog(0).then(value => {
                 console.log(value);
@@ -66,7 +65,7 @@ export class Gerrit {
         return this.branch;
     }
 
-    private setCurrentRef(ref: Ref) {
+    public setCurrentRef(ref: Ref) {
         this.currentRef = ref;
         Event.emit("ref.change", this.statusBar, ref);
         this.logger.debug(`New Ref:
@@ -74,7 +73,7 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
-    private isDirty(): Promise<boolean> {
+    public isDirty(): Promise<boolean> {
         return this.getDirtyFiles().then(value => {
             return value.isDirty();
         });
@@ -90,14 +89,14 @@ export class Gerrit {
             untracked: "-o"
         };
         let container = new common.DirtyFileContainter();
-        return this.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
+        return this.git.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addDeleted({
                     path: files[i]
                 });
             }
-            return this.git("ls-files", options.concat([dirtyTypes.modified]));
+            return this.git.git("ls-files", options.concat([dirtyTypes.modified]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -105,7 +104,7 @@ export class Gerrit {
                     path: files[i]
                 });
             }
-            return this.git("ls-files", options.concat([dirtyTypes.untracked]));
+            return this.git.git("ls-files", options.concat([dirtyTypes.untracked]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -123,7 +122,7 @@ export class Gerrit {
             "--cached"
         ];
         let container = new common.StagedFileContainter();
-        return this.git("diff", options).then(result => {
+        return this.git.git("diff", options).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.addStaged({
@@ -167,7 +166,7 @@ export class Gerrit {
         });
     }
 
-    getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
+    public getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
         return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
             let revision_count: number = value[0].revisions[value[0].current_revision]._number;
             let revisions: common.PatchsetQuickPick[] = [];
@@ -185,24 +184,14 @@ export class Gerrit {
     public stage(path: string): Promise<string> {
         this.logger.debug(`Stage:
     Message: ${path}`);
-        let args = [
-            path
-        ];
-        return this.git("add", [], args);
+        return this.git.stage(path);
     }
 
     public reset(path: string, hard?: boolean): Promise<string> {
         hard = utils.setDefault(hard, false);
         this.logger.debug(`Stage:
     Message: ${path}`);
-        let args: string[] = [
-            path
-        ];
-        let options: string[] = [];
-        if (hard) {
-            options.push("--hard");
-        }
-        return this.git("reset", options, args);
+        return this.git.reset(path, hard);
     }
 
     public clean(path: string): Promise<string> {
@@ -213,221 +202,68 @@ export class Gerrit {
         this.logger.debug(`Commit:
     Message: ${msg}
     Amend: ${amend}`);
-        return new Promise((resolve, reject) => {
-            let options: string[] = [];
-            if (amend) {
-                options.push("--amend", "--no-edit");
-            } else {
-                if (msg === null || msg.length === 0) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Requires a message to commit with",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                }
-                options.push("--file", "-");
-            }
-            this.git("commit", options, [], (!amend) ? msg : null).then(value => {
-                resolve(value);
-            }, reason => {
-                reject(reason);
-            });
-        });
+        return this.git.commit(msg, amend);
     }
 
-    // TODO: get branch list??
     public checkoutBranch(branch: string): Promise<string> {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
-        return this.fetch("", ["-fv"]).then(fetchValue => {
-            return this.checkout(`origin/${branch}`).then(checkoutValue => {
-                this.setBranch(branch);
-                return checkoutValue;
-            });
-        });
+        return this.git.checkoutBranch(branch);
     }
 
     public checkoutRef(ref: Ref): Promise<string> {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.checkout);
+        return this.fetchRef(ref, this.git.checkout);
     }
 
     public cherrypickRef(ref: Ref): Promise<string> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.cherrypick);
+        return this.fetchRef(ref, this.git.cherrypick);
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.isDirty().then(dirty => {
-                if (dirty) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Dirty Head",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                    return;
-                }
-
-                this.setCurrentRef(ref);
-
-                this.fetch(ref.getUrl()).then(value => {
-                    resolver.apply(this, ["FETCH_HEAD"]).then(value => {
-                        resolve(value);
-                    }, reason => {
-                        reject(reason);
-                        return;
-                    });
-                }, reason => {
-                    reject(reason);
-                    return;
-                });
-            }, reason => {
-                reject(reason);
-                return;
-            });
-        });
+        return this.git.fetchRef(ref, resolver);
     }
 
     private fetch(url: string, options?: string[]): Promise<string> {
         url = utils.setDefault(url, "");
         options = utils.setDefault(options, []);
-        let args: string[] = [
-            "origin"
-        ];
-        if (url.length > 0) {
-            args.push(url);
-        }
-        return this.git("fetch", options, args);
+        return this.git.fetch(url, options);
     }
 
     private checkout(HEAD: string): Promise<string> {
-        let options = [
-            HEAD
-        ];
-        return this.git("checkout", options);
+        return this.git.checkout(HEAD);
     }
 
     private cherrypick(HEAD: string): Promise<string> {
-        let options = [
-            HEAD
-        ];
-        return this.git("cherry-pick", options).then(value => {
-            return value;
-        }, reason => {
-            this.cherrypickActive = true;
-            return reason;
-        });
+        return this.git.cherrypick(HEAD);
     }
 
     public cherrypickContinue(): Promise<string> {
-        if (!this.cherrypickActive) {
-            return;
-        }
-        let options = [
-            "--continue"
-        ];
-        return this.git("cherry-pick", options).then(value => {
-            this.cherrypickActive = false;
-            return value;
-        });
+        return this.cherrypickContinue();
     }
 
     public push(branch: string): Promise<string> {
-        let args = [
-            "origin",
-            `HEAD:refs/for/${branch}`
-        ];
-        return this.git("push", [], args).then(value => {
-            this.setBranch(branch);
-            return value;
-        });
+        return this.git.push(branch);
     }
 
     // TODO: check how rejections are passed through
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
-        return this.fetch("", ["-fv"]).then(value => {
-            let args: string[] = [
-                `origin/${branch}`
-            ];
-            return this.git("rebase", [], args).then(value => {
-                this.setBranch(branch);
-                return value;
-            }, reason => {
-                this.rebaseActive = true;
-                return reason;
-            });
-        });
+        return this.git.rebase(branch);
     }
 
     public rebaseContinue(): Promise<string> {
-        if (!this.rebaseActive) {
-            return;
-        }
-        let options = [
-            "--continue"
-        ];
-        return this.git("rebase", options).then(value => {
-            this.rebaseActive = false;
-            return value;
-        });
+        return this.git.rebaseContinue();
     }
 
     private getGitLog(index: number): Promise<GitLog> {
-        let options = [
-            "--skip",
-            index.toString(),
-            "-n",
-            "1"
-        ];
-        return this.git("log", options).then(value => {
-            return createLog(value);
-        });
-    }
-
-    private git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string> {
-        options = utils.setDefault(options, []);
-        args = utils.setDefault(args, []);
-        stdin = utils.setDefault(stdin, "");
-        return new Promise((resolve, reject) => {
-            let fullArgs: string[] = [gitCommand];
-            fullArgs = fullArgs.concat(options);
-            fullArgs.push("--");
-            fullArgs = fullArgs.concat(args);
-            this.logger.log(fullArgs.join(" "));
-
-            let runOptions = {
-                cwd: this.workspaceRoot,
-            };
-            if (stdin.length > 0) {
-                runOptions["input"] = stdin + "\n";
-            }
-
-            let child = exec.run("git", fullArgs, runOptions).then(result => {
-                if (result.error === null) {
-                    resolve(result.stdout);
-                } else {
-                    let reason: common.RejectReason = {
-                        showInformation: false,
-                        message: "Failed Git",
-                        type: common.RejectType.GIT,
-                        attributes: { error: result.error, stderr: result.stderr }
-                    };
-                    console.warn(reason);
-                    this.logger.log(result.error.name);
-                    reject(reason);
-                    return;
-                }
-            });
-        });
+        return this.git.getGitLog(index);
     }
 
     private generateFetchUrl(): string {
