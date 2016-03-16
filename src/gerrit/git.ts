@@ -7,7 +7,27 @@ import * as common from "../common/common";
 import { Gerrit, IGerrit } from "./gerrit";
 import * as exec from "../common/exec";
 
-export class Git {
+interface IGit {
+    stage(path: string): Promise<string>;
+    reset(path: string, hard?: boolean): Promise<string>;
+    clean(path: string): Promise<string>;
+    commit(msg: string, amend: boolean): Promise<string>;
+    checkoutBranch(branch: string): Promise<string>;
+    checkoutRef(ref: Ref): Promise<string>;
+    cherrypickRef(ref: Ref): Promise<string>;
+    fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string>;
+    fetch(url: string, options?: string[]): Promise<string>;
+    checkout(HEAD: string): Promise<string>;
+    cherrypick(HEAD: string): Promise<string>;
+    cherrypickContinue(): Promise<string>;
+    push(branch: string): Promise<string>;
+    rebase(branch: string): Promise<string>;
+    rebaseContinue(): Promise<string>;
+    getGitLog(index: number): Promise<GitLog>;
+    git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string>;
+}
+
+class GitClass implements IGit {
     private settings: IGerritSettings;
     private logger: LoggerSingleton;
     private cherrypickActive: boolean;
@@ -251,5 +271,19 @@ export class Git {
             });
         });
     }
-
 }
+
+class GitSingleton {
+    private static _git: GitClass = null;
+
+    static get git() {
+        if (utils.isNull(GitSingleton._git)) {
+            GitSingleton._git = new GitClass();
+        }
+        return GitSingleton._git;
+    }
+}
+
+const Git = GitSingleton.git;
+export default Git;
+export { Git, IGit };

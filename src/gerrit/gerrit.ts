@@ -9,7 +9,7 @@ import * as utils from "../common/utils";
 import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
-import { Git } from "./git";
+import { Git, IGit } from "./git";
 import * as files from "./files";
 let rp = require("request-promise");
 
@@ -49,14 +49,14 @@ class GerritClass implements IGerrit {
     private logger: LoggerSingleton;
     private settings: IGerritSettings;
     private statusBar: StatusBar;
-    private git: Git;
+    private git: IGit;
 
     constructor(ref?: Ref) {
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
-        this.git = new Git();
+        this.git = Git;
         if (ref !== null) {
             this.getGitLog(0).then(value => {
                 console.log(value);
