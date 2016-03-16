@@ -277,7 +277,6 @@ export class GerritController {
     }
 
     public rebaseContinue() {
-        this.gerrit.rebaseContinue();
         this.aquireLock(this.gerrit, this.gerrit.rebaseContinue, []);
     }
 
