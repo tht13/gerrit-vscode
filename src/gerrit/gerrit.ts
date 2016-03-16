@@ -42,32 +42,28 @@ class GerritClass implements IGerrit {
     private statusBar: StatusBar;
     private git: IGit;
 
-    constructor(ref?: Ref) {
+    constructor() {
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git;
-        if (ref !== null) {
-            this.getGitLog(0).then(value => {
-                console.log(value);
-                if (value.change_id !== null) {
-                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-                        this.settings.project = value.project;
-                        this.setBranch(value.branch);
-                        // TODO: handle case when merged adn ref does not exist
-                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-                        this.setCurrentRef(ref);
-                    });
-                }
-            }, (reason: common.RejectReason) => {
-                if (reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-                    this.logger.log("No commits on branch");
-                }
-            });
-            // TODO: determine ref at start
-            this.currentRef = ref;
-        }
+        this.getGitLog(0).then(value => {
+            console.log(value);
+            if (value.change_id !== null) {
+                this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                    this.settings.project = value.project;
+                    this.setBranch(value.branch);
+                    // TODO: handle case when merged adn ref does not exist
+                    let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                    this.setCurrentRef(ref);
+                });
+            }
+        }, (reason: common.RejectReason) => {
+            if (reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                this.logger.log("No commits on branch");
+            }
+        });
     }
 
     public setStatusBar(statusBar: StatusBar) {
