@@ -9,7 +9,7 @@ let controller: GerritController;
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
     gerrit = Gerrit;
-    controller = new GerritController(gerrit);
+    controller = new GerritController();
 
     commands.push(
         vscode.commands.registerCommand("gerrit.stageAll", () => {
