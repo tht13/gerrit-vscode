@@ -16,7 +16,7 @@ interface IGit {
     checkoutRef(ref: Ref): Promise<string>;
     cherrypickRef(ref: Ref): Promise<string>;
     fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string>;
-    fetch(url: string, options?: string[]): Promise<string>;
+    fetch(url: string, options?: string[], origin?: string): Promise<string>;
     checkout(HEAD: string): Promise<string>;
     cherrypick(HEAD: string): Promise<string>;
     cherrypickContinue(): Promise<string>;
@@ -139,11 +139,12 @@ class GitClass implements IGit {
         });
     }
 
-    public fetch(url: string, options?: string[]): Promise<string> {
+    public fetch(url: string, options?: string[], origin?: string): Promise<string> {
         url = utils.setDefault(url, "");
         options = utils.setDefault(options, []);
+        origin = utils.setDefault(origin, "origin");
         let args: string[] = [
-            "origin"
+            origin
         ];
         if (url.length > 0) {
             args.push(url);
