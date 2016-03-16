@@ -2,6 +2,7 @@ import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
 import { Gerrit, IGerrit } from "./gerrit";
+import { Git, IGit } from "./git";
 import { Ref } from "./ref";
 import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
@@ -16,9 +17,11 @@ export class GerritController {
     private statusBar: StatusBar;
     private lock: boolean;
     private gerrit: IGerrit;
+    private git: IGit;
 
     constructor() {
         this.gerrit = Gerrit;
+        this.git = Git;
         this.statusBar = new StatusBar();
         this.gerrit.setStatusBar(this.statusBar);
         this.logger = Logger.logger;
@@ -26,14 +29,14 @@ export class GerritController {
     }
 
     public stageAll() {
-        this.aquireLock(this.gerrit, this.gerrit.stage, ["."]);
+        this.aquireLock(this.git, this.git.stage, ["."]);
     }
 
     public stageCurrentFile() {
         let filePath: string = window.activeTextEditor.document.fileName;
         fs.stat(filePath, (err, stats) => {
             if (!err) {
-                this.aquireLock(this.gerrit, this.gerrit.stage, [filePath]);
+                this.aquireLock(this.git, this.git.stage, [filePath]);
             }
         });
     }
@@ -57,7 +60,7 @@ export class GerritController {
                 return;
             }
             let filePath = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.gerrit, this.gerrit.stage, [filePath]).then(value => {
+            this.aquireLock(this.git, this.git.stage, [filePath]).then(value => {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
@@ -68,14 +71,14 @@ export class GerritController {
     }
 
     public resetAll() {
-        this.aquireLock(this.gerrit, this.gerrit.reset, [".", false]);
+        this.aquireLock(this.git, this.git.reset, [".", false]);
     }
 
     public resetCurrentFile() {
         let filePath: string = window.activeTextEditor.document.fileName;
         fs.stat(filePath, (err, stats) => {
             if (!err) {
-                this.aquireLock(this.gerrit, this.gerrit.reset, [filePath, false]);
+                this.aquireLock(this.git, this.git.reset, [filePath, false]);
             }
         });
     }
@@ -99,7 +102,7 @@ export class GerritController {
                 return;
             }
             let filePath: string = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.gerrit, this.gerrit.reset, [filePath, false]).then(value => {
+            this.aquireLock(this.git, this.git.reset, [filePath, false]).then(value => {
             }, reason => {
             });
         }, (reason: common.RejectReason) => {
@@ -114,7 +117,7 @@ export class GerritController {
     public cleanAll() {
         common.confirm("Clean all files? This cannot be undone").then(value => {
             if (value) {
-                this.aquireLock(this.gerrit, this.gerrit.clean, ["."]);
+                this.aquireLock(this.git, this.git.clean, ["."]);
             }
         });
     }
@@ -125,7 +128,7 @@ export class GerritController {
             if (!err) {
                 common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
                     if (value) {
-                        this.aquireLock(this.gerrit, this.gerrit.clean, [filePath]);
+                        this.aquireLock(this.git, this.git.clean, [filePath]);
                     }
                 });
             }
@@ -142,13 +145,13 @@ export class GerritController {
             if (utils.isNull(message)) {
                 return;
             }
-            this.aquireLock(this.gerrit, this.gerrit.commit, [message, false]);
+            this.aquireLock(this.git, this.git.commit, [message, false]);
         }, reason => {
         });
     }
 
     public commitAmend() {
-        this.aquireLock(this.gerrit, this.gerrit.commit, ["", true]);
+        this.aquireLock(this.git, this.git.commit, ["", true]);
     }
 
     public checkoutBranch() {
@@ -242,7 +245,7 @@ export class GerritController {
     }
 
     public cherrypickContinue() {
-        this.aquireLock(this.gerrit, this.gerrit.cherrypickContinue, []);
+        this.aquireLock(this.git, this.git.cherrypickContinue, []);
     }
 
     public push() {
@@ -277,7 +280,7 @@ export class GerritController {
     }
 
     public rebaseContinue() {
-        this.aquireLock(this.gerrit, this.gerrit.rebaseContinue, []);
+        this.aquireLock(this.git, this.git.rebaseContinue, []);
     }
 
     private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V>, args?: U[]): Promise<V> {
