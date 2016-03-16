@@ -180,36 +180,34 @@ class GitClass implements IGit {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
         stdin = utils.setDefault(stdin, "");
-        return new Promise((resolve, reject) => {
-            let fullArgs: string[] = [gitCommand];
-            fullArgs = fullArgs.concat(options);
-            fullArgs.push("--");
-            fullArgs = fullArgs.concat(args);
-            this.logger.log(fullArgs.join(" "));
+        let fullArgs: string[] = [gitCommand];
+        fullArgs = fullArgs.concat(options);
+        fullArgs.push("--");
+        fullArgs = fullArgs.concat(args);
+        this.logger.log(fullArgs.join(" "));
 
-            let runOptions = {
-                cwd: this.settings.workspaceRoot,
-            };
-            if (stdin.length > 0) {
-                runOptions["input"] = stdin + "\n";
+        let runOptions = {
+            cwd: this.settings.workspaceRoot,
+        };
+        if (stdin.length > 0) {
+            runOptions["input"] = stdin + "\n";
+        }
+
+        return exec.run("git", fullArgs, runOptions).then(result => {
+            if (result.error === null) {
+                return result.stdout;
+            } else {
+                let reason: common.RejectReason = {
+                    showInformation: false,
+                    message: "Failed Git",
+                    type: common.RejectType.GIT,
+                    attributes: { error: result.error, stderr: result.stderr }
+                };
+                console.warn(reason);
+                this.logger.log(result.error.name);
+                Promise.reject(reason);
+                return;
             }
-
-            let child = exec.run("git", fullArgs, runOptions).then(result => {
-                if (result.error === null) {
-                    resolve(result.stdout);
-                } else {
-                    let reason: common.RejectReason = {
-                        showInformation: false,
-                        message: "Failed Git",
-                        type: common.RejectType.GIT,
-                        attributes: { error: result.error, stderr: result.stderr }
-                    };
-                    console.warn(reason);
-                    this.logger.log(result.error.name);
-                    reject(reason);
-                    return;
-                }
-            });
         });
     }
 }
