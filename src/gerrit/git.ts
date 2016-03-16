@@ -12,8 +12,10 @@ export class Git {
     private logger: LoggerSingleton;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
+    private gerrit: IGerrit;
 
-    constructor(private gerrit: IGerrit) {
+    constructor() {
+        this.gerrit = Gerrit;
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.cherrypickActive = false;
