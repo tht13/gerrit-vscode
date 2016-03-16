@@ -20,7 +20,7 @@ interface IGit {
     checkout(HEAD: string): Promise<string>;
     cherrypick(HEAD: string): Promise<string>;
     cherrypickContinue(): Promise<string>;
-    push(branch: string): Promise<string>;
+    push(target: string[], origin?: string): Promise<string>;
     rebase(branch: string): Promise<string>;
     rebaseContinue(): Promise<string>;
     getGitLog(index: number): Promise<GitLog>;
@@ -184,30 +184,24 @@ class GitClass implements IGit {
         });
     }
 
-    public push(branch: string): Promise<string> {
-        let args = [
-            "origin",
-            `HEAD:refs/for/${branch}`
-        ];
-        return this.git("push", [], args).then(value => {
-            this.gerrit.setBranch(branch);
+    public push(target: string[], origin?: string): Promise<string> {
+        origin = utils.setDefault(origin, "origin");
+        target.unshift(origin);
+        return this.git("push", [], target).then(value => {
             return value;
         });
     }
 
     // TODO: check how rejections are passed through
     public rebase(branch: string): Promise<string> {
-        return this.fetch("", ["-fv"]).then(value => {
-            let args: string[] = [
-                `origin/${branch}`
-            ];
-            return this.git("rebase", [], args).then(value => {
-                this.gerrit.setBranch(branch);
-                return value;
-            }, reason => {
-                this.rebaseActive = true;
-                return reason;
-            });
+        let args: string[] = [
+            branch
+        ];
+        return this.git("rebase", [], args).then(value => {
+            return value;
+        }, reason => {
+            this.rebaseActive = true;
+            return reason;
         });
     }
 

@@ -206,7 +206,12 @@ class GerritClass implements IGerrit {
     public checkoutBranch(branch: string): Promise<string> {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
-        return this.git.checkoutBranch(branch);
+        return this.git.fetch("", ["-fv"]).then(fetchValue => {
+            return this.git.checkout(`origin/${branch}`).then(checkoutValue => {
+                this.setBranch(branch);
+                return checkoutValue;
+            });
+        });
     }
 
     public checkoutRef(ref: Ref): Promise<string> {
@@ -224,7 +229,36 @@ class GerritClass implements IGerrit {
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
-        return this.git.fetchRef(ref, resolver);
+        return new Promise((resolve, reject) => {
+            this.isDirty().then(dirty => {
+                if (dirty) {
+                    let reason: common.RejectReason = {
+                        showInformation: true,
+                        message: "Dirty Head",
+                        type: common.RejectType.DEFAULT
+                    };
+                    reject(reason);
+                    return;
+                }
+
+                this.setCurrentRef(ref);
+
+                this.git.fetch(ref.getUrl()).then(value => {
+                    resolver.apply(this.git, ["FETCH_HEAD"]).then(value => {
+                        resolve(value);
+                    }, reason => {
+                        reject(reason);
+                        return;
+                    });
+                }, reason => {
+                    reject(reason);
+                    return;
+                });
+            }, reason => {
+                reject(reason);
+                return;
+            });
+        });
     }
 
     private fetch(url: string, options?: string[]): Promise<string> {
@@ -242,14 +276,26 @@ class GerritClass implements IGerrit {
     }
 
     public push(branch: string): Promise<string> {
-        return this.git.push(branch);
+        let target = [
+            `HEAD:refs/for/${branch}`
+        ];
+        return this.git.push(target).then(value => {
+            this.setBranch(branch);
+            return value;
+        });
     }
 
     // TODO: check how rejections are passed through
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
-        return this.git.rebase(branch);
+        return this.fetch("", ["-fv"]).then(value => {
+            let target: string = `origin/${branch}`;
+            return this.git.rebase(target).then(value => {
+                this.setBranch(branch);
+                return value;
+            });
+        });
     }
 
     private getGitLog(index: number): Promise<GitLog> {
