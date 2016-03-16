@@ -10,6 +10,7 @@ import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 import { Git } from "./git";
+import * as files from "./files";
 let rp = require("request-promise");
 
 export class Gerrit {
@@ -79,7 +80,7 @@ export class Gerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<common.DirtyFileContainter> {
+    public getDirtyFiles(): Promise<files.DirtyFileContainter> {
         let options = [
             "--exclude-standard"
         ];
@@ -88,7 +89,7 @@ export class Gerrit {
             modified: "-m",
             untracked: "-o"
         };
-        let container = new common.DirtyFileContainter();
+        let container = new files.DirtyFileContainter();
         return this.git.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -116,12 +117,12 @@ export class Gerrit {
         });
     }
 
-    public getStagedFiles(): Promise<common.StagedFileContainter> {
+    public getStagedFiles(): Promise<files.StagedFileContainter> {
         let options = [
             "--name-only",
             "--cached"
         ];
-        let container = new common.StagedFileContainter();
+        let container = new files.StagedFileContainter();
         return this.git.git("diff", options).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
