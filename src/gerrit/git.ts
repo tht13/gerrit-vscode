@@ -66,7 +66,7 @@ class GitClass implements IGit {
         if (amend) {
             options.push("--amend", "--no-edit");
         } else {
-            if (msg === null || msg.length === 0) {
+            if (utils.isNull(msg) || msg.length === 0) {
                 let reason: common.RejectReason = {
                     showInformation: true,
                     message: "Requires a message to commit with",
@@ -188,7 +188,7 @@ class GitClass implements IGit {
         }
 
         return exec.run("git", fullArgs, runOptions).then(result => {
-            if (result.error === null) {
+            if (utils.isNull(result.error)) {
                 return result.stdout;
             } else {
                 let reason: common.RejectReason = {

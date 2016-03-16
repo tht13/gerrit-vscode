@@ -55,7 +55,7 @@ export class GerritController {
                 return value.getDescriptors();
             }),
             { placeHolder: "File to stage" }).then(value => {
-                if (value === undefined) {
+                if (utils.isNull(value)) {
                     return;
                 }
                 let filePath = path.join(workspace.rootPath, value.path);
@@ -96,7 +96,7 @@ export class GerritController {
                 return value.getDescriptors();
             }),
             { placeHolder: "File to reset" }).then(value => {
-                if (value === undefined) {
+                if (utils.isNull(value)) {
                     return;
                 }
                 let filePath: string = path.join(workspace.rootPath, value.path);

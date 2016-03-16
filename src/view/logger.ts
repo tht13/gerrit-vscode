@@ -5,7 +5,7 @@ export class Logger {
     private static _logger: LoggerSingleton = null;
 
     static get logger() {
-        if (Logger._logger === null) {
+        if (utils.isNull(Logger._logger)) {
             Logger._logger = new LoggerSingletonClass();
         }
         return Logger._logger;
