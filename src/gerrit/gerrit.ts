@@ -13,10 +13,7 @@ import { Git, IGit } from "./git";
 import * as files from "./files";
 let rp = require("request-promise");
 
-// TODO: 
-// Make Gerrit singleton
-// Make Git singleton
-// Redo FileContainer and add event emitter
+// TODO: Redo FileContainer and add event emitter
 
 interface IGerrit {
     setStatusBar(statusBar: StatusBar): void;
