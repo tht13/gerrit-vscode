@@ -13,6 +13,11 @@ import { Git } from "./git";
 import * as files from "./files";
 let rp = require("request-promise");
 
+// TODO: 
+// Make Gerrit singleton
+// Make Git singleton
+// Redo FileContainer and add event emitter
+
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
