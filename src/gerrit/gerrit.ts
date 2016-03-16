@@ -170,7 +170,7 @@ export class Gerrit {
         return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
             let revision_count: number = value[0].revisions[value[0].current_revision]._number;
             let revisions: common.PatchsetQuickPick[] = [];
-            for (let i = 1; i <= revision_count; i++) {
+            for (let i = revision_count; i >= 1; i--) {
                 revisions.push({
                     patchset: i,
                     label: i.toString(),
