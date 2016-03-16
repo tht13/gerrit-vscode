@@ -26,7 +26,7 @@ interface IGerrit {
     getStagedFiles(): Promise<files.StagedFileContainter>;
     getBranches(): Promise<string[]>;
     getChanges(count?: number): Promise<common.ChangeQuickPick[]>;
-    getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
+    getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
     stage(path: string): Promise<string>;
     reset(path: string, hard?: boolean): Promise<string>;
     clean(path: string): Promise<string>;
@@ -194,7 +194,7 @@ class GerritClass implements IGerrit {
         });
     }
 
-    public getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
+    public getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
         return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
             let revision_count: number = value[0].revisions[value[0].current_revision]._number;
             let revisions: common.PatchsetQuickPick[] = [];

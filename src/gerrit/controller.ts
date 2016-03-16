@@ -185,7 +185,7 @@ export class GerritController {
             let patchsetOptions: QuickPickOptions = revisionOptions;
             patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
 
-            window.showQuickPick(this.gerrit.getPachsets(refValue.change_number), patchsetOptions).then(patchValue => {
+            window.showQuickPick(this.gerrit.getPatchsets(refValue.change_number), patchsetOptions).then(patchValue => {
                 if (utils.isNull(refValue)) {
                     return;
                 }
@@ -221,7 +221,7 @@ export class GerritController {
             let patchsetOptions: QuickPickOptions = revisionOptions;
             patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
 
-            window.showQuickPick(this.gerrit.getPachsets(refValue.change_number), patchsetOptions).then(patchValue => {
+            window.showQuickPick(this.gerrit.getPatchsets(refValue.change_number), patchsetOptions).then(patchValue => {
                 if (utils.isNull(refValue)) {
                     return;
                 }
