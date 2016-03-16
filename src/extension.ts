@@ -1,6 +1,5 @@
 "use strict";
 import * as vscode from "vscode";
-import { Gerrit, IGerrit } from "./gerrit/gerrit";
 import { GerritController } from "./gerrit/controller";
 
 let controller: GerritController;
