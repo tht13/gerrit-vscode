@@ -272,7 +272,7 @@ class GerritClass implements IGerrit {
     }
 
     public cherrypickContinue(): Promise<string> {
-        return this.cherrypickContinue();
+        return this.git.cherrypickContinue();
     }
 
     public push(branch: string): Promise<string> {
