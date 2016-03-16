@@ -62,27 +62,21 @@ class GitClass implements IGit {
     }
 
     public commit(msg: string, amend: boolean): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let options: string[] = [];
-            if (amend) {
-                options.push("--amend", "--no-edit");
-            } else {
-                if (msg === null || msg.length === 0) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Requires a message to commit with",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                }
-                options.push("--file", "-");
+        let options: string[] = [];
+        if (amend) {
+            options.push("--amend", "--no-edit");
+        } else {
+            if (msg === null || msg.length === 0) {
+                let reason: common.RejectReason = {
+                    showInformation: true,
+                    message: "Requires a message to commit with",
+                    type: common.RejectType.DEFAULT
+                };
+                Promise.reject(reason);
             }
-            this.git("commit", options, [], (!amend) ? msg : null).then(value => {
-                resolve(value);
-            }, reason => {
-                reject(reason);
-            });
-        });
+            options.push("--file", "-");
+        }
+        return this.git("commit", options, [], (!amend) ? msg : null);
     }
 
     public fetch(url: string, options?: string[], origin?: string): Promise<string> {

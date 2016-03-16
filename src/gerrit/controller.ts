@@ -42,7 +42,7 @@ export class GerritController {
     }
 
     public stageFile() {
-        window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
+        window.showQuickPick<common.FileStageQuickPick>(
             this.aquireLock(this.gerrit, this.gerrit.getDirtyFiles).then(value => {
                 if (value.length === 0) {
                     let reason: common.RejectReason = {
@@ -50,24 +50,23 @@ export class GerritController {
                         message: "No files to stage",
                         type: common.RejectType.NO_DIRTY
                     };
-                    reject(reason);
+                    Promise.reject(reason);
+                }
+                return value.getDescriptors();
+            }),
+            { placeHolder: "File to stage" }).then(value => {
+                if (value === undefined) {
                     return;
                 }
-                resolve(value.getDescriptors());
+                let filePath = path.join(workspace.rootPath, value.path);
+                this.aquireLock(this.git, this.git.stage, [filePath]).then(value => {
+                }, reason => {
+                });
+            }, (reason: common.RejectReason) => {
+                if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+                    window.showInformationMessage(reason.message);
+                }
             });
-        }), { placeHolder: "File to stage" }).then(value => {
-            if (value === undefined) {
-                return;
-            }
-            let filePath = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.git, this.git.stage, [filePath]).then(value => {
-            }, reason => {
-            });
-        }, (reason: common.RejectReason) => {
-            if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
-                window.showInformationMessage(reason.message);
-            }
-        });
     }
 
     public resetAll() {
@@ -84,7 +83,7 @@ export class GerritController {
     }
 
     public resetFile() {
-        window.showQuickPick<common.FileStageQuickPick>(new Promise<common.FileStageQuickPick[]>((resolve, reject) => {
+        window.showQuickPick<common.FileStageQuickPick>(
             this.aquireLock(this.gerrit, this.gerrit.getStagedFiles).then(value => {
                 if (value.length === 0) {
                     let reason: common.RejectReason = {
@@ -92,24 +91,23 @@ export class GerritController {
                         message: "No staged files",
                         type: common.RejectType.NO_DIRTY
                     };
-                    reject(reason);
+                    Promise.reject(reason);
+                }
+                return value.getDescriptors();
+            }),
+            { placeHolder: "File to reset" }).then(value => {
+                if (value === undefined) {
                     return;
                 }
-                resolve(value.getDescriptors());
+                let filePath: string = path.join(workspace.rootPath, value.path);
+                this.aquireLock(this.git, this.git.reset, [filePath, false]).then(value => {
+                }, reason => {
+                });
+            }, (reason: common.RejectReason) => {
+                if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+                    window.showInformationMessage(reason.message);
+                }
             });
-        }), { placeHolder: "File to reset" }).then(value => {
-            if (value === undefined) {
-                return;
-            }
-            let filePath: string = path.join(workspace.rootPath, value.path);
-            this.aquireLock(this.git, this.git.reset, [filePath, false]).then(value => {
-            }, reason => {
-            });
-        }, (reason: common.RejectReason) => {
-            if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
-                window.showInformationMessage(reason.message);
-            }
-        });
     }
 
     // TODO: clean file from quick pick, requires getStagedFiles
