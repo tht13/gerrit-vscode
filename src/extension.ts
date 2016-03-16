@@ -3,12 +3,10 @@ import * as vscode from "vscode";
 import { Gerrit, IGerrit } from "./gerrit/gerrit";
 import { GerritController } from "./gerrit/controller";
 
-let gerrit: IGerrit;
 let controller: GerritController;
 
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
-    gerrit = Gerrit;
     controller = new GerritController();
 
     commands.push(
