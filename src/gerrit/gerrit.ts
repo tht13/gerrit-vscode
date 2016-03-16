@@ -26,12 +26,12 @@ export class Gerrit {
     private statusBar: StatusBar;
     private git: Git;
 
-    constructor(private workspaceRoot: string, private repo: string, ref?: Ref) {
+    constructor(ref?: Ref) {
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
-        this.git = new Git(this.workspaceRoot, this);
+        this.git = new Git(this);
         if (ref !== null) {
             this.getGitLog(0).then(value => {
                 console.log(value);

@@ -17,6 +17,8 @@ interface IGerritSettings {
     version: string;
 
     httpPassword: string;
+
+    workspaceRoot: string;
 }
 
 class GerritSettingsClass implements IGerritSettings {
@@ -28,8 +30,10 @@ class GerritSettingsClass implements IGerritSettings {
     private _project: string;
     private _version: string;
     private _httpPassword: string;
+    private _workspaceRoot: string;
 
     constructor() {
+        this._workspaceRoot = workspace.rootPath;
         this.loadSettings();
         workspace.onDidChangeConfiguration(() => {
             this.loadSettings();
@@ -82,6 +86,10 @@ class GerritSettingsClass implements IGerritSettings {
 
     get httpPassword(): string {
         return this._httpPassword;
+    }
+
+    get workspaceRoot(): string {
+        return this._workspaceRoot;
     }
 }
 

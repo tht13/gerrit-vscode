@@ -13,7 +13,7 @@ export class Git {
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
 
-    constructor(private workspaceRoot: string, private gerrit: Gerrit) {
+    constructor(private gerrit: Gerrit) {
         this.settings = GerritSettings;
         this.logger = Logger.logger;
         this.cherrypickActive = false;
@@ -225,7 +225,7 @@ export class Git {
             this.logger.log(fullArgs.join(" "));
 
             let runOptions = {
-                cwd: this.workspaceRoot,
+                cwd: this.settings.workspaceRoot,
             };
             if (stdin.length > 0) {
                 runOptions["input"] = stdin + "\n";
