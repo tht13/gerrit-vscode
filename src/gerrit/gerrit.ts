@@ -27,17 +27,11 @@ interface IGerrit {
     getBranches(): Promise<string[]>;
     getChanges(count?: number): Promise<common.ChangeQuickPick[]>;
     getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
-    stage(path: string): Promise<string>;
-    reset(path: string, hard?: boolean): Promise<string>;
-    clean(path: string): Promise<string>;
-    commit(msg: string, amend: boolean): Promise<string>;
     checkoutBranch(branch: string): Promise<string>;
     checkoutRef(ref: Ref): Promise<string>;
     cherrypickRef(ref: Ref): Promise<string>;
-    cherrypickContinue(): Promise<string>;
     push(branch: string): Promise<string>;
     rebase(branch: string): Promise<string>;
-    rebaseContinue(): Promise<string>;
 }
 
 class GerritClass implements IGerrit {
@@ -209,30 +203,6 @@ class GerritClass implements IGerrit {
         });
     }
 
-    public stage(path: string): Promise<string> {
-        this.logger.debug(`Stage:
-    Message: ${path}`);
-        return this.git.stage(path);
-    }
-
-    public reset(path: string, hard?: boolean): Promise<string> {
-        hard = utils.setDefault(hard, false);
-        this.logger.debug(`Stage:
-    Message: ${path}`);
-        return this.git.reset(path, hard);
-    }
-
-    public clean(path: string): Promise<string> {
-        return this.checkout(path);
-    }
-
-    public commit(msg: string, amend: boolean): Promise<string> {
-        this.logger.debug(`Commit:
-    Message: ${msg}
-    Amend: ${amend}`);
-        return this.git.commit(msg, amend);
-    }
-
     public checkoutBranch(branch: string): Promise<string> {
         this.logger.debug(`Checkout Branch:
     Branch: origin/${branch}`);
@@ -263,10 +233,6 @@ class GerritClass implements IGerrit {
         return this.git.fetch(url, options);
     }
 
-    private checkout(HEAD: string): Promise<string> {
-        return this.git.checkout(HEAD);
-    }
-
     private cherrypick(HEAD: string): Promise<string> {
         return this.git.cherrypick(HEAD);
     }
@@ -284,10 +250,6 @@ class GerritClass implements IGerrit {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
         return this.git.rebase(branch);
-    }
-
-    public rebaseContinue(): Promise<string> {
-        return this.git.rebaseContinue();
     }
 
     private getGitLog(index: number): Promise<GitLog> {
