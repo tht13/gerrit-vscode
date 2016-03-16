@@ -18,7 +18,32 @@ let rp = require("request-promise");
 // Make Git singleton
 // Redo FileContainer and add event emitter
 
-export class Gerrit {
+interface IGerrit {
+    setStatusBar(statusBar: StatusBar): void;
+    getCurrentRef(): Ref;
+    setBranch(branch: string): void;
+    getBranch(): string;
+    setCurrentRef(ref: Ref): void;
+    isDirty(): Promise<boolean>;
+    getDirtyFiles(): Promise<files.DirtyFileContainter>;
+    getStagedFiles(): Promise<files.StagedFileContainter>;
+    getBranches(): Promise<string[]>;
+    getChanges(count?: number): Promise<common.ChangeQuickPick[]>;
+    getPachsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
+    stage(path: string): Promise<string>;
+    reset(path: string, hard?: boolean): Promise<string>;
+    clean(path: string): Promise<string>;
+    commit(msg: string, amend: boolean): Promise<string>;
+    checkoutBranch(branch: string): Promise<string>;
+    checkoutRef(ref: Ref): Promise<string>;
+    cherrypickRef(ref: Ref): Promise<string>;
+    cherrypickContinue(): Promise<string>;
+    push(branch: string): Promise<string>;
+    rebase(branch: string): Promise<string>;
+    rebaseContinue(): Promise<string>;
+}
+
+class GerritClass implements IGerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: LoggerSingleton;
@@ -301,3 +326,18 @@ export class Gerrit {
         });
     }
 }
+
+class GerritSingleton {
+    private static _gerrit: GerritClass = null;
+
+    static get gerrit() {
+        if (utils.isNull(GerritSingleton._gerrit)) {
+            GerritSingleton._gerrit = new GerritClass();
+        }
+        return GerritSingleton._gerrit;
+    }
+}
+
+const Gerrit = GerritSingleton.gerrit;
+export default Gerrit;
+export { Gerrit, IGerrit };
