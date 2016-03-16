@@ -229,34 +229,21 @@ class GerritClass implements IGerrit {
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.isDirty().then(dirty => {
-                if (dirty) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Dirty Head",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                    return;
-                }
-
-                this.setCurrentRef(ref);
-
-                this.git.fetch(ref.getUrl()).then(value => {
-                    resolver.apply(this.git, ["FETCH_HEAD"]).then(value => {
-                        resolve(value);
-                    }, reason => {
-                        reject(reason);
-                        return;
-                    });
-                }, reason => {
-                    reject(reason);
-                    return;
-                });
-            }, reason => {
-                reject(reason);
+        return this.isDirty().then(dirty => {
+            if (dirty) {
+                let reason: common.RejectReason = {
+                    showInformation: true,
+                    message: "Dirty Head",
+                    type: common.RejectType.DEFAULT
+                };
+                Promise.reject(reason);
                 return;
+            }
+
+            this.setCurrentRef(ref);
+
+            return this.git.fetch(ref.getUrl()).then(value => {
+                return resolver.apply(this.git, ["FETCH_HEAD"]);
             });
         });
     }
