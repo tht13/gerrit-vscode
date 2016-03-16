@@ -137,6 +137,9 @@ export class GerritController {
         };
 
         window.showInputBox(options).then(message => {
+            if (utils.isNull(message)) {
+                return;
+            }
             this.aquireLock(this.gerrit, this.gerrit.commit, [message, false]);
         }, reason => {
         });
