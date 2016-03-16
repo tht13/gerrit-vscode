@@ -48,6 +48,10 @@ class GerritClass implements IGerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git;
+        this.updateStatus();
+    }
+
+    private updateStatus() {
         this.getGitLog(0).then(value => {
             console.log(value);
             if (value.change_id !== null) {
