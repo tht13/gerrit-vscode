@@ -248,20 +248,6 @@ class GerritClass implements IGerrit {
         });
     }
 
-    private fetch(url: string, options?: string[]): Promise<string> {
-        url = utils.setDefault(url, "");
-        options = utils.setDefault(options, []);
-        return this.git.fetch(url, options);
-    }
-
-    private cherrypick(HEAD: string): Promise<string> {
-        return this.git.cherrypick(HEAD);
-    }
-
-    public cherrypickContinue(): Promise<string> {
-        return this.git.cherrypickContinue();
-    }
-
     public push(branch: string): Promise<string> {
         let target = [
             `HEAD:refs/for/${branch}`
@@ -276,7 +262,7 @@ class GerritClass implements IGerrit {
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
-        return this.fetch("", ["-fv"]).then(value => {
+        return this.git.fetch("", ["-fv"]).then(value => {
             let target: string = `origin/${branch}`;
             return this.git.rebase(target).then(value => {
                 this.setBranch(branch);
