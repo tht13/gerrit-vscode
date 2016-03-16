@@ -12,10 +12,6 @@ interface IGit {
     reset(path: string, hard?: boolean): Promise<string>;
     clean(path: string): Promise<string>;
     commit(msg: string, amend: boolean): Promise<string>;
-    checkoutBranch(branch: string): Promise<string>;
-    checkoutRef(ref: Ref): Promise<string>;
-    cherrypickRef(ref: Ref): Promise<string>;
-    fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string>;
     fetch(url: string, options?: string[], origin?: string): Promise<string>;
     checkout(HEAD: string): Promise<string>;
     cherrypick(HEAD: string): Promise<string>;
@@ -85,56 +81,6 @@ class GitClass implements IGit {
                 resolve(value);
             }, reason => {
                 reject(reason);
-            });
-        });
-    }
-
-    public checkoutBranch(branch: string): Promise<string> {
-        return this.fetch("", ["-fv"]).then(fetchValue => {
-            return this.checkout(`origin/${branch}`).then(checkoutValue => {
-                this.gerrit.setBranch(branch);
-                return checkoutValue;
-            });
-        });
-    }
-
-    public checkoutRef(ref: Ref): Promise<string> {
-        return this.fetchRef(ref, this.checkout);
-    }
-
-    public cherrypickRef(ref: Ref): Promise<string> {
-        return this.fetchRef(ref, this.cherrypick);
-    }
-
-    public fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.gerrit.isDirty().then(dirty => {
-                if (dirty) {
-                    let reason: common.RejectReason = {
-                        showInformation: true,
-                        message: "Dirty Head",
-                        type: common.RejectType.DEFAULT
-                    };
-                    reject(reason);
-                    return;
-                }
-
-                this.gerrit.setCurrentRef(ref);
-
-                this.fetch(ref.getUrl()).then(value => {
-                    resolver.apply(this, ["FETCH_HEAD"]).then(value => {
-                        resolve(value);
-                    }, reason => {
-                        reject(reason);
-                        return;
-                    });
-                }, reason => {
-                    reject(reason);
-                    return;
-                });
-            }, reason => {
-                reject(reason);
-                return;
             });
         });
     }
