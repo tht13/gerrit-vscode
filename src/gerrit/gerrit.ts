@@ -116,7 +116,7 @@ class GerritClass implements IGerrit {
             untracked: "-o"
         };
         let container = new gitFiles.FileContainer();
-        return this.git.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
+        return this.git.ls_files(options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.push({
@@ -124,7 +124,7 @@ class GerritClass implements IGerrit {
                     status: gitFiles.GitStatus.DELETED
                 });
             }
-            return this.git.git("ls-files", options.concat([dirtyTypes.modified]));
+            return this.git.ls_files(options.concat([dirtyTypes.modified]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -133,7 +133,7 @@ class GerritClass implements IGerrit {
                     status: gitFiles.GitStatus.MODIFIED
                 });
             }
-            return this.git.git("ls-files", options.concat([dirtyTypes.untracked]));
+            return this.git.ls_files(options.concat([dirtyTypes.untracked]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
@@ -152,7 +152,7 @@ class GerritClass implements IGerrit {
             "--cached"
         ];
         let container = new gitFiles.FileContainer();
-        return this.git.git("diff", options).then(result => {
+        return this.git.diff([], options).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
                 container.push({
