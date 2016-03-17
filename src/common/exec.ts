@@ -42,7 +42,7 @@ function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, s
             stdout.push(b);
         });
         child.stdout.on("close", () => {
-            result.stderr = Buffer.concat(stdout).toString();
+            result.stdout = Buffer.concat(stdout).toString();
             resolve();
         });
     });
