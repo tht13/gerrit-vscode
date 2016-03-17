@@ -160,6 +160,9 @@ class GlobalFileContainer extends FileContainer {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
+                if (files[i] === "") {
+                    continue;
+                }
                 container.push({
                     path: files[i],
                     status: type
@@ -174,6 +177,9 @@ class GlobalFileContainer extends FileContainer {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
+                if (files[i] === "") {
+                    continue;
+                }
                 container.push({
                     path: files[i],
                     status: GitStatus.CLEAN
