@@ -3,41 +3,34 @@ import * as common from "../common/common";
 
 interface IFile {
     path: string;
+    status: GitStatus;
 }
 
-enum GitStatus {
+export enum GitStatus {
     MODIFIED,
     DELETED,
     UNTRACKED,
     STAGED,
+    CLEAN,
     DEFAULT
 }
 
 export class FileContainer {
-    private container: Map<GitStatus, IFile[]>;
+    private container: IFile[];
 
     constructor() {
-        this.container = new Map<GitStatus, IFile[]>();
+        this.container = [];
     }
 
-    protected addTypeContainer(type: GitStatus, container?: IFile[]) {
-        container = utils.setDefault(container, []);
-        this.container.set(type, container);
-    }
-
-    protected getTypeContainer(type: GitStatus): IFile[] {
-        return this.container.get(type);
-    }
-
-    protected pushType(type: GitStatus, ...items: IFile[]) {
+    push(...items: IFile[]) {
         for (let i in items) {
-            this.container.get(type).push(items[i]);
+            this.container.push(items[i]);
         }
     }
 
     getFilePaths(): string[] {
         let paths: string[] = [];
-        this.container.forEach((value, index, map) => {
+        this.container.forEach((value, index, array) => {
             for (let i in value) {
                 paths.push(value[i].path);
             }
@@ -45,7 +38,7 @@ export class FileContainer {
         return paths;
     }
 
-    protected removeByPath(container: common.FileStageQuickPick[], path: string): common.FileStageQuickPick[] {
+    private removeByPath(container: common.FileStageQuickPick[], path: string): common.FileStageQuickPick[] {
         container = container.filter((value, index, array) => {
             return value.path !== path;
         });
@@ -53,94 +46,54 @@ export class FileContainer {
     }
 
     get length(): number {
-        let count = 0;
+        return this.container.length;
+    }
+
+    lengthOfType(...type: GitStatus[]) {
+        return this.getByType(...type).length;
+    }
+
+    getByType(...type: GitStatus[]) {
+        let subset: IFile[] = [];
         this.container.forEach((value, index, map) => {
-            count += value.length;
+            if (type.indexOf(value.status) > -1) {
+                subset.push(value);
+            }
         });
-        return count;
-    }
-}
-
-export class DirtyFileContainter extends FileContainer {
-
-    constructor() {
-        super();
-        this.addTypeContainer(GitStatus.MODIFIED);
-        this.addTypeContainer(GitStatus.DELETED);
-        this.addTypeContainer(GitStatus.UNTRACKED);
+        return subset;
     }
 
-    addModified(file: IFile) {
-        this.pushType(GitStatus.MODIFIED, file);
-    }
-
-    addDeleted(file: IFile) {
-        this.pushType(GitStatus.DELETED, file);
-    }
-
-    addUntrackedFile(file: IFile) {
-        this.pushType(GitStatus.UNTRACKED, file);
-    }
-
-    getDescriptors(): common.FileStageQuickPick[] {
+    getDescriptorsAll(): common.FileStageQuickPick[] {
         let descriptors: common.FileStageQuickPick[] = [];
+        for (let status in GitStatus) {
+            let files = this.getByType(GitStatus.MODIFIED);
+            for (let i in files) {
+                descriptors.push({
+                    label: files[i].path,
+                    path: files[i].path,
+                    description: status
+                });
+            }
+        }
+        return descriptors;
+    }
 
-        let modifiedFiles = this.getTypeContainer(GitStatus.MODIFIED);
-        for (let i in modifiedFiles) {
-            descriptors.push({
-                label: modifiedFiles[i].path,
-                path: modifiedFiles[i].path,
-                description: "Modified"
-            });
-        }
-        let deletedFiles = this.getTypeContainer(GitStatus.DELETED);
-        for (let i in deletedFiles) {
-            descriptors = this.removeByPath(descriptors, deletedFiles[i].path);
-            descriptors.push({
-                label: deletedFiles[i].path,
-                path: deletedFiles[i].path,
-                description: "Deleted"
-            });
-        }
-        let untrackedFiles = this.getTypeContainer(GitStatus.UNTRACKED);
-        for (let i in untrackedFiles) {
-            descriptors.push({
-                label: untrackedFiles[i].path,
-                path: untrackedFiles[i].path,
-                description: "Untracked"
-            });
+    getDescriptorsByType(...type: GitStatus[]): common.FileStageQuickPick[] {
+        let descriptors: common.FileStageQuickPick[] = [];
+        for (let status in type) {
+            let files = this.getByType(type[status]);
+            for (let i in files) {
+                descriptors.push({
+                    label: files[i].path,
+                    path: files[i].path,
+                    description: status
+                });
+            }
         }
         return descriptors;
     }
 
     isDirty(): boolean {
-        return this.getTypeContainer(GitStatus.MODIFIED).length +
-            this.getTypeContainer(GitStatus.DELETED).length !== 0;
-    }
-}
-
-export class StagedFileContainter extends FileContainer {
-
-    constructor() {
-        super();
-        this.addTypeContainer(GitStatus.STAGED);
-    }
-
-    addStaged(file: IFile) {
-        this.pushType(GitStatus.STAGED, file);
-    }
-
-    getDescriptors(): common.FileStageQuickPick[] {
-        let descriptors: common.FileStageQuickPick[] = [];
-
-        let stagedFiles = this.getTypeContainer(GitStatus.STAGED);
-        for (let i in stagedFiles) {
-            descriptors.push({
-                label: stagedFiles[i].path,
-                path: stagedFiles[i].path,
-                description: "Staged"
-            });
-        }
-        return descriptors;
+        return this.lengthOfType(GitStatus.MODIFIED, GitStatus.DELETED) !== 0;
     }
 }

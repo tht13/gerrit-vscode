@@ -10,7 +10,7 @@ import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 import { Git, IGit } from "./git";
-import * as files from "./files";
+import * as gitFiles from "./files";
 let rp = require("request-promise");
 
 // TODO: Redo FileContainer and add event emitter
@@ -22,8 +22,8 @@ interface IGerrit {
     getBranch(): string;
     setCurrentRef(ref: Ref): void;
     isDirty(): Promise<boolean>;
-    getDirtyFiles(): Promise<files.DirtyFileContainter>;
-    getStagedFiles(): Promise<files.StagedFileContainter>;
+    getDirtyFiles(): Promise<gitFiles.FileContainer>;
+    getStagedFiles(): Promise<gitFiles.FileContainer>;
     getBranches(): Promise<string[]>;
     getChanges(count?: number): Promise<common.ChangeQuickPick[]>;
     getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
@@ -106,7 +106,7 @@ class GerritClass implements IGerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<files.DirtyFileContainter> {
+    public getDirtyFiles(): Promise<gitFiles.FileContainer> {
         let options = [
             "--exclude-standard"
         ];
@@ -115,45 +115,49 @@ class GerritClass implements IGerrit {
             modified: "-m",
             untracked: "-o"
         };
-        let container = new files.DirtyFileContainter();
+        let container = new gitFiles.FileContainer();
         return this.git.git("ls-files", options.concat([dirtyTypes.deleted])).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
-                container.addDeleted({
-                    path: files[i]
+                container.push({
+                    path: files[i],
+                    status: gitFiles.GitStatus.DELETED
                 });
             }
             return this.git.git("ls-files", options.concat([dirtyTypes.modified]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
-                container.addModified({
-                    path: files[i]
+                container.push({
+                    path: files[i],
+                    status: gitFiles.GitStatus.MODIFIED
                 });
             }
             return this.git.git("ls-files", options.concat([dirtyTypes.untracked]));
         }).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
-                container.addUntrackedFile({
-                    path: files[i]
+                container.push({
+                    path: files[i],
+                    status: gitFiles.GitStatus.UNTRACKED
                 });
             }
             return container;
         });
     }
 
-    public getStagedFiles(): Promise<files.StagedFileContainter> {
+    public getStagedFiles(): Promise<gitFiles.FileContainer> {
         let options = [
             "--name-only",
             "--cached"
         ];
-        let container = new files.StagedFileContainter();
+        let container = new gitFiles.FileContainer();
         return this.git.git("diff", options).then(result => {
             let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
             for (let i in files) {
-                container.addStaged({
-                    path: files[i]
+                container.push({
+                    path: files[i],
+                    status: gitFiles.GitStatus.STAGED
                 });
             }
             return container;
