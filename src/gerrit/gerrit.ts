@@ -290,6 +290,9 @@ class GerritClass implements IGerrit {
     }
 
     private get(path: string): Promise<any> {
+        if (utils.isNull(this.settings.host) || utils.isNull(this.settings.httpPort)) {
+            return Promise.reject("Host not setup");
+        }
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
         console.log(url);
         let options = {
