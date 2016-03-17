@@ -1,9 +1,15 @@
 import * as utils from "../common/utils";
 import * as common from "../common/common";
+import { Git, IGit } from "./git";
 
 interface IFile {
     path: string;
     status: GitStatus;
+}
+
+interface IUpdateResult {
+    status: GitStatus;
+    container: IFile[];
 }
 
 export enum GitStatus {
@@ -99,5 +105,81 @@ export class FileContainer {
 
     isDirty(): boolean {
         return this.lengthOfType(GitStatus.MODIFIED, GitStatus.DELETED) !== 0;
+    }
+}
+
+class GlobalFileContainer extends FileContainer {
+    private git: IGit;
+
+
+    constructor() {
+        super();
+        this.git = Git;
+    }
+
+    updateFiles() {
+        let find = (values: IUpdateResult[], search: GitStatus) => {
+            return values.find((value, index, obj) => {
+                return (value.status === search);
+            });
+        };
+        return Promise.all([
+            this.updateIndex(),
+            this.updateModified(),
+            this.updateDeleted(),
+            this.updateUntracked(),
+            // TODO: add staged, as this is the only type which could be a second property of a file
+            // this.updateStaged()
+        ]).then(values => {
+            this.clear();
+            this.push(...find(values, GitStatus.CLEAN).container);
+            this.push(...find(values, GitStatus.DELETED).container);
+            this.push(...find(values, GitStatus.MODIFIED).container);
+            this.push(...find(values, GitStatus.UNTRACKED).container);
+        });
+    }
+
+    updateIndex() {
+        return this.updateType(GitStatus.CLEAN);
+    }
+
+    updateModified() {
+        return this.updateType(GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
+    }
+
+    updateDeleted() {
+        return this.updateType(GitStatus.DELETED, ["--exclude-standard", "-d"]);
+    }
+
+    updateUntracked() {
+        return this.updateType(GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
+    }
+
+    updateType(type: GitStatus, options?: string[], command?: string) {
+        return this.git.ls_files(options).then(value => {
+            let container: IFile[] = [];
+            let files: string[] = value.split(utils.SPLIT_LINE);
+            for (let i in files) {
+                container.push({
+                    path: files[i],
+                    status: type
+                });
+            }
+            return { status: type, container: container };
+        });
+    }
+
+    updateStaged() {
+        return this.git.diff([], ["--name-only", "--cached"]).then(value => {
+            let container: IFile[] = [];
+            let files: string[] = value.split(utils.SPLIT_LINE);
+            for (let i in files) {
+                container.push({
+                    path: files[i],
+                    status: GitStatus.CLEAN
+                });
+            }
+            return { status: GitStatus.CLEAN, container: container };
+        });
     }
 }
