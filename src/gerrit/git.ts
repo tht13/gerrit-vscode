@@ -165,6 +165,16 @@ class GitClass implements IGit {
             "1"
         ];
         return this.git("log", options).then(value => {
+            if (utils.isNull(value)) {
+                let reason: common.RejectReason = {
+                    showInformation: false,
+                    message: "Failed Gitlog",
+                    type: common.RejectType.GIT,
+                    attributes: {  }
+                };
+                Promise.reject(reason);
+                return;
+            }
             return createLog(value);
         });
     }
