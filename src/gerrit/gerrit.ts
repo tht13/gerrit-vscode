@@ -54,7 +54,7 @@ class GerritClass implements IGerrit {
     private updateStatus() {
         this.getGitLog(0).then(value => {
             console.log(value);
-            if (!utils.isNull(value.change_id)) {
+            if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
                 this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                     this.settings.project = value.project;
                     this.setBranch(value.branch);
@@ -69,7 +69,7 @@ class GerritClass implements IGerrit {
         }, (reason: common.RejectReason) => {
             console.log("rejected");
             console.log(reason);
-            if (reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+            if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
                 this.logger.log("No commits on branch");
             }
         });
