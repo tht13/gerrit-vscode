@@ -61,7 +61,7 @@ class GitClass implements IGit {
         return this.checkout(path);
     }
 
-    public commit(msg: string, amend: boolean): Promise<string> {
+    public commit(msg: string, amend: boolean): Promise<string | void> {
         let options: string[] = [];
         if (amend) {
             options.push("--amend", "--no-edit");
@@ -72,7 +72,7 @@ class GitClass implements IGit {
                     message: "Requires a message to commit with",
                     type: common.RejectType.DEFAULT
                 };
-                Promise.reject(reason);
+                return Promise.reject(reason);
             }
             options.push("--file", "-");
         }
@@ -157,29 +157,28 @@ class GitClass implements IGit {
         });
     }
 
-    public getGitLog(index: number): Promise<GitLog> {
+    public getGitLog(index: number): Promise<void | GitLog> {
         let options = [
             "--skip",
             index.toString(),
             "-n",
             "1"
         ];
-        return this.git("log", options).then(value => {
+        return this.git("log", options).then((value: string): Promise<void | GitLog> => {
             if (utils.isNull(value)) {
                 let reason: common.RejectReason = {
                     showInformation: false,
                     message: "Failed Gitlog",
                     type: common.RejectType.GIT,
-                    attributes: {  }
+                    attributes: {}
                 };
-                Promise.reject(reason);
-                return;
+                return Promise.reject(reason);
             }
-            return createLog(value);
+            return Promise.resolve(createLog(value));
         });
     }
 
-    public git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string> {
+    public git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string | void> {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
         stdin = utils.setDefault(stdin, "");
@@ -196,9 +195,9 @@ class GitClass implements IGit {
             runOptions["input"] = stdin + "\n";
         }
 
-        return exec.run("git", fullArgs, runOptions).then(result => {
+        return exec.run("git", fullArgs, runOptions).then((result): Promise<string | void> => {
             if (utils.isNull(result.error)) {
-                return result.stdout;
+                return Promise.resolve(result.stdout);
             } else {
                 let reason: common.RejectReason = {
                     showInformation: false,
@@ -208,8 +207,7 @@ class GitClass implements IGit {
                 };
                 console.warn(reason);
                 this.logger.log(result.error.name);
-                Promise.reject(reason);
-                return;
+                return Promise.reject(reason);
             }
         });
     }

@@ -233,7 +233,7 @@ class GerritClass implements IGerrit {
         return this.fetchRef(ref, this.git.cherrypick);
     }
 
-    private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string> {
+    private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string | void> {
         return this.isDirty().then(dirty => {
             if (dirty) {
                 let reason: common.RejectReason = {
@@ -241,8 +241,7 @@ class GerritClass implements IGerrit {
                     message: "Dirty Head",
                     type: common.RejectType.DEFAULT
                 };
-                Promise.reject(reason);
-                return;
+                return Promise.reject(reason);
             }
 
             this.setCurrentRef(ref);
