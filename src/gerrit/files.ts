@@ -16,15 +16,15 @@ export enum GitStatus {
 }
 
 export class FileContainer {
-    private container: IFile[];
+    private container: Set<IFile>;
 
     constructor() {
-        this.container = [];
+        this.container = new Set();
     }
 
     push(...items: IFile[]) {
         for (let i in items) {
-            this.container.push(items[i]);
+            this.container.add(items[i]);
         }
     }
 
@@ -46,18 +46,18 @@ export class FileContainer {
     }
 
     get length(): number {
-        return this.container.length;
+        return this.container.size;
     }
 
     lengthOfType(...type: GitStatus[]) {
-        return this.getByType(...type).length;
+        return this.getByType(...type).size;
     }
 
     getByType(...type: GitStatus[]) {
-        let subset: IFile[] = [];
+        let subset: Set<IFile> = new Set();
         this.container.forEach((value, index, map) => {
             if (type.indexOf(value.status) > -1) {
-                subset.push(value);
+                subset.add(value);
             }
         });
         return subset;
