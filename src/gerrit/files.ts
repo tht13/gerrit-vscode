@@ -22,6 +22,7 @@ export enum GitStatus {
 }
 
 export class FileContainer {
+    // TODO: revert to Map<IFile, Status>
     private container: Set<IFile>;
 
     constructor() {
@@ -108,7 +109,8 @@ export class FileContainer {
     }
 }
 
-class GlobalFileContainer extends FileContainer {
+// TODO: Make GlobalFileContainer singleton
+export class GlobalFileContainer extends FileContainer {
     private git: IGit;
 
 

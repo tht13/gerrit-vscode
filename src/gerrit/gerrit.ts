@@ -42,6 +42,7 @@ class GerritClass implements IGerrit {
     private settings: IGerritSettings;
     private statusBar: StatusBar;
     private git: IGit;
+    private fileIndex: gitFiles.GlobalFileContainer;
 
     constructor() {
         this.settings = GerritSettings;
@@ -49,6 +50,8 @@ class GerritClass implements IGerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git;
+        this.fileIndex = new gitFiles.GlobalFileContainer();
+        this.fileIndex.updateFiles();
         this.updateStatus();
     }
 
@@ -107,60 +110,14 @@ class GerritClass implements IGerrit {
     }
 
     public getDirtyFiles(): Promise<gitFiles.FileContainer> {
-        let options = [
-            "--exclude-standard"
-        ];
-        let dirtyTypes = {
-            deleted: "-d",
-            modified: "-m",
-            untracked: "-o"
-        };
-        let container = new gitFiles.FileContainer();
-        return this.git.ls_files(options.concat([dirtyTypes.deleted])).then(result => {
-            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
-            for (let i in files) {
-                container.push({
-                    path: files[i],
-                    status: gitFiles.GitStatus.DELETED
-                });
-            }
-            return this.git.ls_files(options.concat([dirtyTypes.modified]));
-        }).then(result => {
-            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
-            for (let i in files) {
-                container.push({
-                    path: files[i],
-                    status: gitFiles.GitStatus.MODIFIED
-                });
-            }
-            return this.git.ls_files(options.concat([dirtyTypes.untracked]));
-        }).then(result => {
-            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
-            for (let i in files) {
-                container.push({
-                    path: files[i],
-                    status: gitFiles.GitStatus.UNTRACKED
-                });
-            }
-            return container;
+        return this.fileIndex.updateFiles().then(() => {
+            return this.fileIndex;
         });
     }
 
     public getStagedFiles(): Promise<gitFiles.FileContainer> {
-        let options = [
-            "--name-only",
-            "--cached"
-        ];
-        let container = new gitFiles.FileContainer();
-        return this.git.diff([], options).then(result => {
-            let files: string[] = result.split(utils.SPLIT_LINE).filter(utils.filterDuplicates);
-            for (let i in files) {
-                container.push({
-                    path: files[i],
-                    status: gitFiles.GitStatus.STAGED
-                });
-            }
-            return container;
+        return this.fileIndex.updateFiles().then(() => {
+            return this.fileIndex;
         });
     }
 
