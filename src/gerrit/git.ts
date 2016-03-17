@@ -19,6 +19,8 @@ interface IGit {
     push(target: string[], origin?: string): Promise<string>;
     rebase(branch: string): Promise<string>;
     rebaseContinue(): Promise<string>;
+    diff(args?: string[], options?: string[]): Promise<string>;
+    ls_files(options?: string[]): Promise<string>;
     getGitLog(index: number): Promise<GitLog>;
     git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string>;
 }
@@ -176,6 +178,14 @@ class GitClass implements IGit {
             }
             return Promise.resolve(createLog(value));
         });
+    }
+
+    public diff(args?: string[], options?: string[]): Promise<string> {
+        return this.git("diff", args, options);
+    }
+
+    public ls_files(options?: string[]): Promise<string> {
+        return this.git("ls-files", options);
     }
 
     public git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string | void> {
