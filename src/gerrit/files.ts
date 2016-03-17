@@ -28,6 +28,10 @@ export class FileContainer {
         }
     }
 
+    clear() {
+        this.container.clear();
+    }
+
     getFilePaths(): string[] {
         let paths: string[] = [];
         this.container.forEach((value, index, array) => {
