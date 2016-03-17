@@ -59,7 +59,6 @@ class GerritClass implements IGerrit {
                 this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                     this.settings.project = value.project;
                     this.setBranch(value.branch);
-                    // TODO: handle case when merged and ref does not exist
                     let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                     this.setCurrentRef(ref);
                 }, reason => {
