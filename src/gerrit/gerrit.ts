@@ -34,6 +34,7 @@ interface IGerrit {
     rebase(branch: string): Promise<string>;
 }
 
+// TODO: Contains serious regression in running on Tempest
 class GerritClass implements IGerrit {
     private branch: string;
     private currentRef: Ref;
