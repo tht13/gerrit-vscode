@@ -18,62 +18,54 @@ export function run(command: string, args: string[], options: any): Promise<{ ex
 }
 
 function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
-    return new Promise((resolve, reject) => {
-        let result = {
-            exit_code: 0,
-            error: null,
-            stdout: "",
-            stderr: ""
-        };
-        let active = {
-            stdout: false,
-            stderr: false
-        };
-        let stdout: Buffer[] = [];
+    let result = {
+        exit_code: 0,
+        error: null,
+        stdout: "",
+        stderr: ""
+    };
+    let stderrPromise = new Promise((resolve, reject) => {
         let stderr: Buffer[] = [];
-        child.on("error", e => {
-            result.error = e;
-            checkExit();
-        });
-        child.on("exit", (exit_code: number) => {
-            checkExit(exit_code);
-        });
-        child.stdout.on("data", (b: Buffer) => {
-            Logger.logger.log(b.toString());
-            stdout.push(b);
-        });
-        child.stdout.on("close", () => {
-            result.stdout = Buffer.concat(stdout).toString();
-            active.stdout = true;
-            checkExit();
-        });
         child.stderr.on("data", (b: Buffer) => {
             Logger.logger.log(b.toString());
             stderr.push(b);
         });
         child.stderr.on("close", () => {
             result.stderr = Buffer.concat(stderr).toString();
-            active.stderr = true;
-            checkExit();
+            resolve();
         });
-
-        function checkExit(exit_code?: number) {
-            if (!utils.isNull(exit_code)) {
-                result.exit_code = exit_code;
-            }
-            for (let channel in active) {
-                if (!active[channel]) {
-                    return;
-                }
-            }
-            if (result.exit_code !== 0) {
-                let error = new Error(result.stderr);
-                result.error = error;
-                console.log(error.stack);
-            }
-            resolve(result);
+    });
+    let stdoutPromise = new Promise((resolve, reject) => {
+        let stdout: Buffer[] = [];
+        child.stdout.on("data", (b: Buffer) => {
+            Logger.logger.log(b.toString());
+            stdout.push(b);
+        });
+        child.stdout.on("close", () => {
+            result.stderr = Buffer.concat(stdout).toString();
+            resolve();
+        });
+    });
+    let childPromise = new Promise((resolve, reject) => {
+        child.on("error", e => {
+            result.error = e;
+        });
+        child.on("exit", (exit_code: number) => {
+            result.exit_code = exit_code;
+            resolve();
+        });
+    });
+    return Promise.all([
+        stderrPromise,
+        stdoutPromise,
+        childPromise
+    ]).then(values => {
+        if (result.exit_code !== 0) {
+            let error = new Error(result.stderr);
+            result.error = error;
+            console.log(error.stack);
         }
-
+        return result;
     });
 }
 
