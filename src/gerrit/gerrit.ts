@@ -58,7 +58,7 @@ class GerritClass implements IGerrit {
                 this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                     this.settings.project = value.project;
                     this.setBranch(value.branch);
-                    // TODO: handle case when merged adn ref does not exist
+                    // TODO: handle case when merged and ref does not exist
                     let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
                     this.setCurrentRef(ref);
                 });
@@ -258,7 +258,6 @@ class GerritClass implements IGerrit {
         });
     }
 
-    // TODO: check how rejections are passed through
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
@@ -285,7 +284,6 @@ class GerritClass implements IGerrit {
             ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
-    // TODO: implement rest api interfaces and type the return
     private get(path: string): Promise<any> {
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
         console.log(url);

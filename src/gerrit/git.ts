@@ -132,7 +132,6 @@ class GitClass implements IGit {
         });
     }
 
-    // TODO: check how rejections are passed through
     public rebase(branch: string): Promise<string> {
         let args: string[] = [
             branch
