@@ -139,23 +139,23 @@ class GlobalFileContainer extends FileContainer {
         });
     }
 
-    updateIndex() {
+    private updateIndex() {
         return this.updateType(GitStatus.CLEAN);
     }
 
-    updateModified() {
+    private updateModified() {
         return this.updateType(GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
     }
 
-    updateDeleted() {
+    private updateDeleted() {
         return this.updateType(GitStatus.DELETED, ["--exclude-standard", "-d"]);
     }
 
-    updateUntracked() {
+    private updateUntracked() {
         return this.updateType(GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    updateType(type: GitStatus, options?: string[], command?: string) {
+    private updateType(type: GitStatus, options?: string[], command?: string) {
         return this.git.ls_files(options).then(value => {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
@@ -169,7 +169,7 @@ class GlobalFileContainer extends FileContainer {
         });
     }
 
-    updateStaged() {
+    private updateStaged() {
         return this.git.diff([], ["--name-only", "--cached"]).then(value => {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
