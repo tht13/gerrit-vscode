@@ -10,7 +10,8 @@ import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 import { Git } from "./git";
-import { FileContainer, GlobalFileContainer } from "./files/FileContainer";
+import { FileContainer } from "./files/FileContainer";
+import { GlobalFileContainer } from "./files/GlobalFileContainer";
 let rp = require("request-promise");
 
 // TODO: Redo FileContainer and add event emitter
