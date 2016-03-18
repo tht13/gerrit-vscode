@@ -181,14 +181,14 @@ class GitClass implements IGit {
     }
 
     public diff(args?: string[], options?: string[]): Promise<string> {
-        return this.git("diff", args, options);
+        return this.git("diff", args, options, null, false);
     }
 
     public ls_files(options?: string[]): Promise<string> {
-        return this.git("ls-files", options);
+        return this.git("ls-files", options, null, null, false);
     }
 
-    public git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string | void> {
+    public git(gitCommand: string, options?: string[], args?: string[], stdin?: string, log?: boolean): Promise<string | void> {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
         stdin = utils.setDefault(stdin, "");
@@ -205,7 +205,7 @@ class GitClass implements IGit {
             runOptions["input"] = stdin + "\n";
         }
 
-        return exec.run("git", fullArgs, runOptions).then((result): Promise<string | void> => {
+        return exec.run("git", fullArgs, runOptions, log).then((result): Promise<string | void> => {
             if (utils.isNull(result.error)) {
                 return Promise.resolve(result.stdout);
             } else {
