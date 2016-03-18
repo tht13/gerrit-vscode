@@ -29,7 +29,11 @@ export class FileContainer {
         this.container = new Set();
     }
 
-    push(...items: IFile[]) {
+    add(item: IFile) {
+        this.container.add(item);
+    }
+
+    push(items: IFile[]) {
         for (let i in items) {
             this.container.add(items[i]);
         }
@@ -135,9 +139,9 @@ export class GlobalFileContainer extends FileContainer {
         ]).then(values => {
             this.clear();
             // this.push(...find(values, GitStatus.CLEAN).container);
-            this.push(...find(values, GitStatus.DELETED).container);
-            this.push(...find(values, GitStatus.MODIFIED).container);
-            this.push(...find(values, GitStatus.UNTRACKED).container);
+            this.push(find(values, GitStatus.DELETED).container);
+            this.push(find(values, GitStatus.MODIFIED).container);
+            this.push(find(values, GitStatus.UNTRACKED).container);
         });
     }
 
