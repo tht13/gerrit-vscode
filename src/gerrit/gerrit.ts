@@ -51,30 +51,31 @@ class GerritClass implements IGerrit {
         this.logger.log("Activating Gerrit...", false);
         this.git = Git;
         this.fileIndex = new gitFiles.GlobalFileContainer();
-        this.fileIndex.updateFiles();
         this.updateStatus();
     }
 
     private updateStatus() {
-        this.getGitLog(0).then(value => {
-            console.log(value);
-            if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-                this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-                    this.settings.project = value.project;
-                    this.setBranch(value.branch);
-                    let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-                    this.setCurrentRef(ref);
-                }, reason => {
-                    console.log("rejected");
-                    console.log(reason);
-                });
-            }
-        }, (reason: common.RejectReason) => {
-            console.log("rejected");
-            console.log(reason);
-            if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-                this.logger.log("No commits on branch");
-            }
+        this.fileIndex.updateFiles().then(value => {
+            this.getGitLog(0).then(value => {
+                console.log(value);
+                if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                        this.settings.project = value.project;
+                        this.setBranch(value.branch);
+                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                        this.setCurrentRef(ref);
+                    }, reason => {
+                        console.log("rejected");
+                        console.log(reason);
+                    });
+                }
+            }, (reason: common.RejectReason) => {
+                console.log("rejected");
+                console.log(reason);
+                if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                    this.logger.log("No commits on branch");
+                }
+            });
         });
     }
 

@@ -126,7 +126,7 @@ export class GlobalFileContainer extends FileContainer {
             });
         };
         return Promise.all([
-            this.updateIndex(),
+            // this.updateIndex(),
             this.updateModified(),
             this.updateDeleted(),
             this.updateUntracked(),
@@ -134,7 +134,7 @@ export class GlobalFileContainer extends FileContainer {
             // this.updateStaged()
         ]).then(values => {
             this.clear();
-            this.push(...find(values, GitStatus.CLEAN).container);
+            // this.push(...find(values, GitStatus.CLEAN).container);
             this.push(...find(values, GitStatus.DELETED).container);
             this.push(...find(values, GitStatus.MODIFIED).container);
             this.push(...find(values, GitStatus.UNTRACKED).container);
