@@ -4,7 +4,7 @@ import { GerritSettings } from "../common/settings";
 import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
 import * as common from "../common/common";
-import { Gerrit, IGerrit } from "./gerrit";
+import { Gerrit } from "./gerrit";
 import * as exec from "../common/exec";
 
 
@@ -13,11 +13,11 @@ class Git {
     private logger: Logger;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
-    private gerrit: IGerrit;
+    private gerrit: Gerrit;
     private static _git: Git = null;
 
     constructor() {
-        this.gerrit = Gerrit;
+        this.gerrit = Gerrit.getInstance();
         this.settings = GerritSettings.getInstance();
         this.logger = Logger.logger;
         this.cherrypickActive = false;

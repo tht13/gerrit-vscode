@@ -15,27 +15,8 @@ let rp = require("request-promise");
 
 // TODO: Redo FileContainer and add event emitter
 
-interface IGerrit {
-    setStatusBar(statusBar: StatusBar): void;
-    getCurrentRef(): Ref;
-    setBranch(branch: string): void;
-    getBranch(): string;
-    setCurrentRef(ref: Ref): void;
-    isDirty(): Promise<boolean>;
-    getDirtyFiles(): Promise<gitFiles.FileContainer>;
-    getStagedFiles(): Promise<gitFiles.FileContainer>;
-    getBranches(): Promise<string[]>;
-    getChanges(count?: number): Promise<common.ChangeQuickPick[]>;
-    getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]>;
-    checkoutBranch(branch: string): Promise<string>;
-    checkoutRef(ref: Ref): Promise<string>;
-    cherrypickRef(ref: Ref): Promise<string>;
-    push(branch: string): Promise<string>;
-    rebase(branch: string): Promise<string>;
-}
-
 // TODO: Contains serious regression in running on Tempest
-class GerritClass implements IGerrit {
+export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: Logger;
@@ -43,6 +24,7 @@ class GerritClass implements IGerrit {
     private statusBar: StatusBar;
     private git: Git;
     private fileIndex: gitFiles.GlobalFileContainer;
+    private static _gerrit: Gerrit = null;
 
     constructor() {
         this.settings = GerritSettings.getInstance();
@@ -52,6 +34,13 @@ class GerritClass implements IGerrit {
         this.git = Git.getInstance();
         this.fileIndex = new gitFiles.GlobalFileContainer();
         this.updateStatus();
+    }
+
+    static getInstance() {
+        if (utils.isNull(Gerrit._gerrit)) {
+            Gerrit._gerrit = new Gerrit();
+        }
+        return Gerrit._gerrit;
     }
 
     private updateStatus() {
@@ -272,17 +261,5 @@ class GerritClass implements IGerrit {
     }
 }
 
-class GerritSingleton {
-    private static _gerrit: GerritClass = null;
-
-    static get gerrit() {
-        if (utils.isNull(GerritSingleton._gerrit)) {
-            GerritSingleton._gerrit = new GerritClass();
-        }
-        return GerritSingleton._gerrit;
-    }
-}
-
-const Gerrit = GerritSingleton.gerrit;
 export default Gerrit;
-export { Gerrit, IGerrit };
+
