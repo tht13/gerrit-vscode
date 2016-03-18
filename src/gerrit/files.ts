@@ -141,23 +141,23 @@ export class GlobalFileContainer extends FileContainer {
         });
     }
 
-    private updateIndex() {
+    private updateIndex(): Promise<IUpdateResult> {
         return this.updateType(GitStatus.CLEAN);
     }
 
-    private updateModified() {
+    private updateModified(): Promise<IUpdateResult> {
         return this.updateType(GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
     }
 
-    private updateDeleted() {
+    private updateDeleted(): Promise<IUpdateResult> {
         return this.updateType(GitStatus.DELETED, ["--exclude-standard", "-d"]);
     }
 
-    private updateUntracked() {
+    private updateUntracked(): Promise<IUpdateResult> {
         return this.updateType(GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    private updateType(type: GitStatus, options?: string[], command?: string) {
+    private updateType(type: GitStatus, options?: string[], command?: string): Promise<IUpdateResult> {
         return this.git.ls_files(options).then(value => {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
@@ -174,7 +174,7 @@ export class GlobalFileContainer extends FileContainer {
         });
     }
 
-    private updateStaged() {
+    private updateStaged(): Promise<IUpdateResult> {
         return this.git.diff([], ["--name-only", "--cached"]).then(value => {
             let container: IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
