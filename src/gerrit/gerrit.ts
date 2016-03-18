@@ -10,7 +10,7 @@ import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 import { Git } from "./git";
-import * as gitFiles from "./files";
+import { FileContainer, GlobalFileContainer } from "./files/FileContainer";
 let rp = require("request-promise");
 
 // TODO: Redo FileContainer and add event emitter
@@ -23,7 +23,7 @@ export class Gerrit {
     private settings: GerritSettings;
     private statusBar: StatusBar;
     private git: Git;
-    private fileIndex: gitFiles.GlobalFileContainer;
+    private fileIndex: GlobalFileContainer;
     private static _gerrit: Gerrit = null;
 
     constructor() {
@@ -32,7 +32,7 @@ export class Gerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git.getInstance();
-        this.fileIndex = new gitFiles.GlobalFileContainer();
+        this.fileIndex = new GlobalFileContainer();
         this.updateStatus();
     }
 
@@ -99,13 +99,13 @@ export class Gerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<gitFiles.FileContainer> {
+    public getDirtyFiles(): Promise<FileContainer> {
         return this.fileIndex.updateFiles().then(() => {
             return this.fileIndex;
         });
     }
 
-    public getStagedFiles(): Promise<gitFiles.FileContainer> {
+    public getStagedFiles(): Promise<FileContainer> {
         return this.fileIndex.updateFiles().then(() => {
             return this.fileIndex;
         });

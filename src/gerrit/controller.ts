@@ -11,7 +11,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as octicon from "../common/octicons";
 import { StatusBar } from "../view/statusbar";
-import * as gitFiles from "./files";
+import { GitStatus } from "./files/fileContainer";
 
 export class GerritController {
     private logger: Logger;
@@ -54,9 +54,9 @@ export class GerritController {
                     Promise.reject(reason);
                 }
                 return value.getDescriptorsByType(
-                    gitFiles.GitStatus.DELETED,
-                    gitFiles.GitStatus.MODIFIED,
-                    gitFiles.GitStatus.UNTRACKED
+                    GitStatus.DELETED,
+                    GitStatus.MODIFIED,
+                    GitStatus.UNTRACKED
                 );
             }),
             { placeHolder: "File to stage" }).then(value => {
@@ -98,7 +98,7 @@ export class GerritController {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType(gitFiles.GitStatus.STAGED);
+                return value.getDescriptorsByType(GitStatus.STAGED);
             }),
             { placeHolder: "File to reset" }).then(value => {
                 if (utils.isNull(value)) {
