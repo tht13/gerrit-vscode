@@ -2,30 +2,20 @@ import { window, OutputChannel } from "vscode";
 import * as utils from "../common/utils";
 
 export class Logger {
-    private static _logger: LoggerSingleton = null;
-
-    static get logger() {
-        if (utils.isNull(Logger._logger)) {
-            Logger._logger = new LoggerSingletonClass();
-        }
-        return Logger._logger;
-    }
-
-}
-
-export interface LoggerSingleton {
-    setDebug(value: boolean): void;
-    log(value: string, show?: boolean): void;
-    debug(value: string): void;
-}
-
-class LoggerSingletonClass implements LoggerSingleton {
     private outputChannel: OutputChannel;
     private visible: boolean = false;
     private debugMode: boolean = false;
+    private static _logger: Logger = null;
 
     constructor() {
         this.outputChannel = window.createOutputChannel("Gerrit");
+    }
+
+    static get logger() {
+        if (utils.isNull(Logger._logger)) {
+            Logger._logger = new Logger();
+        }
+        return Logger._logger;
     }
 
     setDebug(value: boolean) {

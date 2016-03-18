@@ -1,6 +1,6 @@
 import { Ref } from "./ref";
 import { createLog, GitLog } from "./gitLog";
-import { Logger, LoggerSingleton } from "../view/logger";
+import { Logger } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
@@ -38,7 +38,7 @@ interface IGerrit {
 class GerritClass implements IGerrit {
     private branch: string;
     private currentRef: Ref;
-    private logger: LoggerSingleton;
+    private logger: Logger;
     private settings: GerritSettings;
     private statusBar: StatusBar;
     private git: Git;

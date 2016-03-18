@@ -1,7 +1,7 @@
 import { Ref } from "./ref";
 import { createLog, GitLog } from "./gitLog";
 import { GerritSettings } from "../common/settings";
-import { Logger, LoggerSingleton } from "../view/logger";
+import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
 import * as common from "../common/common";
 import { Gerrit, IGerrit } from "./gerrit";
@@ -10,7 +10,7 @@ import * as exec from "../common/exec";
 
 class Git {
     private settings: GerritSettings;
-    private logger: LoggerSingleton;
+    private logger: Logger;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
     private gerrit: IGerrit;
