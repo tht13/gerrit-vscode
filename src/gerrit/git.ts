@@ -7,30 +7,14 @@ import * as common from "../common/common";
 import { Gerrit, IGerrit } from "./gerrit";
 import * as exec from "../common/exec";
 
-interface IGit {
-    stage(path: string): Promise<string>;
-    reset(path: string, hard?: boolean): Promise<string>;
-    clean(path: string): Promise<string>;
-    commit(msg: string, amend: boolean): Promise<string>;
-    fetch(url: string, options?: string[], origin?: string): Promise<string>;
-    checkout(HEAD: string): Promise<string>;
-    cherrypick(HEAD: string): Promise<string>;
-    cherrypickContinue(): Promise<string>;
-    push(target: string[], origin?: string): Promise<string>;
-    rebase(branch: string): Promise<string>;
-    rebaseContinue(): Promise<string>;
-    diff(args?: string[], options?: string[]): Promise<string>;
-    ls_files(options?: string[]): Promise<string>;
-    getGitLog(index: number): Promise<GitLog>;
-    git(gitCommand: string, options?: string[], args?: string[], stdin?: string): Promise<string>;
-}
 
-class GitClass implements IGit {
+class Git {
     private settings: GerritSettings;
     private logger: LoggerSingleton;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
     private gerrit: IGerrit;
+    private static _git: Git = null;
 
     constructor() {
         this.gerrit = Gerrit;
@@ -38,6 +22,13 @@ class GitClass implements IGit {
         this.logger = Logger.logger;
         this.cherrypickActive = false;
         this.rebaseActive = false;
+    }
+
+    static getInstance() {
+        if (utils.isNull(Git._git)) {
+            Git._git = new Git();
+        }
+        return Git._git;
     }
 
     public stage(path: string): Promise<string> {
@@ -225,16 +216,15 @@ class GitClass implements IGit {
 }
 
 class GitSingleton {
-    private static _git: GitClass = null;
+    private static _git: Git = null;
 
     static get git() {
         if (utils.isNull(GitSingleton._git)) {
-            GitSingleton._git = new GitClass();
+            GitSingleton._git = new Git();
         }
         return GitSingleton._git;
     }
 }
 
-const Git = GitSingleton.git;
 export default Git;
-export { Git, IGit };
+export { Git };

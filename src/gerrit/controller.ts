@@ -2,7 +2,7 @@ import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
 import { Gerrit, IGerrit } from "./gerrit";
-import { Git, IGit } from "./git";
+import { Git } from "./git";
 import { Ref } from "./ref";
 import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
@@ -18,11 +18,11 @@ export class GerritController {
     private statusBar: StatusBar;
     private lock: boolean;
     private gerrit: IGerrit;
-    private git: IGit;
+    private git: Git;
 
     constructor() {
         this.gerrit = Gerrit;
-        this.git = Git;
+        this.git = Git.getInstance();
         this.statusBar = new StatusBar();
         this.gerrit.setStatusBar(this.statusBar);
         this.logger = Logger.logger;

@@ -1,6 +1,6 @@
 import * as utils from "../common/utils";
 import * as common from "../common/common";
-import { Git, IGit } from "./git";
+import { Git } from "./git";
 
 interface IFile {
     path: string;
@@ -115,12 +115,12 @@ export class FileContainer {
 
 // TODO: Make GlobalFileContainer singleton
 export class GlobalFileContainer extends FileContainer {
-    private git: IGit;
+    private git: Git;
 
 
     constructor() {
         super();
-        this.git = Git;
+        this.git = Git.getInstance();
     }
 
     updateFiles() {

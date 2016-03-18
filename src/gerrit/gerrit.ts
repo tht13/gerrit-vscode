@@ -9,7 +9,7 @@ import * as utils from "../common/utils";
 import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
-import { Git, IGit } from "./git";
+import { Git } from "./git";
 import * as gitFiles from "./files";
 let rp = require("request-promise");
 
@@ -41,7 +41,7 @@ class GerritClass implements IGerrit {
     private logger: LoggerSingleton;
     private settings: GerritSettings;
     private statusBar: StatusBar;
-    private git: IGit;
+    private git: Git;
     private fileIndex: gitFiles.GlobalFileContainer;
 
     constructor() {
@@ -49,7 +49,7 @@ class GerritClass implements IGerrit {
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
-        this.git = Git;
+        this.git = Git.getInstance();
         this.fileIndex = new gitFiles.GlobalFileContainer();
         this.updateStatus();
     }
