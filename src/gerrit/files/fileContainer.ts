@@ -21,20 +21,19 @@ export enum GitStatus {
 }
 
 export class FileContainer {
-    // TODO: revert to Map<IFile, Status>
-    private container: Set<IFile>;
+    private container: Map<string, IFile>;
 
     constructor() {
-        this.container = new Set();
+        this.container = new Map();
     }
 
     add(item: IFile) {
-        this.container.add(item);
+        this.container.set(item.path, item);
     }
 
     push(items: IFile[]) {
         for (let i in items) {
-            this.container.add(items[i]);
+            this.add(items[i]);
         }
     }
 
