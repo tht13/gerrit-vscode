@@ -53,11 +53,11 @@ export class GerritController {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType(
+                return value.getDescriptorsByType([
                     GitStatus.DELETED,
                     GitStatus.MODIFIED,
                     GitStatus.UNTRACKED
-                );
+                ]);
             }),
             { placeHolder: "File to stage" }).then(value => {
                 if (utils.isNull(value)) {
@@ -98,7 +98,7 @@ export class GerritController {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType(GitStatus.STAGED);
+                return value.getDescriptorsByType([GitStatus.STAGED]);
             }),
             { placeHolder: "File to reset" }).then(value => {
                 if (utils.isNull(value)) {

@@ -62,11 +62,11 @@ export class FileContainer {
         return this.container.size;
     }
 
-    lengthOfType(...type: GitStatus[]) {
-        return this.getByType(...type).size;
+    lengthOfType(type: GitStatus[]) {
+        return this.getByType(type).size;
     }
 
-    getByType(...type: GitStatus[]) {
+    getByType(type: GitStatus[]) {
         let subset: Set<IFile> = new Set();
         this.container.forEach((value, index, map) => {
             if (type.indexOf(value.status) > -1) {
@@ -79,7 +79,7 @@ export class FileContainer {
     getDescriptorsAll(): common.FileStageQuickPick[] {
         let descriptors: common.FileStageQuickPick[] = [];
         for (let status in GitStatus) {
-            let files = this.getByType(GitStatus.MODIFIED);
+            let files = this.getByType([GitStatus.MODIFIED]);
             for (let i in files) {
                 descriptors.push({
                     label: files[i].path,
@@ -91,10 +91,10 @@ export class FileContainer {
         return descriptors;
     }
 
-    getDescriptorsByType(...type: GitStatus[]): common.FileStageQuickPick[] {
+    getDescriptorsByType(type: GitStatus[]): common.FileStageQuickPick[] {
         let descriptors: common.FileStageQuickPick[] = [];
         for (let status in type) {
-            let files = this.getByType(type[status]);
+            let files = this.getByType([type[status]]);
             for (let i in files) {
                 descriptors.push({
                     label: files[i].path,
@@ -107,6 +107,6 @@ export class FileContainer {
     }
 
     isDirty(): boolean {
-        return this.lengthOfType(GitStatus.MODIFIED, GitStatus.DELETED) !== 0;
+        return this.lengthOfType([GitStatus.MODIFIED, GitStatus.DELETED]) !== 0;
     }
 }
