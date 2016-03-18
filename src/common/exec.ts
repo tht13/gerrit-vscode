@@ -2,14 +2,15 @@ import { spawn, ChildProcess } from "child_process";
 import { Logger } from "../view/logger";
 import * as utils from "./utils";
 
-export function run(command: string, args: string[], options: any): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
+export function run(command: string, args: string[], options: any, log?: boolean): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
+    log = utils.setDefault(log, true);
     let child = spawn(command, args, options);
 
     if (options.input) {
         child.stdin.end(options.input, "utf8");
     }
 
-    return exec(child).then(value => {
+    return exec(child, log).then(value => {
         if (!utils.isNull(value.error)) {
             value.error.name = `Command ${command} ${args.join(" ")} failed with exit code: ${value.exit_code}`;
         }
@@ -17,7 +18,7 @@ export function run(command: string, args: string[], options: any): Promise<{ ex
     });
 }
 
-function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
+function exec(child: ChildProcess, log: boolean): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
     let result = {
         exit_code: 0,
         error: null,
@@ -38,7 +39,7 @@ function exec(child: ChildProcess): Promise<{ exit_code: number, error: Error, s
     let stdoutPromise = new Promise((resolve, reject) => {
         let stdout: Buffer[] = [];
         child.stdout.on("data", (b: Buffer) => {
-            Logger.logger.log(b.toString());
+            if (log) Logger.logger.log(b.toString());
             stdout.push(b);
         });
         child.stdout.on("close", () => {
