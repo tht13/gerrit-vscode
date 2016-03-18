@@ -113,6 +113,7 @@ class GitClass implements IGit {
         });
     }
 
+    // TODO: Broken as vim editor opens
     public cherrypickContinue(): Promise<string> {
         if (!this.cherrypickActive) {
             return;
