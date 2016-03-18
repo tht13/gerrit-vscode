@@ -1,6 +1,6 @@
 import { Ref } from "./ref";
 import { createLog, GitLog } from "./gitLog";
-import { GerritSettings, IGerritSettings } from "../common/settings";
+import { GerritSettings } from "../common/settings";
 import { Logger, LoggerSingleton } from "../view/logger";
 import * as utils from "../common/utils";
 import * as common from "../common/common";
@@ -26,7 +26,7 @@ interface IGit {
 }
 
 class GitClass implements IGit {
-    private settings: IGerritSettings;
+    private settings: GerritSettings;
     private logger: LoggerSingleton;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
@@ -34,7 +34,7 @@ class GitClass implements IGit {
 
     constructor() {
         this.gerrit = Gerrit;
-        this.settings = GerritSettings;
+        this.settings = GerritSettings.getInstance();
         this.logger = Logger.logger;
         this.cherrypickActive = false;
         this.rebaseActive = false;

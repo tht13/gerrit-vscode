@@ -1,27 +1,6 @@
 import { workspace } from "vscode";
 
-interface IGerritSettings {
-
-    host: string;
-
-    protocol: string;
-
-    httpPort: number;
-
-    sshPort: number;
-
-    username: string;
-
-    project: string;
-
-    version: string;
-
-    httpPassword: string;
-
-    workspaceRoot: string;
-}
-
-class GerritSettingsClass implements IGerritSettings {
+class GerritSettings {
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -31,6 +10,7 @@ class GerritSettingsClass implements IGerritSettings {
     private _version: string;
     private _httpPassword: string;
     private _workspaceRoot: string;
+    private static _gerritSettings: GerritSettings = null;
 
     constructor() {
         this._workspaceRoot = workspace.rootPath;
@@ -38,6 +18,13 @@ class GerritSettingsClass implements IGerritSettings {
         workspace.onDidChangeConfiguration(() => {
             this.loadSettings();
         });
+    }
+
+    static getInstance() {
+        if (GerritSettings._gerritSettings === null) {
+            GerritSettings._gerritSettings = new GerritSettings();
+        }
+        return GerritSettings._gerritSettings;
     }
 
     private loadSettings(): void {
@@ -93,17 +80,5 @@ class GerritSettingsClass implements IGerritSettings {
     }
 }
 
-class GerritSettingsSingleton {
-    private static _gerritSettings: GerritSettingsClass = null;
-
-    static get gerritSettings() {
-        if (GerritSettingsSingleton._gerritSettings === null) {
-            GerritSettingsSingleton._gerritSettings = new GerritSettingsClass();
-        }
-        return GerritSettingsSingleton._gerritSettings;
-    }
-}
-
-const GerritSettings = GerritSettingsSingleton.gerritSettings;
 export default GerritSettings;
-export { GerritSettings, IGerritSettings };
+export { GerritSettings };

@@ -1,7 +1,7 @@
 import { Ref } from "./ref";
 import { createLog, GitLog } from "./gitLog";
 import { Logger, LoggerSingleton } from "../view/logger";
-import { GerritSettings, IGerritSettings } from "../common/settings";
+import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
 import * as common from "../common/common";
@@ -39,13 +39,13 @@ class GerritClass implements IGerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: LoggerSingleton;
-    private settings: IGerritSettings;
+    private settings: GerritSettings;
     private statusBar: StatusBar;
     private git: IGit;
     private fileIndex: gitFiles.GlobalFileContainer;
 
     constructor() {
-        this.settings = GerritSettings;
+        this.settings = GerritSettings.getInstance();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
