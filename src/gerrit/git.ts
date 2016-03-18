@@ -17,11 +17,14 @@ class Git {
     private static _git: Git = null;
 
     constructor() {
-        this.gerrit = Gerrit.getInstance();
         this.settings = GerritSettings.getInstance();
         this.logger = Logger.logger;
         this.cherrypickActive = false;
         this.rebaseActive = false;
+    }
+
+    setGerrit() {
+        this.gerrit = Gerrit.getInstance();
     }
 
     static getInstance() {
