@@ -1,12 +1,11 @@
 "use strict";
 import * as vscode from "vscode";
 import { Git } from "./common/git/git";
-import { GerritSettings } from "./common/settings";
-import { GerritController } from "./gerrit/controller";
+import { Controller } from "./controller";
 import { GlobalFileContainerClient } from "./gerrit/files/globalFileContainerClient";
 import { RequestEventType } from "./gerrit/files/globalFileContainerInterface";
 
-let controller: GerritController;
+let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
     {
@@ -20,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
     }
     let commands: vscode.Disposable[] = [];
-    controller = new GerritController();
+    controller = new Controller();
 
     commands.push(
         vscode.commands.registerCommand("gerrit.stageAll", () => {
