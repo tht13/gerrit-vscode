@@ -2,7 +2,7 @@
 import * as vscode from "vscode";
 import { GerritController } from "./gerrit/controller";
 import { GerritSettings } from "./common/settings";
-import { Git } from "./gerrit/git";
+import { Git } from "./common/git/git";
 import { GlobalFileContainerClient } from "./gerrit/files/globalFileContainerClient";
 import { RequestEventType } from "./gerrit/files/globalFileContainerInterface";
 

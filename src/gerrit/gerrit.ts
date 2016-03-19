@@ -1,5 +1,5 @@
 import { Ref } from "./ref";
-import { createLog, GitLog } from "./gitLog";
+import { createLog, GitLog } from "../common/git/gitLog";
 import { Logger } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
@@ -9,7 +9,7 @@ import * as utils from "../common/utils";
 import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
 import Event from "../common/event";
-import { Git } from "./git";
+import { Git } from "../common/git/git";
 import { FileContainer } from "./files/fileContainer";
 import { GlobalFileContainerClient } from "./files/globalFileContainerClient";
 let rp = require("request-promise");
