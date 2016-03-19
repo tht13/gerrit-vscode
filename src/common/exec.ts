@@ -1,16 +1,16 @@
 import { spawn, ChildProcess } from "child_process";
 import * as utils from "./utils";
-import { Logger } from "../view/logger";
+import { BasicLogger } from "../view/simpleLogger";
 
-export function run(command: string, args: string[], options: any, log?: boolean): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
-    log = utils.setDefault(log, true);
+export function run(command: string, args: string[], options: any, logger?: BasicLogger): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
+    logger = utils.setDefault(logger, null);
     let child = spawn(command, args, options);
 
     if (options.input) {
         child.stdin.end(options.input, "utf8");
     }
 
-    return exec(child, log).then(value => {
+    return exec(child, logger).then(value => {
         if (!utils.isNull(value.error)) {
             value.error.name = `Command ${command} ${args.join(" ")} failed with exit code: ${value.exit_code}`;
         }
@@ -18,7 +18,7 @@ export function run(command: string, args: string[], options: any, log?: boolean
     });
 }
 
-function exec(child: ChildProcess, log: boolean): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
+function exec(child: ChildProcess, log: BasicLogger): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
     let result = {
         exit_code: 0,
         error: null,
@@ -28,7 +28,7 @@ function exec(child: ChildProcess, log: boolean): Promise<{ exit_code: number, e
     let stderrPromise = new Promise((resolve, reject) => {
         let stderr: Buffer[] = [];
         child.stderr.on("data", (b: Buffer) => {
-            Logger.logger.log(b.toString());
+            if (!utils.isNull) log.log(b.toString());
             stderr.push(b);
         });
         child.stderr.on("close", () => {
@@ -39,7 +39,7 @@ function exec(child: ChildProcess, log: boolean): Promise<{ exit_code: number, e
     let stdoutPromise = new Promise((resolve, reject) => {
         let stdout: Buffer[] = [];
         child.stdout.on("data", (b: Buffer) => {
-            if (log) Logger.logger.log(b.toString());
+            if (!utils.isNull(log)) log.log(b.toString());
             stdout.push(b);
         });
         child.stdout.on("close", () => {
