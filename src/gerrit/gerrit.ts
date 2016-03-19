@@ -60,7 +60,7 @@ export class Gerrit {
                         console.log(reason);
                     });
                 }
-            }, (reason: common.RejectReason) => {
+            }, (reason: reject.RejectReason) => {
                 console.log("rejected");
                 console.log(reason);
                 if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
