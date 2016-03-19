@@ -11,8 +11,9 @@ import { IReview } from "./gerritAPI";
 import Event from "../common/event";
 import { Git } from "./git";
 import { FileContainer } from "./files/fileContainer";
-import { GlobalFileContainer } from "./files/globalFileContainer";
+import { GlobalFileContainerClient } from "./files/globalFileContainerClient";
 let rp = require("request-promise");
+import { RequestEventType } from "./files/globalFileContainerInterface";
 
 // TODO: Redo FileContainer and add event emitter
 
@@ -24,7 +25,7 @@ export class Gerrit {
     private settings: GerritSettings;
     private statusBar: StatusBar;
     private git: Git;
-    private fileIndex: GlobalFileContainer;
+    private fileIndex: GlobalFileContainerClient;
     private static _gerrit: Gerrit = null;
 
     constructor() {
@@ -33,7 +34,7 @@ export class Gerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git.getInstance();
-        this.fileIndex = new GlobalFileContainer();
+        this.fileIndex = GlobalFileContainerClient.getInstance();
         this.updateStatus();
     }
 
@@ -45,28 +46,28 @@ export class Gerrit {
     }
 
     private updateStatus() {
-        this.fileIndex.updateFiles().then(value => {
-            this.getGitLog(0).then(value => {
-                console.log(value);
-                if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-                        this.settings.project = value.project;
-                        this.setBranch(value.branch);
-                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-                        this.setCurrentRef(ref);
-                    }, reason => {
-                        console.log("rejected");
-                        console.log(reason);
-                    });
-                }
-            }, (reason: common.RejectReason) => {
-                console.log("rejected");
-                console.log(reason);
-                if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-                    this.logger.log("No commits on branch");
-                }
-            });
-        });
+        // this.fileIndex.updateFiles().then(value => {
+        //     this.getGitLog(0).then(value => {
+        //         console.log(value);
+        //         if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+        //             this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+        //                 this.settings.project = value.project;
+        //                 this.setBranch(value.branch);
+        //                 let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+        //                 this.setCurrentRef(ref);
+        //             }, reason => {
+        //                 console.log("rejected");
+        //                 console.log(reason);
+        //             });
+        //         }
+        //     }, (reason: common.RejectReason) => {
+        //         console.log("rejected");
+        //         console.log(reason);
+        //         if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+        //             this.logger.log("No commits on branch");
+        //         }
+        //     });
+        // });
     }
 
     public setStatusBar(statusBar: StatusBar) {
@@ -101,15 +102,17 @@ export class Gerrit {
     }
 
     public getDirtyFiles(): Promise<FileContainer> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex;
-        });
+        // return this.fileIndex.updateFiles().then(() => {
+        //     return this.fileIndex;
+        // });
+        return Promise.resolve({});
     }
 
     public getStagedFiles(): Promise<FileContainer> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex;
-        });
+        // return this.fileIndex.updateFiles().then(() => {
+        //     return this.fileIndex;
+        // });
+        return Promise.resolve({});
     }
 
     public getBranches(): Promise<string[]> {

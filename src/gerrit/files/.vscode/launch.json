@@ -1,0 +1,17 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Attach",
+			"type": "node",
+			"request": "attach",
+			"port": 6004,
+			"address": "localhost",
+			"restart": true,
+			"sourceMaps": true,
+			"outDir": "${workspaceRoot}/../../../out/src/gerrit/files",
+			"localRoot": "${workspaceRoot}",
+			"remoteRoot": "../../../out/src/gerrit/files"
+		}
+	]
+}
