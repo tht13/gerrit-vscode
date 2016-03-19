@@ -1,13 +1,13 @@
 import { window, OutputChannel } from "vscode";
+import { BasicLogger } from "./simpleLogger";
 import * as utils from "../common/utils";
 
-export class Logger {
+export class Logger extends BasicLogger {
     private outputChannel: OutputChannel;
-    private visible: boolean = false;
-    private debugMode: boolean = false;
     private static _logger: Logger = null;
 
     constructor() {
+        super();
         this.outputChannel = window.createOutputChannel("Gerrit");
     }
 
@@ -16,10 +16,6 @@ export class Logger {
             Logger._logger = new Logger();
         }
         return Logger._logger;
-    }
-
-    setDebug(value: boolean) {
-        this.debugMode = value;
     }
 
     log(value: string, show?: boolean) {
@@ -31,12 +27,5 @@ export class Logger {
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
         }
-    }
-
-    debug(value: string) {
-        if (!this.debugMode) {
-            return;
-        }
-        this.log(value);
     }
 }
