@@ -1,14 +1,9 @@
 "use strict";
 import * as vscode from "vscode";
 import { GerritController } from "./gerrit/controller";
-import { Gerrit } from "./gerrit/gerrit";
 import { Git } from "./gerrit/git";
 
 let controller: GerritController;
-{
-    let git = Git.getInstance();
-    git.setGerrit();
-}
 
 export function activate(context: vscode.ExtensionContext) {
     let commands: vscode.Disposable[] = [];
