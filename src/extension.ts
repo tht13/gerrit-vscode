@@ -1,7 +1,7 @@
 "use strict";
 import * as vscode from "vscode";
 import { GerritController } from "./gerrit/controller";
-import { Git } from "./gerrit/git";
+import { Git } from "./common/git/git";
 
 let controller: GerritController;
 

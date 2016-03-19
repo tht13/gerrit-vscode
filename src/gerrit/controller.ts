@@ -2,7 +2,7 @@ import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
 import { Gerrit } from "./gerrit";
-import { Git } from "./git";
+import { Git } from "../common/git/git";
 import { Ref } from "./ref";
 import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
