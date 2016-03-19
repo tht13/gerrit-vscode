@@ -10,6 +10,7 @@ class GerritSettings {
     private _version: string;
     private _httpPassword: string;
     private _workspaceRoot: string;
+    private _extensionRoot: string;
     private static _gerritSettings: GerritSettings = null;
 
     constructor() {
@@ -77,6 +78,14 @@ class GerritSettings {
 
     get workspaceRoot(): string {
         return this._workspaceRoot;
+    }
+
+    get extensionRoot(): string {
+        return this._extensionRoot;
+    }
+
+    set extensionRoot(value: string) {
+        this._extensionRoot = value;
     }
 }
 
