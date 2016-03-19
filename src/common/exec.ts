@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from "child_process";
-import { Logger } from "../view/logger";
 import * as utils from "./utils";
+import { Logger } from "../view/logger";
 
 export function run(command: string, args: string[], options: any, log?: boolean): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
     log = utils.setDefault(log, true);

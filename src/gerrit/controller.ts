@@ -1,18 +1,18 @@
+import * as fs from "fs";
+import * as path from "path";
 import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
-import { Gerrit } from "./gerrit";
-import { Git } from "../common/git/git";
-import { Ref } from "./ref";
-import { Logger } from "../view/logger";
-import * as utils from "../common/utils";
-import * as reject from "../common/reject";
-import * as view from "../view/common";
-import * as path from "path";
-import * as fs from "fs";
-import * as octicon from "../common/octicons";
-import { StatusBar } from "../view/statusbar";
 import { GitStatus } from "./files/fileContainer";
+import { Gerrit } from "./gerrit";
+import { Ref } from "./ref";
+import { Git } from "../common/git/git";
+import * as reject from "../common/reject";
+import * as utils from "../common/utils";
+import * as octicon from "../common/octicons";
+import * as view from "../view/common";
+import { Logger } from "../view/logger";
+import { StatusBar } from "../view/statusbar";
 
 export class GerritController {
     private logger: Logger;

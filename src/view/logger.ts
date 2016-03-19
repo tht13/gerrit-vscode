@@ -39,5 +39,4 @@ export class Logger {
         }
         this.log(value);
     }
-
 }
