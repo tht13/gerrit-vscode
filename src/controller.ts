@@ -3,13 +3,13 @@ import * as path from "path";
 import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
-import { GitStatus } from "./files/fileContainer";
-import { Gerrit } from "./gerrit/gerrit";
-import { Ref } from "./gerrit/ref";
 import { Git } from "./common/git/git";
 import * as reject from "./common/reject";
 import * as utils from "./common/utils";
 import * as octicon from "./common/octicons";
+import { GitStatus } from "./files/fileContainer";
+import { Gerrit } from "./gerrit/gerrit";
+import { Ref } from "./gerrit/ref";
 import * as view from "./view/common";
 import { Logger } from "./view/logger";
 import { StatusBar } from "./view/statusbar";
