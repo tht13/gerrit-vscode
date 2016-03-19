@@ -1,5 +1,4 @@
 import * as utils from "../../common/utils";
-import * as common from "../../common/common";
 import { Git } from "../../common/git/git";
 import { FileContainer, GitStatus, IUpdateResult, IFile } from "./fileContainer";
 

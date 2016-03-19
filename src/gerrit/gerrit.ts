@@ -4,7 +4,8 @@ import { Logger } from "../view/logger";
 import { GerritSettings } from "../common/settings";
 import { StatusBar } from "../view/statusbar";
 import { workspace } from "vscode";
-import * as common from "../common/common";
+import * as reject from "../common/reject";
+import * as view from "../view/common";
 import * as utils from "../common/utils";
 import * as exec from "../common/exec";
 import { IReview } from "./gerritAPI";
@@ -128,12 +129,12 @@ export class Gerrit {
         });
     }
 
-    public getChanges(count?: number): Promise<common.ChangeQuickPick[]> {
+    public getChanges(count?: number): Promise<view.ChangeQuickPick[]> {
         let countString = (utils.isNull(count)) ? "" : "&n=" + count;
         return this.get(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
-            let changes: common.ChangeQuickPick[] = [];
+            let changes: view.ChangeQuickPick[] = [];
             for (let item of value) {
-                let change: common.ChangeQuickPick = {
+                let change: view.ChangeQuickPick = {
                     change_id: item.change_id,
                     change_number: item._number,
                     label: item._number.toString(),
@@ -145,10 +146,10 @@ export class Gerrit {
         });
     }
 
-    public getPatchsets(change_id: number): Promise<common.PatchsetQuickPick[]> {
+    public getPatchsets(change_id: number): Promise<view.PatchsetQuickPick[]> {
         return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
             let revision_count: number = value[0].revisions[value[0].current_revision]._number;
-            let revisions: common.PatchsetQuickPick[] = [];
+            let revisions: view.PatchsetQuickPick[] = [];
             for (let i = revision_count; i >= 1; i--) {
                 revisions.push({
                     patchset: i,
@@ -188,10 +189,10 @@ export class Gerrit {
     private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string | void> {
         return this.isDirty().then(dirty => {
             if (dirty) {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: true,
                     message: "Dirty Head",
-                    type: common.RejectType.DEFAULT
+                    type: reject.RejectType.DEFAULT
                 };
                 return Promise.reject(reason);
             }

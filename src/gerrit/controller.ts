@@ -6,7 +6,8 @@ import { Git } from "../common/git/git";
 import { Ref } from "./ref";
 import { Logger } from "../view/logger";
 import * as utils from "../common/utils";
-import * as common from "../common/common";
+import * as reject from "../common/reject";
+import * as view from "../view/common";
 import * as path from "path";
 import * as fs from "fs";
 import * as octicon from "../common/octicons";
@@ -43,13 +44,13 @@ export class GerritController {
     }
 
     public stageFile() {
-        window.showQuickPick<common.FileStageQuickPick>(
+        window.showQuickPick<view.FileStageQuickPick>(
             this.aquireLock(this.gerrit, this.gerrit.getDirtyFiles).then(value => {
                 if (value.length === 0) {
-                    let reason: common.RejectReason = {
+                    let reason: reject.RejectReason = {
                         showInformation: true,
                         message: "No files to stage",
-                        type: common.RejectType.NO_DIRTY
+                        type: reject.RejectType.NO_DIRTY
                     };
                     Promise.reject(reason);
                 }
@@ -67,8 +68,8 @@ export class GerritController {
                 this.aquireLock(this.git, this.git.stage, [filePath]).then(value => {
                 }, reason => {
                 });
-            }, (reason: common.RejectReason) => {
-                if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+            }, (reason: reject.RejectReason) => {
+                if (reason.type === reject.RejectType.NO_DIRTY && reason.showInformation) {
                     window.showInformationMessage(reason.message);
                 }
             });
@@ -88,13 +89,13 @@ export class GerritController {
     }
 
     public resetFile() {
-        window.showQuickPick<common.FileStageQuickPick>(
+        window.showQuickPick<view.FileStageQuickPick>(
             this.aquireLock(this.gerrit, this.gerrit.getStagedFiles).then(value => {
                 if (value.length === 0) {
-                    let reason: common.RejectReason = {
+                    let reason: reject.RejectReason = {
                         showInformation: true,
                         message: "No staged files",
-                        type: common.RejectType.NO_DIRTY
+                        type: reject.RejectType.NO_DIRTY
                     };
                     Promise.reject(reason);
                 }
@@ -108,8 +109,8 @@ export class GerritController {
                 this.aquireLock(this.git, this.git.reset, [filePath, false]).then(value => {
                 }, reason => {
                 });
-            }, (reason: common.RejectReason) => {
-                if (reason.type === common.RejectType.NO_DIRTY && reason.showInformation) {
+            }, (reason: reject.RejectReason) => {
+                if (reason.type === reject.RejectType.NO_DIRTY && reason.showInformation) {
                     window.showInformationMessage(reason.message);
                 }
             });
@@ -118,7 +119,7 @@ export class GerritController {
     // TODO: clean file from quick pick, requires getStagedFiles
     // TODO: clean untracked files with git clean -f <path>
     public cleanAll() {
-        common.confirm("Clean all files? This cannot be undone").then(value => {
+        view.confirm("Clean all files? This cannot be undone").then(value => {
             if (value) {
                 this.aquireLock(this.git, this.git.clean, ["."]);
             }
@@ -129,7 +130,7 @@ export class GerritController {
         let filePath: string = window.activeTextEditor.document.fileName;
         fs.stat(filePath, (err, stats) => {
             if (!err) {
-                common.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
+                view.confirm(`Clean ${path.basename}? This cannot be undone`).then(value => {
                     if (value) {
                         this.aquireLock(this.git, this.git.clean, [filePath]);
                     }
