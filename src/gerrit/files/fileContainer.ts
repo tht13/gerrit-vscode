@@ -1,5 +1,5 @@
 import * as utils from "../../common/utils";
-import * as common from "../../common/common";
+import * as view from "../../view/common";
 
 export interface IFile {
     path: string;
@@ -51,7 +51,7 @@ export class FileContainer {
         return paths;
     }
 
-    private removeByPath(container: common.FileStageQuickPick[], path: string): common.FileStageQuickPick[] {
+    private removeByPath(container: view.FileStageQuickPick[], path: string): view.FileStageQuickPick[] {
         container = container.filter((value, index, array) => {
             return value.path !== path;
         });
@@ -76,8 +76,8 @@ export class FileContainer {
         return subset;
     }
 
-    getDescriptorsAll(): common.FileStageQuickPick[] {
-        let descriptors: common.FileStageQuickPick[] = [];
+    getDescriptorsAll(): view.FileStageQuickPick[] {
+        let descriptors: view.FileStageQuickPick[] = [];
         for (let status in GitStatus) {
             let files = this.getByType([GitStatus.MODIFIED]);
             for (let i in files) {
@@ -91,8 +91,8 @@ export class FileContainer {
         return descriptors;
     }
 
-    getDescriptorsByType(type: GitStatus[]): common.FileStageQuickPick[] {
-        let descriptors: common.FileStageQuickPick[] = [];
+    getDescriptorsByType(type: GitStatus[]): view.FileStageQuickPick[] {
+        let descriptors: view.FileStageQuickPick[] = [];
         for (let status in type) {
             let files = this.getByType([type[status]]);
             for (let i in files) {

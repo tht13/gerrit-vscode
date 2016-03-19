@@ -1,5 +1,5 @@
 import { QuickPickItem, window } from "vscode";
-import * as utils from "./utils";
+import * as utils from "../common/utils";
 
 export interface FileStageQuickPick extends QuickPickItem {
     path: string;
@@ -16,23 +16,6 @@ export interface ChangeQuickPick extends QuickPickItem {
 
 export interface PatchsetQuickPick extends QuickPickItem {
     patchset: number;
-}
-
-export interface RejectReason {
-    message: string;
-
-    showInformation?: boolean;
-
-    type: RejectType;
-
-    attributes?: any;
-}
-
-export enum RejectType {
-    DEFAULT,
-    GIT,
-    GET,
-    NO_DIRTY
 }
 
 export function confirm(message: string): Thenable<boolean> {
