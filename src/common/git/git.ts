@@ -1,21 +1,21 @@
 import { createLog, GitLog } from "./gitLog";
 import * as exec from "../exec";
 import * as common from "../reject";
-import { GerritSettings } from "../settings";
+import { Settings } from "../settings";
 import * as utils from "../utils";
 import { Ref } from "../../gerrit/ref";
 import { Logger } from "../../view/logger";
 
 
 class Git {
-    private settings: GerritSettings;
+    private settings: Settings;
     private logger: Logger;
     private cherrypickActive: boolean;
     private rebaseActive: boolean;
     private static _git: Git = null;
 
     constructor() {
-        this.settings = GerritSettings.getInstance();
+        this.settings = Settings.getInstance();
         this.logger = Logger.logger;
         this.cherrypickActive = false;
         this.rebaseActive = false;

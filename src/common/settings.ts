@@ -1,6 +1,6 @@
 import { workspace } from "vscode";
 
-class GerritSettings {
+class Settings {
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -11,7 +11,7 @@ class GerritSettings {
     private _httpPassword: string;
     private _workspaceRoot: string;
     private _extensionRoot: string;
-    private static _gerritSettings: GerritSettings = null;
+    private static _settings: Settings = null;
 
     constructor() {
         this._workspaceRoot = workspace.rootPath;
@@ -22,10 +22,10 @@ class GerritSettings {
     }
 
     static getInstance() {
-        if (GerritSettings._gerritSettings === null) {
-            GerritSettings._gerritSettings = new GerritSettings();
+        if (Settings._settings === null) {
+            Settings._settings = new Settings();
         }
-        return GerritSettings._gerritSettings;
+        return Settings._settings;
     }
 
     private loadSettings(): void {
@@ -89,5 +89,5 @@ class GerritSettings {
     }
 }
 
-export default GerritSettings;
-export { GerritSettings };
+export default Settings;
+export { Settings };

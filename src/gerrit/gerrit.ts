@@ -10,7 +10,7 @@ import * as exec from "../common/exec";
 import { Git } from "../common/git/git";
 import { createLog, GitLog } from "../common/git/gitLog";
 import * as reject from "../common/reject";
-import { GerritSettings } from "../common/settings";
+import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
 import * as view from "../view/common";
 import { Logger } from "../view/logger";
@@ -23,14 +23,14 @@ export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: Logger;
-    private settings: GerritSettings;
+    private settings: Settings;
     private statusBar: StatusBar;
     private git: Git;
     private fileIndex: GlobalFileContainerClient;
     private static _gerrit: Gerrit = null;
 
     constructor() {
-        this.settings = GerritSettings.getInstance();
+        this.settings = Settings.getInstance();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);

@@ -1,6 +1,7 @@
 "use strict";
 import * as vscode from "vscode";
 import { Git } from "./common/git/git";
+import { Settings } from "./common/settings";
 import { Controller } from "./controller";
 import { GlobalFileContainerClient } from "./gerrit/files/globalFileContainerClient";
 import { RequestEventType } from "./gerrit/files/globalFileContainerInterface";
@@ -9,7 +10,7 @@ let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
     {
-        GerritSettings.getInstance().extensionRoot = context.extensionPath;
+        Settings.getInstance().extensionRoot = context.extensionPath;
         console.log("active");
         let fileContainer = GlobalFileContainerClient.getInstance();
         context.subscriptions.push(fileContainer.startServer());
