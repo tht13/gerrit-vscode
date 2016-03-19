@@ -10,7 +10,13 @@ let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
     {
-        Settings.getInstance().extensionRoot = context.extensionPath;
+        let settings = Settings.getInstance();
+        settings.extensionRoot = context.extensionPath;
+        settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
+        vscode.workspace.onDidChangeConfiguration(() => {
+            settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
+        });
+
         console.log("active");
         let fileContainer = GlobalFileContainerClient.getInstance();
         context.subscriptions.push(fileContainer.startServer());

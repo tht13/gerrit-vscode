@@ -1,5 +1,3 @@
-import { workspace } from "vscode";
-
 class Settings {
     private _host: string;
     private _protocol: string;
@@ -14,11 +12,6 @@ class Settings {
     private static _settings: Settings = null;
 
     constructor() {
-        this._workspaceRoot = workspace.rootPath;
-        this.loadSettings();
-        workspace.onDidChangeConfiguration(() => {
-            this.loadSettings();
-        });
     }
 
     static getInstance() {
@@ -28,8 +21,7 @@ class Settings {
         return Settings._settings;
     }
 
-    private loadSettings(): void {
-        let settings: any = workspace.getConfiguration("gerrit");
+    public loadSettings(settings: any): void {
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
@@ -78,6 +70,10 @@ class Settings {
 
     get workspaceRoot(): string {
         return this._workspaceRoot;
+    }
+
+    set workspaceRoot(value: string) {
+        this._workspaceRoot = value;
     }
 
     get extensionRoot(): string {
