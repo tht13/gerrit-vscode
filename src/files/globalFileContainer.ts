@@ -1,10 +1,9 @@
-import { FileContainer, GitStatus, IUpdateResult, IFile } from "./fileContainer";
-import { Git } from "../common/git/git";
+import { BasicFileContainer } from "./basicFileContainer";
+import { GitStatus, IUpdateResult, IFile } from "./common";
 import * as utils from "../common/utils";
 
 // TODO: Make GlobalFileContainer singleton
-export class GlobalFileContainer extends FileContainer {
-    private git: Git;
+export class GlobalFileContainer extends BasicFileContainer {
 
 
     constructor() {

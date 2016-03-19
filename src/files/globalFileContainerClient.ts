@@ -21,7 +21,7 @@ export class GlobalFileContainerClient {
 
     private getOptions(): { serverOptions: ServerOptions, clientOptions: LanguageClientOptions } {
         let serverModule = path.join(Settings.getInstance().extensionRoot, "out", "src",
-            "gerrit", "files", "globalFileContainerServer.js");
+            "files", "globalFileContainerServer.js");
         let debugOptions = {
             execArgv: ["--nolazy", "--debug=6004"],
             // cwd: GerritSettings.getInstance().extensionRoot

@@ -7,7 +7,7 @@ import { Git } from "./common/git/git";
 import * as reject from "./common/reject";
 import * as utils from "./common/utils";
 import * as octicon from "./common/octicons";
-import { GitStatus } from "./files/fileContainer";
+import { GitStatus } from "./files/common";
 import { Gerrit } from "./gerrit/gerrit";
 import { Ref } from "./gerrit/ref";
 import * as view from "./view/common";

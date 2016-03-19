@@ -9,9 +9,9 @@
 			"address": "localhost",
 			"restart": true,
 			"sourceMaps": true,
-			"outDir": "${workspaceRoot}/../../../out/src/gerrit/files",
+			"outDir": "${workspaceRoot}/../../out/src/files",
 			"localRoot": "${workspaceRoot}",
-			"remoteRoot": "../../../out/src/gerrit/files"
+			"remoteRoot": "../../out/src"
 		}
 	]
 }

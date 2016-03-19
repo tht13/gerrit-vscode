@@ -1,4 +1,3 @@
-import { Uri, WorkspaceConfiguration } from "vscode";
 import { RequestType } from "vscode-languageclient";
 
 export namespace Request {
@@ -14,12 +13,6 @@ export interface RequestParams {
      * the server.
      */
     processId: number;
-
-    /**
-     * The configuration option to sent
-     * requestEventType must be set to CONFIG
-     */
-    configuration?: WorkspaceConfiguration;
 
     /**
      * The type of request event to handle.
