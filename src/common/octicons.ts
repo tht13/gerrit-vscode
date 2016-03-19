@@ -1,4 +1,3 @@
-
 export enum OCTICONS {
     ALERT,
     ARROW_DOWN,

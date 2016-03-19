@@ -1,20 +1,20 @@
-import { Ref } from "./ref";
-import { createLog, GitLog } from "../common/git/gitLog";
-import { Logger } from "../view/logger";
-import { GerritSettings } from "../common/settings";
-import { StatusBar } from "../view/statusbar";
+let rp = require("request-promise");
 import { workspace } from "vscode";
-import * as reject from "../common/reject";
-import * as view from "../view/common";
-import * as utils from "../common/utils";
-import * as exec from "../common/exec";
-import { IReview } from "./gerritAPI";
-import Event from "../common/event";
-import { Git } from "../common/git/git";
 import { FileContainer } from "./files/fileContainer";
 import { GlobalFileContainerClient } from "./files/globalFileContainerClient";
-let rp = require("request-promise");
 import { RequestEventType } from "./files/globalFileContainerInterface";
+import { IReview } from "./gerritAPI";
+import { Ref } from "./ref";
+import Event from "../common/event";
+import * as exec from "../common/exec";
+import { Git } from "../common/git/git";
+import { createLog, GitLog } from "../common/git/gitLog";
+import * as reject from "../common/reject";
+import { GerritSettings } from "../common/settings";
+import * as utils from "../common/utils";
+import * as view from "../view/common";
+import { Logger } from "../view/logger";
+import { StatusBar } from "../view/statusbar";
 
 // TODO: Redo FileContainer and add event emitter
 
@@ -267,4 +267,3 @@ export class Gerrit {
 }
 
 export default Gerrit;
-

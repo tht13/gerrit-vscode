@@ -1,10 +1,10 @@
-import { Ref } from "../../gerrit/ref";
 import { createLog, GitLog } from "./gitLog";
-import { GerritSettings } from "../settings";
-import { Logger } from "../../view/logger";
-import * as utils from "../utils";
-import * as common from "../reject";
 import * as exec from "../exec";
+import * as common from "../reject";
+import { GerritSettings } from "../settings";
+import * as utils from "../utils";
+import { Ref } from "../../gerrit/ref";
+import { Logger } from "../../view/logger";
 
 
 class Git {

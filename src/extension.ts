@@ -1,8 +1,8 @@
 "use strict";
 import * as vscode from "vscode";
-import { GerritController } from "./gerrit/controller";
-import { GerritSettings } from "./common/settings";
 import { Git } from "./common/git/git";
+import { GerritSettings } from "./common/settings";
+import { GerritController } from "./gerrit/controller";
 import { GlobalFileContainerClient } from "./gerrit/files/globalFileContainerClient";
 import { RequestEventType } from "./gerrit/files/globalFileContainerInterface";
 
