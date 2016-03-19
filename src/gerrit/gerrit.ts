@@ -1,8 +1,5 @@
 let rp = require("request-promise");
 import { workspace } from "vscode";
-import { FileContainer } from "./files/fileContainer";
-import { GlobalFileContainerClient } from "./files/globalFileContainerClient";
-import { RequestEventType } from "./files/globalFileContainerInterface";
 import { IReview } from "./gerritAPI";
 import { Ref } from "./ref";
 import Event from "../common/event";
@@ -12,6 +9,9 @@ import { createLog, GitLog } from "../common/git/gitLog";
 import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
+import { FileContainer } from "../files/fileContainer";
+import { GlobalFileContainerClient } from "../files/globalFileContainerClient";
+import { RequestEventType } from "../files/globalFileContainerInterface";
 import * as view from "../view/common";
 import { Logger } from "../view/logger";
 import { StatusBar } from "../view/statusbar";

@@ -1,6 +1,6 @@
 import { FileContainer, GitStatus, IUpdateResult, IFile } from "./fileContainer";
-import { Git } from "../../common/git/git";
-import * as utils from "../../common/utils";
+import { Git } from "../common/git/git";
+import * as utils from "../common/utils";
 
 // TODO: Make GlobalFileContainer singleton
 export class GlobalFileContainer extends FileContainer {

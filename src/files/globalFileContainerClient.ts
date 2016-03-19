@@ -1,9 +1,9 @@
 import { workspace } from "vscode";
-import { GerritSettings } from "../../common/settings";
+import { Settings } from "../common/settings";
 import * as path from "path";
 import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
-import * as utils from "../../common/utils";
+import * as utils from "../common/utils";
 
 export class GlobalFileContainerClient {
     private languageClient: LanguageClient;
@@ -20,7 +20,7 @@ export class GlobalFileContainerClient {
     }
 
     private getOptions(): { serverOptions: ServerOptions, clientOptions: LanguageClientOptions } {
-        let serverModule = path.join(GerritSettings.getInstance().extensionRoot, "out", "src",
+        let serverModule = path.join(Settings.getInstance().extensionRoot, "out", "src",
             "gerrit", "files", "globalFileContainerServer.js");
         let debugOptions = {
             execArgv: ["--nolazy", "--debug=6004"],
@@ -31,7 +31,7 @@ export class GlobalFileContainerClient {
         // Otherwise the run options are used
         let serverOptions: ServerOptions = {
             run: { module: serverModule, transport: TransportKind.ipc, options: {
-                cwd: GerritSettings.getInstance().extensionRoot
+                cwd: Settings.getInstance().extensionRoot
             } },
             debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
         };

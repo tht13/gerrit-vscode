@@ -1,5 +1,5 @@
-import * as utils from "../../common/utils";
-import * as view from "../../view/common";
+import * as utils from "../common/utils";
+import * as view from "../view/common";
 
 export interface IFile {
     path: string;
