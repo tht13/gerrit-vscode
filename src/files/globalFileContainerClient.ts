@@ -66,7 +66,7 @@ export class GlobalFileContainerClient {
         this.languageClient = new LanguageClient("Global File Container", options.serverOptions, options.clientOptions);
         let start = this.languageClient.start();
         this.languageClient.onReady().then(value => {
-            console.log("ready");
+            console.log("Server Ready");
         });
         return start;
     }

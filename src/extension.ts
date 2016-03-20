@@ -17,13 +17,8 @@ export function activate(context: vscode.ExtensionContext) {
             settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
         });
 
-        console.log("active");
         let fileContainer = GlobalFileContainerClient.getInstance();
         context.subscriptions.push(fileContainer.startServer());
-        console.log("sending message");
-        fileContainer.doRequest(RequestEventType.OPEN).then(value => {
-            console.log(value.message);
-        });
     }
     let commands: vscode.Disposable[] = [];
     controller = new Controller();

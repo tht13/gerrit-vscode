@@ -4,8 +4,6 @@ createConnection, IConnection, InitializeResult, TextDocuments } from "vscode-la
 import { GlobalFileContainer } from "./globalFileContainer";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
 
-console.log("active");
-
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let container = new GlobalFileContainer();
 let workspaceRoot: string;
@@ -34,7 +32,6 @@ connection.console.log("active");
 // fs.writeFile(path.join("C:", "example.txt"), "hello");
 
 connection.onRequest(Request.type, (params: RequestParams): RequestResult => {
-    console.log("event recieved");
     connection.console.log("Recieved event");
     return {
         message: "complete",
