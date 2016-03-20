@@ -1,20 +1,20 @@
-import * as common from "./common";
+import * as fileCommon from "./common";
 import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
 
 
 export abstract class BasicFileContainer {
-    protected container: Map<string, common.IFile>;
+    protected container: Map<string, fileCommon.IFile>;
 
     constructor() {
         this.container = new Map();
     }
 
-    add(item: common.IFile) {
+    add(item: fileCommon.IFile) {
         this.container.set(item.path, item);
     }
 
-    push(items: common.IFile[]) {
+    push(items: fileCommon.IFile[]) {
         for (let i in items) {
             this.add(items[i]);
         }
@@ -43,7 +43,7 @@ export abstract class BasicFileContainer {
     }
 
     getByType(type: gitCommon.GitStatus[]) {
-        let subset: Map<string, common.IFile> = new Map();
+        let subset: Map<string, fileCommon.IFile> = new Map();
         this.container.forEach((value, index, map) => {
             if (type.indexOf(value.status) > -1) {
                 subset.set(index, value);

@@ -1,5 +1,5 @@
 import { BasicFileContainer } from "./basicFileContainer";
-import * as common from "./common";
+import * as fileCommon from "./common";
 import { BasicGit } from "../common/git/basicGit";
 import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
@@ -15,7 +15,7 @@ export class GlobalFileContainer extends BasicFileContainer {
     }
 
     updateFiles() {
-        let find = (values: common.IUpdateResult[], search: gitCommon.GitStatus) => {
+        let find = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) => {
             return values.find((value, index, obj) => {
                 return (value.status === search);
             });
@@ -36,25 +36,25 @@ export class GlobalFileContainer extends BasicFileContainer {
         });
     }
 
-    private updateIndex(): Promise<common.IUpdateResult> {
+    private updateIndex(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.CLEAN);
     }
 
-    private updateModified(): Promise<common.IUpdateResult> {
+    private updateModified(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
     }
 
-    private updateDeleted(): Promise<common.IUpdateResult> {
+    private updateDeleted(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.DELETED, ["--exclude-standard", "-d"]);
     }
 
-    private updateUntracked(): Promise<common.IUpdateResult> {
+    private updateUntracked(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    private updateType(type: gitCommon.GitStatus, options?: string[], command?: string): Promise<common.IUpdateResult> {
+    private updateType(type: gitCommon.GitStatus, options?: string[], command?: string): Promise<fileCommon.IUpdateResult> {
         return this.git.ls_files(options).then(value => {
-            let container: common.IFile[] = [];
+            let container: fileCommon.IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
                 if (files[i] === "") {
@@ -69,9 +69,9 @@ export class GlobalFileContainer extends BasicFileContainer {
         });
     }
 
-    private updateStaged(): Promise<common.IUpdateResult> {
+    private updateStaged(): Promise<fileCommon.IUpdateResult> {
         return this.git.diff([], ["--name-only", "--cached"]).then(value => {
-            let container: common.IFile[] = [];
+            let container: fileCommon.IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
                 if (files[i] === "") {

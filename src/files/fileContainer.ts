@@ -1,5 +1,5 @@
 import { BasicFileContainer } from "./basicFileContainer";
-import * as common from "./common";
+import * as fileCommon from "./common";
 import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
 import * as view from "../view/common";
