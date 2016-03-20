@@ -38,8 +38,4 @@ export class FileContainer extends BasicFileContainer {
         }
         return descriptors;
     }
-
-    isDirty(): boolean {
-        return this.lengthOfType([common.GitStatus.MODIFIED, common.GitStatus.DELETED]) !== 0;
-    }
 }
