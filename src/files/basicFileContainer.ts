@@ -2,7 +2,7 @@ import * as common from "./common";
 import * as utils from "../common/utils";
 
 
-export class BasicFileContainer {
+export abstract class BasicFileContainer {
     protected container: Map<string, common.IFile>;
 
     constructor() {
