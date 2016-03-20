@@ -1,6 +1,7 @@
 import { BasicFileContainer } from "./basicFileContainer";
-import { GitStatus, IUpdateResult, IFile } from "./common";
+import * as common from "./common";
 import { BasicGit } from "../common/git/basicGit";
+import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
 
 // TODO: Make GlobalFileContainer singleton
@@ -14,7 +15,7 @@ export class GlobalFileContainer extends BasicFileContainer {
     }
 
     updateFiles() {
-        let find = (values: IUpdateResult[], search: GitStatus) => {
+        let find = (values: common.IUpdateResult[], search: gitCommon.GitStatus) => {
             return values.find((value, index, obj) => {
                 return (value.status === search);
             });
@@ -28,32 +29,32 @@ export class GlobalFileContainer extends BasicFileContainer {
             // this.updateStaged()
         ]).then(values => {
             this.clear();
-            this.push(find(values, GitStatus.CLEAN).container);
-            this.push(find(values, GitStatus.DELETED).container);
-            this.push(find(values, GitStatus.MODIFIED).container);
-            this.push(find(values, GitStatus.UNTRACKED).container);
+            this.push(find(values, gitCommon.GitStatus.CLEAN).container);
+            this.push(find(values, gitCommon.GitStatus.DELETED).container);
+            this.push(find(values, gitCommon.GitStatus.MODIFIED).container);
+            this.push(find(values, gitCommon.GitStatus.UNTRACKED).container);
         });
     }
 
-    private updateIndex(): Promise<IUpdateResult> {
-        return this.updateType(GitStatus.CLEAN);
+    private updateIndex(): Promise<common.IUpdateResult> {
+        return this.updateType(gitCommon.GitStatus.CLEAN);
     }
 
-    private updateModified(): Promise<IUpdateResult> {
-        return this.updateType(GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
+    private updateModified(): Promise<common.IUpdateResult> {
+        return this.updateType(gitCommon.GitStatus.MODIFIED, ["--exclude-standard", "-m"]);
     }
 
-    private updateDeleted(): Promise<IUpdateResult> {
-        return this.updateType(GitStatus.DELETED, ["--exclude-standard", "-d"]);
+    private updateDeleted(): Promise<common.IUpdateResult> {
+        return this.updateType(gitCommon.GitStatus.DELETED, ["--exclude-standard", "-d"]);
     }
 
-    private updateUntracked(): Promise<IUpdateResult> {
-        return this.updateType(GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
+    private updateUntracked(): Promise<common.IUpdateResult> {
+        return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    private updateType(type: GitStatus, options?: string[], command?: string): Promise<IUpdateResult> {
+    private updateType(type: gitCommon.GitStatus, options?: string[], command?: string): Promise<common.IUpdateResult> {
         return this.git.ls_files(options).then(value => {
-            let container: IFile[] = [];
+            let container: common.IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
                 if (files[i] === "") {
@@ -68,9 +69,9 @@ export class GlobalFileContainer extends BasicFileContainer {
         });
     }
 
-    private updateStaged(): Promise<IUpdateResult> {
+    private updateStaged(): Promise<common.IUpdateResult> {
         return this.git.diff([], ["--name-only", "--cached"]).then(value => {
-            let container: IFile[] = [];
+            let container: common.IFile[] = [];
             let files: string[] = value.split(utils.SPLIT_LINE);
             for (let i in files) {
                 if (files[i] === "") {
@@ -78,10 +79,10 @@ export class GlobalFileContainer extends BasicFileContainer {
                 }
                 container.push({
                     path: files[i],
-                    status: GitStatus.CLEAN
+                    status: gitCommon.GitStatus.CLEAN
                 });
             }
-            return { status: GitStatus.CLEAN, container: container };
+            return { status: gitCommon.GitStatus.CLEAN, container: container };
         });
     }
 }

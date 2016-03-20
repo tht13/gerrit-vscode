@@ -1,5 +1,6 @@
 import { BasicFileContainer } from "./basicFileContainer";
 import * as common from "./common";
+import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
 import * as view from "../view/common";
 
@@ -11,8 +12,8 @@ export class FileContainer extends BasicFileContainer {
 
     getDescriptorsAll(): view.FileStageQuickPick[] {
         let descriptors: view.FileStageQuickPick[] = [];
-        for (let status in common.GitStatus) {
-            let files = this.getByType([common.GitStatus.MODIFIED]);
+        for (let status in gitCommon.GitStatus) {
+            let files = this.getByType([gitCommon.GitStatus.MODIFIED]);
             for (let i in files) {
                 descriptors.push({
                     label: files[i].path,
@@ -24,7 +25,7 @@ export class FileContainer extends BasicFileContainer {
         return descriptors;
     }
 
-    getDescriptorsByType(type: common.GitStatus[]): view.FileStageQuickPick[] {
+    getDescriptorsByType(type: gitCommon.GitStatus[]): view.FileStageQuickPick[] {
         let descriptors: view.FileStageQuickPick[] = [];
         for (let status in type) {
             let files = this.getByType([type[status]]);

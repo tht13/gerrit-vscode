@@ -1,4 +1,5 @@
 import * as common from "./common";
+import * as gitCommon from "../common/git/common";
 import * as utils from "../common/utils";
 
 
@@ -37,11 +38,11 @@ export abstract class BasicFileContainer {
         return this.container.size;
     }
 
-    lengthOfType(type: common.GitStatus[]) {
+    lengthOfType(type: gitCommon.GitStatus[]) {
         return this.getByType(type).size;
     }
 
-    getByType(type: common.GitStatus[]) {
+    getByType(type: gitCommon.GitStatus[]) {
         let subset: Map<string, common.IFile> = new Map();
         this.container.forEach((value, index, map) => {
             if (type.indexOf(value.status) > -1) {
@@ -52,6 +53,6 @@ export abstract class BasicFileContainer {
     }
 
     isDirty(): boolean {
-        return this.lengthOfType([common.GitStatus.MODIFIED, common.GitStatus.DELETED]) !== 0;
+        return this.lengthOfType([gitCommon.GitStatus.MODIFIED, gitCommon.GitStatus.DELETED]) !== 0;
     }
 }

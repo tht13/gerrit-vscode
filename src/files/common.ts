@@ -1,18 +1,11 @@
+import * as gitCommon from "../common/git/common";
+
 export interface IFile {
     path: string;
-    status: GitStatus;
+    status: gitCommon.GitStatus;
 }
 
 export interface IUpdateResult {
-    status: GitStatus;
+    status: gitCommon.GitStatus;
     container: IFile[];
-}
-
-export enum GitStatus {
-    MODIFIED,
-    DELETED,
-    UNTRACKED,
-    STAGED,
-    CLEAN,
-    DEFAULT
 }
