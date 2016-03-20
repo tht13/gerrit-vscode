@@ -1,6 +1,6 @@
 import { createLog, GitLog } from "./gitLog";
 import * as exec from "../exec";
-import * as common from "../reject";
+import * as reject from "../reject";
 import { Settings } from "../settings";
 import * as utils from "../utils";
 import { BasicLogger } from "../../view/simpleLogger";
@@ -56,10 +56,10 @@ class BasicGit {
             options.push("--amend", "--no-edit");
         } else {
             if (utils.isNull(msg) || msg.length === 0) {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: true,
                     message: "Requires a message to commit with",
-                    type: common.RejectType.DEFAULT
+                    type: reject.RejectType.DEFAULT
                 };
                 return Promise.reject(reason);
             }
@@ -156,10 +156,10 @@ class BasicGit {
         ];
         return this.git("log", options).then((value: string): Promise<void | GitLog> => {
             if (utils.isNull(value)) {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: false,
                     message: "Failed Gitlog",
-                    type: common.RejectType.GIT,
+                    type: reject.RejectType.GIT,
                     attributes: {}
                 };
                 return Promise.reject(reason);
@@ -198,10 +198,10 @@ class BasicGit {
             if (utils.isNull(result.error)) {
                 return Promise.resolve(result.stdout);
             } else {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: false,
                     message: "Failed Git",
-                    type: common.RejectType.GIT,
+                    type: reject.RejectType.GIT,
                     attributes: { error: result.error, stderr: result.stderr }
                 };
                 console.warn(reason);

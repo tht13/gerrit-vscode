@@ -1,7 +1,7 @@
 import { BasicGit } from "./basicGit";
 import { createLog, GitLog } from "./gitLog";
 import * as exec from "../exec";
-import * as common from "../reject";
+import * as reject from "../reject";
 import { Settings } from "../settings";
 import * as utils from "../utils";
 import { Logger } from "../../view/logger";
