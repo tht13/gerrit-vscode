@@ -7,7 +7,7 @@ import { Git } from "./common/git/git";
 import * as reject from "./common/reject";
 import * as utils from "./common/utils";
 import * as octicon from "./common/octicons";
-import { GitStatus } from "./files/common";
+import * as gitCommon from "./common/git/common";
 import { Gerrit } from "./gerrit/gerrit";
 import { Ref } from "./gerrit/ref";
 import * as view from "./view/common";
@@ -55,9 +55,9 @@ export class Controller {
                     Promise.reject(reason);
                 }
                 return value.getDescriptorsByType([
-                    GitStatus.DELETED,
-                    GitStatus.MODIFIED,
-                    GitStatus.UNTRACKED
+                    gitCommon.GitStatus.DELETED,
+                    gitCommon.GitStatus.MODIFIED,
+                    gitCommon.GitStatus.UNTRACKED
                 ]);
             }),
             { placeHolder: "File to stage" }).then(value => {
@@ -99,7 +99,7 @@ export class Controller {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType([GitStatus.STAGED]);
+                return value.getDescriptorsByType([gitCommon.GitStatus.STAGED]);
             }),
             { placeHolder: "File to reset" }).then(value => {
                 if (utils.isNull(value)) {
