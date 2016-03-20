@@ -1,4 +1,4 @@
-import * as gitCommon from "../common/git/common";
+import * as gitCommon from "../git/common";
 
 export interface IFile {
     path: string;

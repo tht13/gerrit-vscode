@@ -1,9 +1,9 @@
 import { createLog, GitLog } from "./gitLog";
-import * as exec from "../exec";
-import * as reject from "../reject";
-import { Settings } from "../settings";
-import * as utils from "../utils";
-import { BasicLogger } from "../../view/simpleLogger";
+import * as exec from "../common/exec";
+import * as reject from "../common/reject";
+import { Settings } from "../common/settings";
+import * as utils from "../common/utils";
+import { BasicLogger } from "../view/simpleLogger";
 
 
 class BasicGit {

@@ -1,4 +1,4 @@
-import * as utils from "../utils";
+import * as utils from "../common/utils";
 
 export interface GitLog {
     commit: string;

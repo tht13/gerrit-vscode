@@ -3,11 +3,11 @@ import * as path from "path";
 import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
-import { Git } from "./common/git/git";
+import { Git } from "./git/git";
 import * as reject from "./common/reject";
 import * as utils from "./common/utils";
 import * as octicon from "./common/octicons";
-import * as gitCommon from "./common/git/common";
+import * as gitCommon from "./git/common";
 import { Gerrit } from "./gerrit/gerrit";
 import { Ref } from "./gerrit/ref";
 import * as view from "./view/common";

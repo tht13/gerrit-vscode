@@ -1,6 +1,6 @@
 "use strict";
 import * as vscode from "vscode";
-import { Git } from "./common/git/git";
+import { Git } from "./git/git";
 import { Settings } from "./common/settings";
 import { Controller } from "./controller";
 import { GlobalFileContainerClient } from "./files/globalFileContainerClient";

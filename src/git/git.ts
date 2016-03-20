@@ -1,10 +1,10 @@
 import { BasicGit } from "./basicGit";
 import { createLog, GitLog } from "./gitLog";
-import * as exec from "../exec";
-import * as reject from "../reject";
-import { Settings } from "../settings";
-import * as utils from "../utils";
-import { Logger } from "../../view/logger";
+import * as exec from "../common/exec";
+import * as reject from "../common/reject";
+import { Settings } from "../common/settings";
+import * as utils from "../common/utils";
+import { Logger } from "../view/logger";
 
 
 class Git extends BasicGit {
