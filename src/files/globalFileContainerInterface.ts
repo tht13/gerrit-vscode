@@ -43,7 +43,6 @@ export interface RequestError {
 }
 
 export enum RequestEventType {
-    SAVE,
-    OPEN,
-    CONFIG
+    UPDATE,
+    DESCRIPTORS
 }
