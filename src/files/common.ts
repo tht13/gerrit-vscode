@@ -9,3 +9,9 @@ export interface IUpdateResult {
     status: gitCommon.GitStatus;
     container: IFile[];
 }
+
+export interface BasciFileQuickPick {
+    path: string;
+    label: string;
+    description: string;
+}

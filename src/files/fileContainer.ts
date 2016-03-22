@@ -16,8 +16,8 @@ export class FileContainer extends BasicFileContainer {
             let files = this.getByType([gitCommon.GitStatus.MODIFIED]);
             for (let i in files) {
                 descriptors.push({
-                    label: files[i].path,
-                    path: files[i].path,
+                    label: files.get(i).path,
+                    path: files.get(i).path,
                     description: status
                 });
             }
@@ -31,8 +31,8 @@ export class FileContainer extends BasicFileContainer {
             let files = this.getByType([type[status]]);
             for (let i in files) {
                 descriptors.push({
-                    label: files[i].path,
-                    path: files[i].path,
+                    label: files.get(i).path,
+                    path: files.get(i).path,
                     description: status
                 });
             }

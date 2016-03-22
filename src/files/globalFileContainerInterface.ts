@@ -27,6 +27,8 @@ export interface RequestResult {
     succesful: boolean;
 
     message?: string;
+
+    package: any;
 }
 
 
