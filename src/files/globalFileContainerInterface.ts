@@ -1,4 +1,5 @@
 import { RequestType } from "vscode-languageclient";
+import * as fileCommon from "./common";
 
 export namespace Request {
     export const type: RequestType<RequestParams, RequestResult, RequestError> = { get method() { return "request"; } };
@@ -28,8 +29,15 @@ export interface RequestResult {
 
     message?: string;
 
-    package?: any;
+    package?: ResultPackage;
 }
+
+type ResultPackage = fileCommon.BasciFileQuickPick |
+    fileCommon.BasciFileQuickPick[] |
+    fileCommon.IUpdateResult |
+    fileCommon.IUpdateResult[] |
+    fileCommon.IFile |
+    fileCommon.IFile[];
 
 
 /**

@@ -17,11 +17,6 @@ connection.onInitialize((params): InitializeResult => {
     };
 });
 
-connection.console.log("active");
-// import * as fs from "fs";
-// import * as path from "path";
-// fs.writeFile(path.join("C:", "example.txt"), "hello");
-
 connection.onRequest(Request.type, (params: RequestParams): RequestResult | Thenable<RequestResult> => {
     connection.console.log("Recieved event");
     switch (params.requestEventType) {
@@ -33,12 +28,14 @@ connection.onRequest(Request.type, (params: RequestParams): RequestResult | Then
                 };
             });
         case RequestEventType.DESCRIPTORS:
-            // TODO: Return updateFiles
-            break;
+            return {
+                succesful: true,
+                package: container.getDescriptorsAll()
+            };
     }
     return {
         message: "complete",
-        succesful: true
+        succesful: false
     };
 });
 

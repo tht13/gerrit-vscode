@@ -1,8 +1,9 @@
-import { workspace } from "vscode";
-import { Settings } from "../common/settings";
 import * as path from "path";
+import { workspace } from "vscode";
 import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
+import * as fileCommon from "./common";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
+import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
 
 export class GlobalFileContainerClient {
@@ -53,12 +54,22 @@ export class GlobalFileContainerClient {
         return { "serverOptions": serverOptions, "clientOptions": clientOptions };
     }
 
-    doRequest(eventType: RequestEventType) {
+    private doRequest(eventType: RequestEventType) {
         let params: RequestParams = {
             processId: process.pid,
             requestEventType: eventType
         };
         return this.languageClient.sendRequest(Request.type, params);
+    }
+
+    getDescriptors() {
+        return this.doRequest(RequestEventType.DESCRIPTORS).then(value => {
+            return <fileCommon.BasciFileQuickPick[]>value.package;
+        });
+    }
+
+    updateFiles() {
+        return this.doRequest(RequestEventType.UPDATE);
     }
 
     startServer() {
