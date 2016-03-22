@@ -28,7 +28,7 @@ export interface RequestResult {
 
     message?: string;
 
-    package: any;
+    package?: any;
 }
 
 
