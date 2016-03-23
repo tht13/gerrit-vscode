@@ -27,9 +27,7 @@ export abstract class BasicFileContainer {
     getFilePaths(): string[] {
         let paths: string[] = [];
         this.container.forEach((value, index, array) => {
-            for (let i in value) {
-                paths.push(value[i].path);
-            }
+            paths.push(value.path);
         });
         return paths;
     }

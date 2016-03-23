@@ -15,7 +15,7 @@ export class GlobalFileContainer extends BasicFileContainer {
     }
 
     updateFiles() {
-        let find = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) => {
+        let filter = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) => {
             return values.find((value, index, obj) => {
                 return (value.status === search);
             });
@@ -29,10 +29,10 @@ export class GlobalFileContainer extends BasicFileContainer {
             // this.updateStaged()
         ]).then(values => {
             this.clear();
-            this.push(find(values, gitCommon.GitStatus.CLEAN).container);
-            this.push(find(values, gitCommon.GitStatus.DELETED).container);
-            this.push(find(values, gitCommon.GitStatus.MODIFIED).container);
-            this.push(find(values, gitCommon.GitStatus.UNTRACKED).container);
+            this.push(filter(values, gitCommon.GitStatus.CLEAN).container);
+            this.push(filter(values, gitCommon.GitStatus.DELETED).container);
+            this.push(filter(values, gitCommon.GitStatus.MODIFIED).container);
+            this.push(filter(values, gitCommon.GitStatus.UNTRACKED).container);
         });
     }
 
@@ -88,16 +88,13 @@ export class GlobalFileContainer extends BasicFileContainer {
 
     getDescriptorsAll(): fileCommon.BasciFileQuickPick[] {
         let descriptors: fileCommon.BasciFileQuickPick[] = [];
-        for (let status in gitCommon.GitStatus) {
-            let files = this.getByType([gitCommon.GitStatus.MODIFIED]);
-            for (let i in files) {
-                descriptors.push({
-                    label: files.get(i).path,
-                    path: files.get(i).path,
-                    description: status
-                });
-            }
-        }
+        this.container.forEach((value, index, map) => {
+            descriptors.push({
+                label: value.path,
+                path: value.path,
+                description: gitCommon.GitStatus[value.status]
+            });
+        });
         return descriptors;
     }
 }

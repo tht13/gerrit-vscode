@@ -7,6 +7,7 @@ import { Settings, SettingsExport } from "../common/settings";
 
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let container = new GlobalFileContainer();
+container.updateFiles();
 let workspaceRoot: string;
 
 connection.onInitialize((params): InitializeResult => {
@@ -41,7 +42,8 @@ connection.onRequest(Request.type, (params: RequestParams): RequestResult | Then
             settings.workspaceRoot = payload.workspaceRoot;
             return {
                 message: "complete",
-                succesful: true
+                succesful: true,
+                package: settings.exportSettings()
             };
     }
     return {
