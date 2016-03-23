@@ -3,6 +3,7 @@ import { workspace } from "vscode";
 import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
 import * as fileCommon from "./common";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
+import Event from "../common/event";
 import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
 
@@ -31,9 +32,11 @@ export class GlobalFileContainerClient {
         // If the extension is launch in debug mode the debug server options are use
         // Otherwise the run options are used
         let serverOptions: ServerOptions = {
-            run: { module: serverModule, transport: TransportKind.ipc, options: {
-                cwd: Settings.getInstance().extensionRoot
-            } },
+            run: {
+                module: serverModule, transport: TransportKind.ipc, options: {
+                    cwd: Settings.getInstance().extensionRoot
+                }
+            },
             debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
         };
 
@@ -78,6 +81,7 @@ export class GlobalFileContainerClient {
         let start = this.languageClient.start();
         this.languageClient.onReady().then(value => {
             console.log("Server Ready");
+            Event.emit("server-ready");
         });
         return start;
     }
