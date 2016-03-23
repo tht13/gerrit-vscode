@@ -3,6 +3,7 @@ import {
     createConnection, IConnection, InitializeResult, TextDocuments } from "vscode-languageserver";
 import { GlobalFileContainer } from "./globalFileContainer";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
+import { Settings, SettingsExport } from "../common/settings";
 
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let container = new GlobalFileContainer();
@@ -31,6 +32,16 @@ connection.onRequest(Request.type, (params: RequestParams): RequestResult | Then
             return {
                 succesful: true,
                 package: container.getDescriptorsAll()
+            };
+        case RequestEventType.SETTINGS:
+            let settings = Settings.getInstance();
+            settings.loadSettings(params.package);
+            let payload = <SettingsExport>params.package;
+            settings.extensionRoot = payload.extensionRoot;
+            settings.workspaceRoot = payload.workspaceRoot;
+            return {
+                message: "complete",
+                succesful: true
             };
     }
     return {

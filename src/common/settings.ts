@@ -1,3 +1,16 @@
+export interface SettingsExport {
+    host: string;
+    protocol: string;
+    httpPort: number;
+    sshPort: number;
+    username: string;
+    project: string;
+    version: string;
+    httpPassword: string;
+    workspaceRoot: string;
+    extensionRoot: string;
+}
+
 class Settings {
     private _host: string;
     private _protocol: string;
@@ -30,6 +43,21 @@ class Settings {
         this._project = settings.project;
         this._version = settings.version;
         this._httpPassword = settings.httpPassword;
+    }
+
+    exportSettings(): SettingsExport {
+        return {
+            host: this._host,
+            protocol: this._protocol,
+            httpPort: this._httpPort,
+            sshPort: this._sshPort,
+            username: this._username,
+            project: this._project,
+            version: this._version,
+            httpPassword: this._httpPassword,
+            workspaceRoot: this._workspaceRoot,
+            extensionRoot: this._extensionRoot
+        };
     }
 
     get host(): string {

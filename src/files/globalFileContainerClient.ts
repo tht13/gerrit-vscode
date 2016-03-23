@@ -2,10 +2,11 @@ import * as path from "path";
 import { workspace } from "vscode";
 import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
 import * as fileCommon from "./common";
-import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
+import { Request, RequestResult, RequestEventType, RequestParams, RequestPackage } from "./globalFileContainerInterface";
 import Event from "../common/event";
 import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
+import { Gerrit } from "../gerrit/gerrit";
 
 export class GlobalFileContainerClient {
     private languageClient: LanguageClient;
@@ -57,10 +58,11 @@ export class GlobalFileContainerClient {
         return { "serverOptions": serverOptions, "clientOptions": clientOptions };
     }
 
-    private doRequest(eventType: RequestEventType) {
+    private doRequest(eventType: RequestEventType, payload?: RequestPackage) {
         let params: RequestParams = {
             processId: process.pid,
-            requestEventType: eventType
+            requestEventType: eventType,
+            package: payload
         };
         return this.languageClient.sendRequest(Request.type, params);
     }
@@ -75,14 +77,21 @@ export class GlobalFileContainerClient {
         return this.doRequest(RequestEventType.UPDATE);
     }
 
+    sendSettings() {
+        return this.doRequest(RequestEventType.SETTINGS, Settings.getInstance().exportSettings());
+    }
+
     startServer() {
         let options = this.getOptions();
         this.languageClient = new LanguageClient("Global File Container", options.serverOptions, options.clientOptions);
         let start = this.languageClient.start();
         this.languageClient.onReady().then(value => {
             console.log("Server Ready");
-            Event.emit("server-ready");
+            this.sendSettings().then(value => {
+                Event.emit("server-ready", Gerrit.getInstance());
+            });
         });
+        Event.on("settings-update", this.sendSettings);
         return start;
     }
 }

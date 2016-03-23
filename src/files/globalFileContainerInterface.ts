@@ -1,5 +1,6 @@
 import { RequestType } from "vscode-languageclient";
 import * as fileCommon from "./common";
+import { SettingsExport } from "../common/settings";
 
 export namespace Request {
     export const type: RequestType<RequestParams, RequestResult, RequestError> = { get method() { return "request"; } };
@@ -19,6 +20,8 @@ export interface RequestParams {
      * The type of request event to handle.
      */
     requestEventType: RequestEventType;
+
+    package?: RequestPackage;
 }
 
 /**
@@ -29,15 +32,16 @@ export interface RequestResult {
 
     message?: string;
 
-    package?: ResultPackage;
+    package?: RequestPackage;
 }
 
-type ResultPackage = fileCommon.BasciFileQuickPick |
+export type RequestPackage = fileCommon.BasciFileQuickPick |
     fileCommon.BasciFileQuickPick[] |
     fileCommon.IUpdateResult |
     fileCommon.IUpdateResult[] |
     fileCommon.IFile |
-    fileCommon.IFile[];
+    fileCommon.IFile[] |
+    SettingsExport;
 
 
 /**
@@ -54,5 +58,6 @@ export interface RequestError {
 
 export enum RequestEventType {
     UPDATE,
-    DESCRIPTORS
+    DESCRIPTORS,
+    SETTINGS
 }
