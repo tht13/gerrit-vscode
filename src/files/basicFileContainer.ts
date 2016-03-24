@@ -53,4 +53,16 @@ export abstract class BasicFileContainer {
     isDirty(): boolean {
         return this.lengthOfType([gitCommon.GitStatus.MODIFIED, gitCommon.GitStatus.DELETED]) !== 0;
     }
+
+    getDescriptorsAll(): fileCommon.BasciFileQuickPick[] {
+        let descriptors: fileCommon.BasciFileQuickPick[] = [];
+        this.container.forEach((value, index, map) => {
+            descriptors.push({
+                label: value.path,
+                path: value.path,
+                description: gitCommon.GitStatus[value.status]
+            });
+        });
+        return descriptors;
+    }
 }

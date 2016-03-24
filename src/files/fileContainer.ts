@@ -11,18 +11,7 @@ export class FileContainer extends BasicFileContainer {
     }
 
     getDescriptorsAll(): view.FileStageQuickPick[] {
-        let descriptors: view.FileStageQuickPick[] = [];
-        for (let status in gitCommon.GitStatus) {
-            let files = this.getByType([gitCommon.GitStatus.MODIFIED]);
-            for (let i in files) {
-                descriptors.push({
-                    label: files.get(i).path,
-                    path: files.get(i).path,
-                    description: status
-                });
-            }
-        }
-        return descriptors;
+        return <view.FileStageQuickPick[]>super.getDescriptorsAll();
     }
 
     getDescriptorsByType(type: gitCommon.GitStatus[]): view.FileStageQuickPick[] {
