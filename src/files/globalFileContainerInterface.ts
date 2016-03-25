@@ -1,6 +1,7 @@
 import { RequestType } from "vscode-languageclient";
 import * as fileCommon from "./common";
 import { SettingsExport } from "../common/settings";
+import * as gitCommon from "../git/common";
 
 export namespace Request {
     export const type: RequestType<RequestParams, RequestResult, RequestError> = { get method() { return "request"; } };
@@ -41,7 +42,8 @@ export type RequestPackage = fileCommon.BasciFileQuickPick |
     fileCommon.IUpdateResult[] |
     fileCommon.IFile |
     fileCommon.IFile[] |
-    SettingsExport;
+    SettingsExport |
+    gitCommon.GitStatus[];
 
 
 /**
@@ -59,5 +61,6 @@ export interface RequestError {
 export enum RequestEventType {
     UPDATE,
     DESCRIPTORSALL,
+    DESCRIPTORSTYPE,
     SETTINGS
 }

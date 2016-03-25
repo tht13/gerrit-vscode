@@ -4,6 +4,7 @@ import {
 import { GlobalFileContainer } from "./globalFileContainer";
 import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
 import { Settings, SettingsExport } from "../common/settings";
+import * as gitCommon from "../git/common";
 
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let container = new GlobalFileContainer();
@@ -33,6 +34,11 @@ connection.onRequest(Request.type, (params: RequestParams): RequestResult | Then
             return {
                 succesful: true,
                 package: container.getDescriptorsAll()
+            };
+        case RequestEventType.DESCRIPTORSTYPE:
+            return {
+                succesful: true,
+                package: container.getDescriptorsByType(<gitCommon.GitStatus[]>params.package)
             };
         case RequestEventType.SETTINGS:
             let settings = Settings.getInstance();

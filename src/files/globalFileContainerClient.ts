@@ -6,6 +6,7 @@ import { Request, RequestResult, RequestEventType, RequestParams, RequestPackage
 import Event from "../common/event";
 import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
+import * as gitCommon from "../git/common";
 import { Gerrit } from "../gerrit/gerrit";
 
 export class GlobalFileContainerClient {
@@ -69,6 +70,12 @@ export class GlobalFileContainerClient {
 
     getDescriptors() {
         return this.doRequest(RequestEventType.DESCRIPTORSALL).then(value => {
+            return <fileCommon.BasciFileQuickPick[]>value.package;
+        });
+    }
+
+    getDescriptorsByType(type: gitCommon.GitStatus[]) {
+        return this.doRequest(RequestEventType.DESCRIPTORSTYPE, type).then(value => {
             return <fileCommon.BasciFileQuickPick[]>value.package;
         });
     }

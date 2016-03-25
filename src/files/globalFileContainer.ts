@@ -85,4 +85,19 @@ export class GlobalFileContainer extends BasicFileContainer {
             return { status: gitCommon.GitStatus.CLEAN, container: container };
         });
     }
+
+    getDescriptorsByType(type: gitCommon.GitStatus[]): fileCommon.BasciFileQuickPick[] {
+        let descriptors: fileCommon.BasciFileQuickPick[] = [];
+        for (let status in type) {
+            let files = this.getByType([type[status]]);
+            files.forEach((value, index, map) => {
+                descriptors.push({
+                    label: value.path,
+                    path: value.path,
+                    description: status
+                });
+            });
+        }
+        return descriptors;
+    }
 }
