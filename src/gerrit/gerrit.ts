@@ -11,7 +11,7 @@ import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
 import { FileContainer } from "../files/fileContainer";
-import { GlobalFileContainerClient } from "../files/fileServiceClient";
+import { FileServiceClient } from "../files/fileServiceClient";
 import { RequestEventType } from "../files/fileServiceInterface";
 import * as view from "../view/common";
 import { Logger } from "../view/logger";
@@ -27,7 +27,7 @@ export class Gerrit {
     private settings: Settings;
     private statusBar: StatusBar;
     private git: Git;
-    private fileIndex: GlobalFileContainerClient;
+    private fileIndex: FileServiceClient;
     private static _gerrit: Gerrit = null;
 
     constructor() {
@@ -36,7 +36,7 @@ export class Gerrit {
         this.logger.setDebug(true);
         this.logger.log("Activating Gerrit...", false);
         this.git = Git.getInstance();
-        this.fileIndex = GlobalFileContainerClient.getInstance();
+        this.fileIndex = FileServiceClient.getInstance();
         Event.on("server-ready", this.updateStatus);
     }
 

@@ -9,18 +9,18 @@ import * as utils from "../common/utils";
 import * as gitCommon from "../git/common";
 import { Gerrit } from "../gerrit/gerrit";
 
-export class GlobalFileContainerClient {
+export class FileServiceClient {
     private languageClient: LanguageClient;
-    private static _client: GlobalFileContainerClient = null;
+    private static _client: FileServiceClient = null;
 
     constructor() {
     }
 
     static getInstance() {
-        if (utils.isNull(GlobalFileContainerClient._client)) {
-            GlobalFileContainerClient._client = new GlobalFileContainerClient();
+        if (utils.isNull(FileServiceClient._client)) {
+            FileServiceClient._client = new FileServiceClient();
         }
-        return GlobalFileContainerClient._client;
+        return FileServiceClient._client;
     }
 
     private getOptions(): { serverOptions: ServerOptions, clientOptions: LanguageClientOptions } {
