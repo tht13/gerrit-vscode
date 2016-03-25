@@ -28,7 +28,7 @@ export class GlobalFileContainerClient {
             "files", "server", "fileServiceServer.js");
         let debugOptions = {
             execArgv: ["--nolazy", "--debug=6004"],
-            // cwd: GerritSettings.getInstance().extensionRoot
+            cwd: Settings.getInstance().extensionRoot
         };
 
         // If the extension is launch in debug mode the debug server options are use
@@ -43,13 +43,8 @@ export class GlobalFileContainerClient {
         };
 
         let clientOptions: LanguageClientOptions = {
-            // Register the server for plain text documents
-            documentSelector: ["plaintext"],
             synchronize: {
-                // Synchronize the setting section "languageServerExample" to the server
-                configurationSection: "languageServerExample",
-                // Notify the server about file changes to ".clientrc files contain in the workspace
-                fileEvents: workspace.createFileSystemWatcher("**/.clientrc")
+                configurationSection: "gerrit"
             },
             initializationOptions: {
                 debug: true
