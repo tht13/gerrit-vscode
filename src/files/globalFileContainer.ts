@@ -94,7 +94,7 @@ export class GlobalFileContainer extends BasicFileContainer {
                 descriptors.push({
                     label: value.path,
                     path: value.path,
-                    description: status
+                    description: gitCommon.GitStatus[status]
                 });
             });
         }
