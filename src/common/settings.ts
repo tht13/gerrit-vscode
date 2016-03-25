@@ -1,3 +1,5 @@
+import Event from "../common/event";
+
 export interface SettingsExport {
     host: string;
     protocol: string;
@@ -43,6 +45,7 @@ class Settings {
         this._project = settings.project;
         this._version = settings.version;
         this._httpPassword = settings.httpPassword;
+        this.emitUpdate();
     }
 
     exportSettings(): SettingsExport {
@@ -58,6 +61,10 @@ class Settings {
             workspaceRoot: this._workspaceRoot,
             extensionRoot: this._extensionRoot
         };
+    }
+
+    private emitUpdate() {
+        Event.emit("settings-update");
     }
 
     get host(): string {
@@ -86,6 +93,7 @@ class Settings {
 
     set project(project: string) {
         this._project = project;
+        this.emitUpdate();
     }
 
     get version(): string {
@@ -102,6 +110,7 @@ class Settings {
 
     set workspaceRoot(value: string) {
         this._workspaceRoot = value;
+        this.emitUpdate();
     }
 
     get extensionRoot(): string {
@@ -110,6 +119,7 @@ class Settings {
 
     set extensionRoot(value: string) {
         this._extensionRoot = value;
+        this.emitUpdate();
     }
 }
 
