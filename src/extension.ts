@@ -3,8 +3,8 @@ import * as vscode from "vscode";
 import { Git } from "./git/git";
 import { Settings } from "./common/settings";
 import { Controller } from "./controller";
-import { GlobalFileContainerClient } from "./files/globalFileContainerClient";
-import { RequestEventType } from "./files/globalFileContainerInterface";
+import { GlobalFileContainerClient } from "./files/fileServiceClient";
+import { RequestEventType } from "./files/fileServiceInterface";
 
 let controller: Controller;
 
