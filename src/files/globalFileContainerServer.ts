@@ -29,7 +29,7 @@ connection.onRequest(Request.type, (params: RequestParams): RequestResult | Then
                     succesful: true
                 };
             });
-        case RequestEventType.DESCRIPTORS:
+        case RequestEventType.DESCRIPTORSALL:
             return {
                 succesful: true,
                 package: container.getDescriptorsAll()

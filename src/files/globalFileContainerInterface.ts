@@ -58,6 +58,6 @@ export interface RequestError {
 
 export enum RequestEventType {
     UPDATE,
-    DESCRIPTORS,
+    DESCRIPTORSALL,
     SETTINGS
 }

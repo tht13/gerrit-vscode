@@ -68,7 +68,7 @@ export class GlobalFileContainerClient {
     }
 
     getDescriptors() {
-        return this.doRequest(RequestEventType.DESCRIPTORS).then(value => {
+        return this.doRequest(RequestEventType.DESCRIPTORSALL).then(value => {
             return <fileCommon.BasciFileQuickPick[]>value.package;
         });
     }
