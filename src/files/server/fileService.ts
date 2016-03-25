@@ -1,8 +1,8 @@
-import { BasicFileContainer } from "./basicFileContainer";
-import * as fileCommon from "./common";
-import { BasicGit } from "../git/basicGit";
-import * as gitCommon from "../git/common";
-import * as utils from "../common/utils";
+import { BasicFileContainer } from "../basicFileContainer";
+import * as fileCommon from "../common";
+import { BasicGit } from "../../git/basicGit";
+import * as gitCommon from "../../git/common";
+import * as utils from "../../common/utils";
 
 // TODO: Make GlobalFileContainer singleton
 export class GlobalFileContainer extends BasicFileContainer {

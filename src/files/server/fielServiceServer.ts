@@ -1,10 +1,10 @@
 import {
     IPCMessageReader, IPCMessageWriter,
     createConnection, IConnection, InitializeResult, TextDocuments } from "vscode-languageserver";
-import { GlobalFileContainer } from "./globalFileContainer";
-import { Request, RequestResult, RequestEventType, RequestParams } from "./globalFileContainerInterface";
-import { Settings, SettingsExport } from "../common/settings";
-import * as gitCommon from "../git/common";
+import { GlobalFileContainer } from "./fileService";
+import { Request, RequestResult, RequestEventType, RequestParams } from "../fileServiceInterface";
+import { Settings, SettingsExport } from "../../common/settings";
+import * as gitCommon from "../../git/common";
 
 let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let container = new GlobalFileContainer();
