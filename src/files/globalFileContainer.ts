@@ -52,38 +52,40 @@ export class GlobalFileContainer extends BasicFileContainer {
         return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    private updateType(type: gitCommon.GitStatus, options?: string[], command?: string): Promise<fileCommon.IUpdateResult> {
-        return this.git.ls_files(options).then(value => {
-            let container: fileCommon.IFile[] = [];
-            let files: string[] = value.split(utils.SPLIT_LINE);
-            for (let i in files) {
-                if (files[i] === "") {
-                    continue;
-                }
-                container.push({
-                    path: files[i],
-                    status: type
-                });
-            }
-            return { status: type, container: container };
+    private updateStaged(): Promise<fileCommon.IUpdateResult> {
+        return this.updateType(gitCommon.GitStatus.STAGED, ["--name-only", "--cached"]);
+    }
+
+    private updateType(type: gitCommon.GitStatus, options?: string[]): Promise<fileCommon.IUpdateResult> {
+        let value: Promise<string>;
+        switch (type) {
+            case gitCommon.GitStatus.STAGED:
+                value = this.git.diff([], options);
+                break;
+            case gitCommon.GitStatus.CLEAN:
+            case gitCommon.GitStatus.MODIFIED:
+            case gitCommon.GitStatus.DELETED:
+            case gitCommon.GitStatus.UNTRACKED:
+                value = this.git.ls_files(options);
+        }
+        return value.then(value => {
+            return this.parseUpdate(value, type);
         });
     }
 
-    private updateStaged(): Promise<fileCommon.IUpdateResult> {
-        return this.git.diff([], ["--name-only", "--cached"]).then(value => {
-            let container: fileCommon.IFile[] = [];
-            let files: string[] = value.split(utils.SPLIT_LINE);
-            for (let i in files) {
-                if (files[i] === "") {
-                    continue;
-                }
-                container.push({
-                    path: files[i],
-                    status: gitCommon.GitStatus.CLEAN
-                });
+    private parseUpdate(value: string, type: gitCommon.GitStatus): fileCommon.IUpdateResult {
+        let container: fileCommon.IFile[] = [];
+        let files: string[] = value.split(utils.SPLIT_LINE);
+        for (let i in files) {
+            if (files[i] === "") {
+                continue;
             }
-            return { status: gitCommon.GitStatus.CLEAN, container: container };
-        });
+            container.push({
+                path: files[i],
+                status: type
+            });
+        }
+        return { status: type, container: container };
     }
 
     getDescriptorsByType(type: gitCommon.GitStatus[]): fileCommon.BasciFileQuickPick[] {
