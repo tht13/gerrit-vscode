@@ -4,6 +4,7 @@ import { IReview } from "./gerritAPI";
 import { Ref } from "./ref";
 import Event from "../common/event";
 import * as exec from "../common/exec";
+import * as gitCommon from "../git/common";
 import { Git } from "../git/git";
 import { createLog, GitLog } from "../git/gitLog";
 import * as reject from "../common/reject";
@@ -102,18 +103,18 @@ export class Gerrit {
         });
     }
 
-    public getDirtyFiles(): Promise<FileContainer> {
-        // return this.fileIndex.updateFiles().then(() => {
-        //     return this.fileIndex;
-        // });
-        return Promise.resolve({});
+    public getDirtyFiles(): PromiseLike<view.FileStageQuickPick[]> {
+        return this.fileIndex.updateFiles().then(() => {
+            return this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.DELETED,
+                gitCommon.GitStatus.MODIFIED,
+                gitCommon.GitStatus.UNTRACKED]);
+        });
     }
 
-    public getStagedFiles(): Promise<FileContainer> {
-        // return this.fileIndex.updateFiles().then(() => {
-        //     return this.fileIndex;
-        // });
-        return Promise.resolve({});
+    public getStagedFiles(): PromiseLike<view.FileStageQuickPick[]> {
+        return this.fileIndex.updateFiles().then(() => {
+            return this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.STAGED]);
+        });
     }
 
     public getBranches(): Promise<string[]> {
