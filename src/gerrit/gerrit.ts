@@ -37,7 +37,7 @@ export class Gerrit {
         this.logger.log("Activating Gerrit...", false);
         this.git = Git.getInstance();
         this.fileIndex = GlobalFileContainerClient.getInstance();
-        this.updateStatus();
+        Event.on("server-ready", this.updateStatus);
     }
 
     static getInstance() {
@@ -47,29 +47,29 @@ export class Gerrit {
         return Gerrit._gerrit;
     }
 
-    private updateStatus() {
-        // this.fileIndex.updateFiles().then(value => {
-        //     this.getGitLog(0).then(value => {
-        //         console.log(value);
-        //         if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-        //             this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-        //                 this.settings.project = value.project;
-        //                 this.setBranch(value.branch);
-        //                 let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-        //                 this.setCurrentRef(ref);
-        //             }, reason => {
-        //                 console.log("rejected");
-        //                 console.log(reason);
-        //             });
-        //         }
-        //     }, (reason: common.RejectReason) => {
-        //         console.log("rejected");
-        //         console.log(reason);
-        //         if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-        //             this.logger.log("No commits on branch");
-        //         }
-        //     });
-        // });
+    private updateStatus(gerrit: Gerrit) {
+        gerrit.fileIndex.updateFiles().then(value => {
+            gerrit.getGitLog(0).then(value => {
+                console.log(value);
+                if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+                    gerrit.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                        gerrit.settings.project = value.project;
+                        gerrit.setBranch(value.branch);
+                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                        gerrit.setCurrentRef(ref);
+                    }, reason => {
+                        console.log("rejected");
+                        console.log(reason);
+                    });
+                }
+            }, (reason: reject.RejectReason) => {
+                console.log("rejected");
+                console.log(reason);
+                if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                    gerrit.logger.log("No commits on branch");
+                }
+            });
+        });
     }
 
     public setStatusBar(statusBar: StatusBar) {
@@ -97,9 +97,9 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
-    public isDirty(): Promise<boolean> {
+    public isDirty(): PromiseLike<boolean> {
         return this.getDirtyFiles().then(value => {
-            return value.isDirty();
+            return (value.length > 0);
         });
     }
 
@@ -176,21 +176,21 @@ export class Gerrit {
         });
     }
 
-    public checkoutRef(ref: Ref): Promise<string> {
+    public checkoutRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.git.checkout);
     }
 
-    public cherrypickRef(ref: Ref): Promise<string> {
+    public cherrypickRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
         return this.fetchRef(ref, this.git.cherrypick);
     }
 
-    private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string | void> {
+    private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
         return this.isDirty().then(dirty => {
             if (dirty) {
                 let reason: reject.RejectReason = {

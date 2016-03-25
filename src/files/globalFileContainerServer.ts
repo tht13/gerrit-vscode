@@ -21,7 +21,6 @@ connection.onInitialize((params): InitializeResult => {
 });
 
 connection.onRequest(Request.type, (params: RequestParams): RequestResult | Thenable<RequestResult> => {
-    connection.console.log("Recieved event");
     switch (params.requestEventType) {
         case RequestEventType.UPDATE:
             return container.updateFiles().then(value => {

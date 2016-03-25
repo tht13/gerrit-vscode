@@ -54,11 +54,7 @@ export class Controller {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType([
-                    gitCommon.GitStatus.DELETED,
-                    gitCommon.GitStatus.MODIFIED,
-                    gitCommon.GitStatus.UNTRACKED
-                ]);
+                return value;
             }),
             { placeHolder: "File to stage" }).then(value => {
                 if (utils.isNull(value)) {
@@ -99,7 +95,7 @@ export class Controller {
                     };
                     Promise.reject(reason);
                 }
-                return value.getDescriptorsByType([gitCommon.GitStatus.STAGED]);
+                return value;
             }),
             { placeHolder: "File to reset" }).then(value => {
                 if (utils.isNull(value)) {
@@ -287,7 +283,7 @@ export class Controller {
         this.aquireLock(this.git, this.git.rebaseContinue, []);
     }
 
-    private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V>, args?: U[]): Promise<V> {
+    private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V> | PromiseLike<V>, args?: U[]): Promise<V> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");
             return new Promise<V>((resolve, reject) => reject("Locked"));
