@@ -1,6 +1,6 @@
 {
     "name": "gerrit-vscode",
-    "version": "0.3.0.1",
+    "version": "0.3.1",
     "displayName": "Gerrit",
     "description": "A Gerrit extension for vscode",
     "authors": [
