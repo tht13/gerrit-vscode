@@ -92,12 +92,13 @@ class BasicGit {
         let options = [
             HEAD
         ];
-        return this.git("cherry-pick", options).then(value => {
-            return value;
-        }, reason => {
-            this.cherrypickActive = true;
-            return reason;
-        });
+        return this.git("cherry-pick", options).then(
+            value => value,
+            reason => {
+                this.cherrypickActive = true;
+                return reason;
+            }
+        );
     }
 
     // TODO: Broken as vim editor opens
@@ -117,21 +118,20 @@ class BasicGit {
     public push(target: string[], origin?: string): Promise<string> {
         origin = utils.setDefault(origin, "origin");
         target.unshift(origin);
-        return this.git("push", [], target).then(value => {
-            return value;
-        });
+        return this.git("push", [], target);
     }
 
     public rebase(branch: string): Promise<string> {
         let args: string[] = [
             branch
         ];
-        return this.git("rebase", [], args).then(value => {
-            return value;
-        }, reason => {
-            this.rebaseActive = true;
-            return reason;
-        });
+        return this.git("rebase", [], args).then(
+            value => value,
+            reason => {
+                this.rebaseActive = true;
+                return reason;
+            }
+        );
     }
 
     public rebaseContinue(): Promise<string> {

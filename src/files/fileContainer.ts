@@ -18,13 +18,13 @@ export class FileContainer extends BasicFileContainer {
         let descriptors: view.FileStageQuickPick[] = [];
         for (let status in type) {
             let files = this.getByType([type[status]]);
-            files.forEach((value, index, map) => {
+            files.forEach((value, index, map) =>
                 descriptors.push({
                     label: value.path,
                     path: value.path,
                     description: gitCommon.GitStatus[value.status]
-                });
-            });
+                })
+            );
         }
         return descriptors;
     }

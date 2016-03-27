@@ -98,23 +98,21 @@ export class Gerrit {
     }
 
     public isDirty(): PromiseLike<boolean> {
-        return this.getDirtyFiles().then(value => {
-            return (value.length > 0);
-        });
+        return this.getDirtyFiles().then(value => (value.length > 0));
     }
 
     public getDirtyFiles(): PromiseLike<view.FileStageQuickPick[]> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.DELETED,
+        return this.fileIndex.updateFiles().then(() =>
+            this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.DELETED,
                 gitCommon.GitStatus.MODIFIED,
-                gitCommon.GitStatus.UNTRACKED]);
-        });
+                gitCommon.GitStatus.UNTRACKED])
+        );
     }
 
     public getStagedFiles(): PromiseLike<view.FileStageQuickPick[]> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.STAGED]);
-        });
+        return this.fileIndex.updateFiles().then(() =>
+            this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.STAGED])
+        );
     }
 
     public getBranches(): Promise<string[]> {
@@ -203,9 +201,7 @@ export class Gerrit {
 
             this.setCurrentRef(ref);
 
-            return this.git.fetch(ref.getUrl()).then(value => {
-                return resolver.apply(this.git, ["FETCH_HEAD"]);
-            });
+            return this.git.fetch(ref.getUrl()).then(value => resolver.apply(this.git, ["FETCH_HEAD"]));
         });
     }
 
@@ -260,11 +256,10 @@ export class Gerrit {
                 sendImmediately: false
             }
         };
-        return rp(options).then(value => {
-            return JSON.parse(value.replace(")]}'\n", ""));
-        }, reason => {
-            console.log(reason);
-        });
+        return rp(options).then(
+            value => JSON.parse(value.replace(")]}'\n", "")),
+            reason => console.log(reason)
+        );
     }
 }
 

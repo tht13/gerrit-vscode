@@ -15,11 +15,8 @@ export class FileService extends BasicFileContainer {
     }
 
     updateFiles() {
-        let filter = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) => {
-            return values.find((value, index, obj) => {
-                return (value.status === search);
-            });
-        };
+        let filter = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) =>
+            values.find((value, index, obj) => (value.status === search));
         return Promise.all([
             this.updateIndex(),
             this.updateModified(),
@@ -68,9 +65,7 @@ export class FileService extends BasicFileContainer {
             case gitCommon.GitStatus.UNTRACKED:
                 value = this.git.ls_files(options);
         }
-        return value.then(value => {
-            return this.parseUpdate(value, type);
-        });
+        return value.then(value => this.parseUpdate(value, type));
     }
 
     private parseUpdate(value: string, type: gitCommon.GitStatus): fileCommon.IUpdateResult {
@@ -92,13 +87,13 @@ export class FileService extends BasicFileContainer {
         let descriptors: fileCommon.BasciFileQuickPick[] = [];
         for (let status in type) {
             let files = this.getByType([type[status]]);
-            files.forEach((value, index, map) => {
+            files.forEach((value, index, map) =>
                 descriptors.push({
                     label: value.path,
                     path: value.path,
                     description: gitCommon.GitStatus[value.status]
-                });
-            });
+                })
+            );
         }
         return descriptors;
     }

@@ -48,9 +48,7 @@ function exec(child: ChildProcess, log: BasicLogger): Promise<{ exit_code: numbe
         });
     });
     let childPromise = new Promise((resolve, reject) => {
-        child.on("error", e => {
-            result.error = e;
-        });
+        child.on("error", e => result.error = e);
         child.on("exit", (exit_code: number) => {
             result.exit_code = exit_code;
             resolve();

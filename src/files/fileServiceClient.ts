@@ -64,15 +64,15 @@ export class FileServiceClient {
     }
 
     getDescriptors() {
-        return this.doRequest(RequestEventType.DESCRIPTORSALL).then(value => {
-            return <fileCommon.BasciFileQuickPick[]>value.package;
-        });
+        return this.doRequest(RequestEventType.DESCRIPTORSALL).then(value =>
+            <fileCommon.BasciFileQuickPick[]>value.package
+        );
     }
 
     getDescriptorsByType(type: gitCommon.GitStatus[]) {
-        return this.doRequest(RequestEventType.DESCRIPTORSTYPE, type).then(value => {
-            return <fileCommon.BasciFileQuickPick[]>value.package;
-        });
+        return this.doRequest(RequestEventType.DESCRIPTORSTYPE, type).then(value =>
+            <fileCommon.BasciFileQuickPick[]>value.package
+        );
     }
 
     updateFiles() {
@@ -89,9 +89,7 @@ export class FileServiceClient {
         let start = this.languageClient.start();
         this.languageClient.onReady().then(value => {
             console.log("Server Ready");
-            this.sendSettings().then(value => {
-                Event.emit("server-ready", Gerrit.getInstance());
-            });
+            this.sendSettings().then(value => Event.emit("server-ready", Gerrit.getInstance()));
         });
         Event.on("settings-update", this.sendSettings);
         return start;

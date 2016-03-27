@@ -164,9 +164,7 @@ export class Controller {
                 return;
             }
             this.aquireLock(this.gerrit, this.gerrit.checkoutBranch, [branch]);
-        }, reason => {
-            console.log(reason);
-        });
+        }, reason => console.log(reason));
     }
 
     public checkoutRevision() {
@@ -235,9 +233,7 @@ export class Controller {
                 }
                 let newRef: Ref = new Ref(refId, patchId);
                 this.aquireLock(this.gerrit, this.gerrit.cherrypickRef, [newRef]).then(value => {
-                }, reason => {
-                    window.showWarningMessage("Resolve conflicts in cherry-pick");
-                });
+                }, reason => window.showWarningMessage("Resolve conflicts in cherry-pick"));
             }, reason => {
             });
         }, reason => {
@@ -272,9 +268,7 @@ export class Controller {
                 return;
             }
             this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]).then(value => {
-            }, reason => {
-                window.showWarningMessage("Resolve conflicts in rebase");
-            });
+            }, reason => window.showWarningMessage("Resolve conflicts in rebase"));
         }, reason => {
         });
     }

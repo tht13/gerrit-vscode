@@ -20,7 +20,5 @@ export interface PatchsetQuickPick extends QuickPickItem {
 }
 
 export function confirm(message: string): Thenable<boolean> {
-    return window.showInformationMessage(message, "Yes", "No").then(value => {
-        return value === "Yes";
-    });
+    return window.showInformationMessage(message, "Yes", "No").then(value => value === "Yes");
 }

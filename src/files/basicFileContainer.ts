@@ -26,9 +26,7 @@ export abstract class BasicFileContainer {
 
     getFilePaths(): string[] {
         let paths: string[] = [];
-        this.container.forEach((value, index, array) => {
-            paths.push(value.path);
-        });
+        this.container.forEach((value, index, array) => paths.push(value.path));
         return paths;
     }
 
@@ -56,13 +54,13 @@ export abstract class BasicFileContainer {
 
     getDescriptorsAll(): fileCommon.BasciFileQuickPick[] {
         let descriptors: fileCommon.BasciFileQuickPick[] = [];
-        this.container.forEach((value, index, map) => {
+        this.container.forEach((value, index, map) =>
             descriptors.push({
                 label: value.path,
                 path: value.path,
                 description: gitCommon.GitStatus[value.status]
-            });
-        });
+            })
+        );
         return descriptors;
     }
 }
