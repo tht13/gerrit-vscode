@@ -1,3 +1,4 @@
+const hash = require("object-hash");
 import * as fileCommon from "./common";
 import * as gitCommon from "../git/common";
 import * as utils from "../common/utils";
@@ -11,7 +12,8 @@ export abstract class BasicFileContainer {
     }
 
     add(item: fileCommon.IFile) {
-        this.container.set(item.path, item);
+        let hash_key = hash(item);
+        this.container.set(hash_key, item);
     }
 
     push(items: fileCommon.IFile[]) {
