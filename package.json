@@ -150,6 +150,8 @@
     "dependencies": {
         "request-promise": "^2.0.1",
         "vscode-languageclient": "^1.4.2",
+        "vscode-languageserver": "^1.4.1",
+        "object-hash": "^1.1.2"
     },
     "configuration": {
         "type": "object",
