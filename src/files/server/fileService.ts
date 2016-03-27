@@ -22,14 +22,14 @@ export class FileService extends BasicFileContainer {
             this.updateModified(),
             this.updateDeleted(),
             this.updateUntracked(),
-            // TODO: add staged, as this is the only type which could be a second property of a file
-            // this.updateStaged()
+            this.updateStaged()
         ]).then(values => {
             this.clear();
             this.push(filter(values, gitCommon.GitStatus.CLEAN).container);
             this.push(filter(values, gitCommon.GitStatus.DELETED).container);
             this.push(filter(values, gitCommon.GitStatus.MODIFIED).container);
             this.push(filter(values, gitCommon.GitStatus.UNTRACKED).container);
+            this.push(filter(values, gitCommon.GitStatus.STAGED).container);
         });
     }
 
@@ -49,6 +49,7 @@ export class FileService extends BasicFileContainer {
         return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
+    // TODO: provide description of what kind of stage file is, use --name-status to identify type
     private updateStaged(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.STAGED, ["--name-only", "--cached"]);
     }
