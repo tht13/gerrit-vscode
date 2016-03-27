@@ -215,6 +215,7 @@ export class Gerrit {
         ];
         return this.git.push(target).then(value => {
             this.setBranch(branch);
+            this.updateStatus(this);
             return value;
         });
     }
