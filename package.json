@@ -150,7 +150,21 @@
     "dependencies": {
         "request-promise": "^2.0.1",
         "vscode-languageclient": "^1.4.2",
-        "vscode-languageserver": "^1.4.1"
+    },
+    "configuration": {
+        "type": "object",
+        "title": "Gerrit configuration",
+        "properties": {
+            "gerrit.host": {
+                "type": "string",
+                "description": "The Gerrit host url, Required"
+            },
+            "gerrit.port": {
+                "type": "number",
+                "default": 8080,
+                "description": "The port used by the gerrit server, Default=8080"
+            }
+        }
     },
     "//": {
         "commands": [

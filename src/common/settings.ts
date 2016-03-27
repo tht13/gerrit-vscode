@@ -40,6 +40,7 @@ class Settings {
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
+        this._httpPort = settings.port;
         this._sshPort = settings.sshPort;
         this._username = settings.username;
         this._project = settings.project;
