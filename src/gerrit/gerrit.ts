@@ -38,6 +38,7 @@ export class Gerrit {
         this.git = Git.getInstance();
         this.fileIndex = FileServiceClient.getInstance();
         Event.on("server-ready", this.updateStatus);
+        Event.on("update-head", this.updateStatus);
     }
 
     static getInstance() {
