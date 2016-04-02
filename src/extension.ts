@@ -9,6 +9,11 @@ import { RequestEventType } from "./files/fileServiceInterface";
 let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
+    // needs testing as solution to tempest issue
+    setTimeout(_activate, 1000, context);
+}
+
+function _activate(context: vscode.ExtensionContext) {
     {
         let settings = Settings.getInstance();
         settings.extensionRoot = context.extensionPath;
