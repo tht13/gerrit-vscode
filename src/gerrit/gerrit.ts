@@ -17,8 +17,6 @@ import * as view from "../view/common";
 import { Logger } from "../view/logger";
 import { StatusBar } from "../view/statusbar";
 
-// TODO: Redo FileContainer and add event emitter
-
 // TODO: Contains serious regression in running on Tempest
 export class Gerrit {
     private branch: string;
