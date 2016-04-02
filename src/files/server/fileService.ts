@@ -58,7 +58,7 @@ export class FileService extends BasicFileContainer {
         let value: Promise<string>;
         switch (status) {
             case gitCommon.GitStatus.STAGED:
-                value = this.git.diff([], options);
+                value = this.git.diff(options);
                 break;
             case gitCommon.GitStatus.CLEAN:
             case gitCommon.GitStatus.MODIFIED:
@@ -78,7 +78,7 @@ export class FileService extends BasicFileContainer {
             }
             switch (status) {
                 case gitCommon.GitStatus.STAGED:
-                    let [type, filePath] = files[i].split(/\s*/);
+                    let [type, filePath] = files[i].split(/\t/);
                     container.push({
                         path: filePath,
                         status: status,
@@ -103,7 +103,9 @@ export class FileService extends BasicFileContainer {
                 descriptors.push({
                     label: value.path,
                     path: value.path,
-                    description: gitCommon.GitStatus[value.status]
+                    description: (value.status === gitCommon.GitStatus.STAGED) ?
+                        gitCommon.GitStagedType[value.staged_type] :
+                        gitCommon.GitStatus[value.status]
                 })
             );
         }
