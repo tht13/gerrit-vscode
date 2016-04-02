@@ -168,8 +168,8 @@ class BasicGit {
         });
     }
 
-    public diff(args?: string[], options?: string[]): Promise<string> {
-        return this.git("diff", args, options, null, false);
+    public diff(options?: string[], args?: string[]): Promise<string> {
+        return this.git("diff", options, args, null, false);
     }
 
     public ls_files(options?: string[]): Promise<string> {
