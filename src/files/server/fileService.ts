@@ -23,7 +23,7 @@ export class FileService extends BasicFileContainer {
             this.updateModified(),
             this.updateDeleted(),
             this.updateUntracked(),
-            this.updateStaged()
+            this.updateStagedDetailed()
         ]).then(values => {
             this.clear();
             this.push(filter(values, gitCommon.GitStatus.CLEAN).container);
@@ -50,7 +50,9 @@ export class FileService extends BasicFileContainer {
         return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    // TODO: provide description of what kind of stage file is, use --name-status to identify type
+    /**
+     * @Deprecated
+     */
     private updateStaged(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.STAGED, ["--name-only", "--cached"]);
     }
