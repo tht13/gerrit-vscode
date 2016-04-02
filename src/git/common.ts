@@ -3,22 +3,25 @@ export enum GitStatus {
     DELETED,
     MODIFIED,
     STAGED,
-    STAGED_ADDED,
-    STAGED_COPIED,
-    STAGED_DELETED,
-    STAGED_MODIFIED,
-    STAGED_RENAMED,
-    STAGED_TYPE,
-    STAGED_UNKNOWN,
-    STAGED_UNMERGED,
     UNTRACKED
 }
 
-export const GitStatedStatus: Map<string, GitStatus> = new Map<string, GitStatus>();
-GitStatedStatus.set("A", GitStatus.STAGED_ADDED);
-GitStatedStatus.set("C", GitStatus.STAGED_COPIED);
-GitStatedStatus.set("M", GitStatus.STAGED_MODIFIED);
-GitStatedStatus.set("R", GitStatus.STAGED_RENAMED);
-GitStatedStatus.set("T", GitStatus.STAGED_TYPE);
-GitStatedStatus.set("U", GitStatus.STAGED_UNMERGED);
-GitStatedStatus.set("X", GitStatus.STAGED_UNKNOWN);
+export enum GitStagedType {
+    ADDED,
+    COPIED,
+    DELETED,
+    MODIFIED,
+    RENAMED,
+    TYPE,
+    UNKNOWN,
+    UNMERGED
+}
+
+export const GitStategTypeMap: Map<string, GitStagedType> = new Map<string, GitStagedType>();
+GitStategTypeMap.set("A", GitStagedType.ADDED);
+GitStategTypeMap.set("C", GitStagedType.COPIED);
+GitStategTypeMap.set("M", GitStagedType.MODIFIED);
+GitStategTypeMap.set("R", GitStagedType.RENAMED);
+GitStategTypeMap.set("T", GitStagedType.TYPE);
+GitStategTypeMap.set("U", GitStagedType.UNMERGED);
+GitStategTypeMap.set("X", GitStagedType.UNKNOWN);
