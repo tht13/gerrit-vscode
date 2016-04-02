@@ -2,6 +2,7 @@ import { BasicFileContainer } from "../basicFileContainer";
 import * as fileCommon from "../common";
 import { BasicGit } from "../../git/basicGit";
 import * as gitCommon from "../../git/common";
+import * as reject from "../../common/reject";
 import * as utils from "../../common/utils";
 
 // TODO: Make GlobalFileContainer singleton
@@ -52,6 +53,22 @@ export class FileService extends BasicFileContainer {
     // TODO: provide description of what kind of stage file is, use --name-status to identify type
     private updateStaged(): Promise<fileCommon.IUpdateResult> {
         return this.updateType(gitCommon.GitStatus.STAGED, ["--name-only", "--cached"]);
+    }
+
+    private updateStagedDetailed(): Promise<fileCommon.IUpdateResult> {
+        return this.git.diff([], ["--name-status", "--cached"]).then(value => {
+            let container: fileCommon.IFile[] = [];
+            let files: string[] = value.split(utils.SPLIT_LINE);
+            for (let i in files) {
+                let [type, filePath] = files[i].split(/\s*/);
+                container.push({
+                    path: filePath,
+                    status: gitCommon.GitStatus.STAGED,
+                    staged_type: gitCommon.GitStategTypeMap.get(type)
+                });
+            }
+            return { status: gitCommon.GitStatus.STAGED, container: container };
+        });
     }
 
     private updateType(type: gitCommon.GitStatus, options?: string[]): Promise<fileCommon.IUpdateResult> {
