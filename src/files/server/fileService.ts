@@ -23,7 +23,7 @@ export class FileService extends BasicFileContainer {
             this.updateModified(),
             this.updateDeleted(),
             this.updateUntracked(),
-            this.updateStagedDetailed()
+            this.updateStaged()
         ]).then(values => {
             this.clear();
             this.push(filter(values, gitCommon.GitStatus.CLEAN).container);
@@ -50,32 +50,13 @@ export class FileService extends BasicFileContainer {
         return this.updateType(gitCommon.GitStatus.UNTRACKED, ["--exclude-standard", "-o"]);
     }
 
-    /**
-     * @Deprecated
-     */
     private updateStaged(): Promise<fileCommon.IUpdateResult> {
-        return this.updateType(gitCommon.GitStatus.STAGED, ["--name-only", "--cached"]);
+        return this.updateType(gitCommon.GitStatus.STAGED, ["--name-status", "--cached"]);
     }
 
-    private updateStagedDetailed(): Promise<fileCommon.IUpdateResult> {
-        return this.git.diff([], ["--name-status", "--cached"]).then(value => {
-            let container: fileCommon.IFile[] = [];
-            let files: string[] = value.split(utils.SPLIT_LINE);
-            for (let i in files) {
-                let [type, filePath] = files[i].split(/\s*/);
-                container.push({
-                    path: filePath,
-                    status: gitCommon.GitStatus.STAGED,
-                    staged_type: gitCommon.GitStategTypeMap.get(type)
-                });
-            }
-            return { status: gitCommon.GitStatus.STAGED, container: container };
-        });
-    }
-
-    private updateType(type: gitCommon.GitStatus, options?: string[]): Promise<fileCommon.IUpdateResult> {
+    private updateType(status: gitCommon.GitStatus, options?: string[]): Promise<fileCommon.IUpdateResult> {
         let value: Promise<string>;
-        switch (type) {
+        switch (status) {
             case gitCommon.GitStatus.STAGED:
                 value = this.git.diff([], options);
                 break;
@@ -85,22 +66,33 @@ export class FileService extends BasicFileContainer {
             case gitCommon.GitStatus.UNTRACKED:
                 value = this.git.ls_files(options);
         }
-        return value.then(value => this.parseUpdate(value, type));
+        return value.then(value => this.parseUpdate(value, status));
     }
 
-    private parseUpdate(value: string, type: gitCommon.GitStatus): fileCommon.IUpdateResult {
+    private parseUpdate(value: string, status: gitCommon.GitStatus): fileCommon.IUpdateResult {
         let container: fileCommon.IFile[] = [];
         let files: string[] = value.split(utils.SPLIT_LINE);
         for (let i in files) {
             if (files[i] === "") {
                 continue;
             }
-            container.push({
-                path: files[i],
-                status: type
-            });
+            switch (status) {
+                case gitCommon.GitStatus.STAGED:
+                    let [type, filePath] = files[i].split(/\s*/);
+                    container.push({
+                        path: filePath,
+                        status: status,
+                        staged_type: gitCommon.GitStategTypeMap.get(type)
+                    });
+                    break;
+                default:
+                    container.push({
+                        path: files[i],
+                        status: status
+                    });
+            }
         }
-        return { status: type, container: container };
+        return { status: status, container: container };
     }
 
     getDescriptorsByType(type: gitCommon.GitStatus[]): fileCommon.BasciFileQuickPick[] {
