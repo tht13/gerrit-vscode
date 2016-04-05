@@ -249,7 +249,6 @@ export class Gerrit {
             return Promise.reject("Host not setup");
         }
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
-        console.log(url);
         let options = {
             url: url,
             auth: {
