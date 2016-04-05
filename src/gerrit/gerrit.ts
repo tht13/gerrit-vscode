@@ -191,20 +191,20 @@ export class Gerrit {
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
-        return this.isDirty().then(dirty => {
-            if (dirty) {
-                let reason: reject.RejectReason = {
-                    showInformation: true,
-                    message: "Dirty Head",
-                    type: reject.RejectType.DEFAULT
-                };
-                return Promise.reject(reason);
-            }
-
-            this.setCurrentRef(ref);
-
-            return this.git.fetch(ref.getUrl()).then(value => resolver.apply(this.git, ["FETCH_HEAD"]));
-        });
+        return this.git.fetch(ref.getUrl())
+            .then(value => resolver.apply(this.git, ["FETCH_HEAD"]))
+            .then(value => this.setCurrentRef(ref));
+        // TODO: find method to reimplement this but use exit 128 for now
+        // return this.isDirty().then(dirty => {
+        //     if (dirty) {
+        //         let reason: reject.RejectReason = {
+        //             showInformation: true,
+        //             message: "Dirty Head",
+        //             type: reject.RejectType.DEFAULT
+        //         };
+        //         return Promise.reject(reason);
+        //     }
+        // });
     }
 
     public push(branch: string): Promise<string> {
