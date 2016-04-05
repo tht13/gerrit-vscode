@@ -16,17 +16,16 @@ export class FileService extends BasicFileContainer {
     }
 
     updateFiles() {
+        this.clear();
         let filter = (values: fileCommon.IUpdateResult[], search: gitCommon.GitStatus) =>
             values.find((value, index, obj) => (value.status === search));
+        this.updateIndex().then(value => this.push(value.container));
         return Promise.all([
-            this.updateIndex(),
             this.updateModified(),
             this.updateDeleted(),
             this.updateUntracked(),
             this.updateStaged()
         ]).then(values => {
-            this.clear();
-            this.push(filter(values, gitCommon.GitStatus.CLEAN).container);
             this.push(filter(values, gitCommon.GitStatus.DELETED).container);
             this.push(filter(values, gitCommon.GitStatus.MODIFIED).container);
             this.push(filter(values, gitCommon.GitStatus.UNTRACKED).container);
