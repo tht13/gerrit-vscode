@@ -10,7 +10,7 @@ let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
     // needs testing as solution to tempest issue
-    setTimeout(_activate, 1000, context);
+    setTimeout(_activate, 2000, context);
 }
 
 function _activate(context: vscode.ExtensionContext) {
