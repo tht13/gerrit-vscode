@@ -35,8 +35,8 @@ export class Gerrit {
         this.logger.log("Activating Gerrit...", false);
         this.git = Git.getInstance();
         this.fileIndex = FileServiceClient.getInstance();
-        Event.on("server-ready", this.updateStatus);
-        Event.on("update-head", this.updateStatus);
+        Event.on("server-ready", Gerrit.handleUpdate);
+        Event.on("update-head", Gerrit.handleUpdate);
     }
 
     static getInstance() {
@@ -46,28 +46,31 @@ export class Gerrit {
         return Gerrit._gerrit;
     }
 
-    private updateStatus(gerrit: Gerrit) {
-        gerrit.fileIndex.updateFiles().then(value => {
-            gerrit.getGitLog(0).then(value => {
-                console.log(value);
-                if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-                    gerrit.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-                        gerrit.settings.project = value.project;
-                        gerrit.setBranch(value.branch);
-                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-                        gerrit.setCurrentRef(ref);
-                    }, reason => {
-                        console.log("rejected");
-                        console.log(reason);
-                    });
-                }
-            }, (reason: reject.RejectReason) => {
-                console.log("rejected");
-                console.log(reason);
-                if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-                    gerrit.logger.log("No commits on branch");
-                }
-            });
+    static handleUpdate() {
+        Gerrit.getInstance().updateStatus();
+    }
+
+    private updateStatus() {
+        this.fileIndex.updateFiles();
+        this.getGitLog(0).then(value => {
+            console.log(value);
+            if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+                this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                    this.settings.project = value.project;
+                    this.setBranch(value.branch);
+                    let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                    this.setCurrentRef(ref);
+                }, reason => {
+                    console.log("rejected");
+                    console.log(reason);
+                });
+            }
+        }, (reason: reject.RejectReason) => {
+            console.log("rejected");
+            console.log(reason);
+            if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                this.logger.log("No commits on branch");
+            }
         });
     }
 
@@ -210,7 +213,7 @@ export class Gerrit {
         ];
         return this.git.push(target).then(value => {
             this.setBranch(branch);
-            this.updateStatus(this);
+            this.updateStatus();
             return value;
         });
     }
@@ -256,7 +259,11 @@ export class Gerrit {
             }
         };
         return rp(options).then(
-            value => JSON.parse(value.replace(")]}'\n", "")),
+            value => {
+                let temp = value.replace(")]}'\n", "");
+                let json = JSON.parse(temp);
+                return json;
+            },
             reason => console.log(reason)
         );
     }

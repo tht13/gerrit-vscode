@@ -26,7 +26,7 @@ class Git extends BasicGit {
 
     public push(target: string[], origin?: string): Promise<string> {
      return super.push(target, origin).then(value => {
-            Event.emit("update-head", Gerrit.getInstance());
+            Event.emit("update-head");
             return value;
         });
     }

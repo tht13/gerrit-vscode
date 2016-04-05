@@ -23,6 +23,10 @@ export class FileServiceClient {
         return FileServiceClient._client;
     }
 
+    static handleUpdate() {
+        return FileServiceClient.getInstance().sendSettings();
+    }
+
     private getOptions(): { serverOptions: ServerOptions, clientOptions: LanguageClientOptions } {
         let serverModule = path.join(Settings.getInstance().extensionRoot, "out", "src",
             "files", "server", "fileServiceServer.js");
@@ -89,9 +93,9 @@ export class FileServiceClient {
         let start = this.languageClient.start();
         this.languageClient.onReady().then(value => {
             console.log("Server Ready");
-            this.sendSettings().then(value => Event.emit("server-ready", Gerrit.getInstance()));
+            this.sendSettings().then(value => Event.emit("server-ready"));
         });
-        Event.on("settings-update", this.sendSettings);
+        Event.on("settings-update", FileServiceClient.handleUpdate);
         return start;
     }
 }
