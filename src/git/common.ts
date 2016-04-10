@@ -1,5 +1,4 @@
 export enum GitStatus {
-    CLEAN,
     DELETED,
     MODIFIED,
     STAGED,
