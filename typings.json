@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+  },
+  "ambientDependencies": {
+    "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
+    "form-data": "registry:dt/form-data#0.0.0+20160316155526",
+    "request": "registry:dt/request#0.0.0+20160316155526",
+    "request-promise": "registry:dt/request-promise#0.4.2+20160316155526"
+  }
+}
