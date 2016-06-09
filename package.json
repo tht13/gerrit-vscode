@@ -165,6 +165,10 @@
                 "type": "number",
                 "default": 8080,
                 "description": "The port used by the gerrit server, Default=8080"
+            },
+            "gerrit.project": {
+                "type": "string",
+                "description": "Gerrit project, Required"
             }
         }
     },
