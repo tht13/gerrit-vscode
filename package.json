@@ -169,6 +169,10 @@
             "gerrit.project": {
                 "type": "string",
                 "description": "Gerrit project, Required"
+            },
+            "gerrit.httpPassword": {
+                "type": "string",
+                "description": "Gerrit http password, Required"
             }
         }
     },
