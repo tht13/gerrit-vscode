@@ -1,4 +1,4 @@
-let rp = require("request-promise");
+import * as rp from "request-promise";
 import { workspace } from "vscode";
 import { IReview } from "./gerritAPI";
 import { Ref } from "./ref";
@@ -249,15 +249,14 @@ export class Gerrit {
             return Promise.reject("Host not setup");
         }
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
-        let options = {
+        return rp({
             url: url,
             auth: {
                 user: this.settings.username,
                 pass: this.settings.httpPassword,
                 sendImmediately: false
             }
-        };
-        return rp(options).then(
+        }).then(
             value => {
                 let temp = value.replace(")]}'\n", "");
                 let json = JSON.parse(temp);
