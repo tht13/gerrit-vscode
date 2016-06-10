@@ -1,13 +1,14 @@
 import { window, OutputChannel } from "vscode";
+import { BasicLogger } from "./simpleLogger";
 import * as utils from "../common/utils";
+import Settings from "../common/settings";
 
-export class Logger {
+export class Logger extends BasicLogger {
     private outputChannel: OutputChannel;
-    private visible: boolean = false;
-    private debugMode: boolean = false;
     private static _logger: Logger = null;
 
     constructor() {
+        super();
         this.outputChannel = window.createOutputChannel("Gerrit");
     }
 
@@ -18,25 +19,13 @@ export class Logger {
         return Logger._logger;
     }
 
-    setDebug(value: boolean) {
-        this.debugMode = value;
-    }
-
-    log(value: string, show?: boolean) {
-        show = utils.setDefault(show, true);
-        if (show) {
+    log(value: string) {
+        if (!utils.isNull(Settings.getInstance().showLog && Settings.getInstance().showLog)) {
             this.outputChannel.show(true);
         }
         let lines: string[] = value.split(utils.SPLIT_LINE);
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
         }
-    }
-
-    debug(value: string) {
-        if (!this.debugMode) {
-            return;
-        }
-        this.log(value);
     }
 }

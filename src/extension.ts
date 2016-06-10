@@ -1,98 +1,85 @@
 "use strict";
 import * as vscode from "vscode";
-import { Git } from "./common/git/git";
-import { GerritController } from "./gerrit/controller";
+import * as utils from "./common/utils";
+import { Git } from "./git/git";
+import { Settings } from "./common/settings";
+import { Controller } from "./controller";
+import { FileServiceClient } from "./files/fileServiceClient";
+import { RequestEventType } from "./files/fileServiceInterface";
 
-let controller: GerritController;
+let controller: Controller;
 
 export function activate(context: vscode.ExtensionContext) {
+    // needs testing as solution to tempest issue
+    setTimeout(_activate, 2000, context);
+}
+
+function _activate(context: vscode.ExtensionContext) {
+    let settings = Settings.getInstance();
+    settings.extensionRoot = context.extensionPath;
+    settings.workspaceRoot = vscode.workspace.rootPath;
+    settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
+    if (!utils.isNull(settings.active) && !settings.active) {
+        return;
+    }
+    vscode.workspace.onDidChangeConfiguration(() => settings.loadSettings(vscode.workspace.getConfiguration("gerrit")));
+
+    let fileContainer = FileServiceClient.getInstance();
+    context.subscriptions.push(fileContainer.startServer());
+
     let commands: vscode.Disposable[] = [];
-    controller = new GerritController();
+    controller = new Controller();
 
     commands.push(
-        vscode.commands.registerCommand("gerrit.stageAll", () => {
-            controller.stageAll();
-        })
+        vscode.commands.registerCommand("gerrit.stageAll", () => controller.stageAll())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.stageCurrentFile", () => {
-            controller.stageCurrentFile();
-        })
+        vscode.commands.registerCommand("gerrit.stageCurrentFile", () => controller.stageCurrentFile())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.stageFile", () => {
-            controller.stageFile();
-        })
+        vscode.commands.registerCommand("gerrit.stageFile", () => controller.stageFile())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.resetAll", () => {
-            controller.resetAll();
-        })
+        vscode.commands.registerCommand("gerrit.resetAll", () => controller.resetAll())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.resetCurrentFile", () => {
-            controller.resetCurrentFile();
-        })
+        vscode.commands.registerCommand("gerrit.resetCurrentFile", () => controller.resetCurrentFile())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.resetFile", () => {
-            controller.resetFile();
-        })
+        vscode.commands.registerCommand("gerrit.resetFile", () => controller.resetFile())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.cleanAll", () => {
-            controller.cleanAll();
-        })
+        vscode.commands.registerCommand("gerrit.cleanAll", () => controller.cleanAll())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.cleanCurrentFile", () => {
-            controller.cleanCurrentFile();
-        })
+        vscode.commands.registerCommand("gerrit.cleanCurrentFile", () => controller.cleanCurrentFile())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.checkoutBranch", () => {
-            controller.checkoutBranch();
-        })
+        vscode.commands.registerCommand("gerrit.checkoutBranch", () => controller.checkoutBranch())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.checkoutRevision", () => {
-            controller.checkoutRevision();
-        })
+        vscode.commands.registerCommand("gerrit.checkoutRevision", () => controller.checkoutRevision())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.cherrypickRevision", () => {
-            controller.cherrypickRevision();
-        })
+        vscode.commands.registerCommand("gerrit.cherrypickRevision", () => controller.cherrypickRevision())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.cherrypickContinue", () => {
-            controller.cherrypickContinue();
-        })
+        vscode.commands.registerCommand("gerrit.cherrypickContinue", () => controller.cherrypickContinue())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.commit", () => {
-            controller.commit();
-        })
+        vscode.commands.registerCommand("gerrit.commit", () => controller.commit())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.commitAmend", () => {
-            controller.commitAmend();
-        })
+        vscode.commands.registerCommand("gerrit.commitAmend", () => controller.commitAmend())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.pushBranch", () => {
-            controller.push();
-        })
+        vscode.commands.registerCommand("gerrit.pushBranch", () => controller.push())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.rebaseBranch", () => {
-            controller.rebase();
-        })
+        vscode.commands.registerCommand("gerrit.rebaseBranch", () => controller.rebase())
     );
     commands.push(
-        vscode.commands.registerCommand("gerrit.rebaseContinue", () => {
-            controller.rebaseContinue();
-        })
+        vscode.commands.registerCommand("gerrit.rebaseContinue", () => controller.rebaseContinue())
     );
 
     context.subscriptions.concat(commands);

@@ -1,31 +1,30 @@
 import { createLog, GitLog } from "./gitLog";
-import * as exec from "../exec";
-import * as common from "../reject";
-import { GerritSettings } from "../settings";
-import * as utils from "../utils";
-import { Ref } from "../../gerrit/ref";
-import { Logger } from "../../view/logger";
+import * as exec from "../common/exec";
+import * as reject from "../common/reject";
+import { Settings } from "../common/settings";
+import * as utils from "../common/utils";
+import { BasicLogger } from "../view/simpleLogger";
 
 
-class Git {
-    private settings: GerritSettings;
-    private logger: Logger;
-    private cherrypickActive: boolean;
-    private rebaseActive: boolean;
-    private static _git: Git = null;
+class BasicGit {
+    protected settings: Settings;
+    protected logger: BasicLogger;
+    protected cherrypickActive: boolean;
+    protected rebaseActive: boolean;
+    private static _basicGit: BasicGit = null;
 
     constructor() {
-        this.settings = GerritSettings.getInstance();
-        this.logger = Logger.logger;
+        this.settings = Settings.getInstance();
+        this.logger = BasicLogger.logger;
         this.cherrypickActive = false;
         this.rebaseActive = false;
     }
 
     static getInstance() {
-        if (utils.isNull(Git._git)) {
-            Git._git = new Git();
+        if (utils.isNull(BasicGit._basicGit)) {
+            BasicGit._basicGit = new BasicGit();
         }
-        return Git._git;
+        return BasicGit._basicGit;
     }
 
     public stage(path: string): Promise<string> {
@@ -57,10 +56,10 @@ class Git {
             options.push("--amend", "--no-edit");
         } else {
             if (utils.isNull(msg) || msg.length === 0) {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: true,
                     message: "Requires a message to commit with",
-                    type: common.RejectType.DEFAULT
+                    type: reject.RejectType.DEFAULT
                 };
                 return Promise.reject(reason);
             }
@@ -93,12 +92,13 @@ class Git {
         let options = [
             HEAD
         ];
-        return this.git("cherry-pick", options).then(value => {
-            return value;
-        }, reason => {
-            this.cherrypickActive = true;
-            return reason;
-        });
+        return this.git("cherry-pick", options).then(
+            value => value,
+            reason => {
+                this.cherrypickActive = true;
+                return reason;
+            }
+        );
     }
 
     // TODO: Broken as vim editor opens
@@ -118,21 +118,20 @@ class Git {
     public push(target: string[], origin?: string): Promise<string> {
         origin = utils.setDefault(origin, "origin");
         target.unshift(origin);
-        return this.git("push", [], target).then(value => {
-            return value;
-        });
+        return this.git("push", [], target);
     }
 
     public rebase(branch: string): Promise<string> {
         let args: string[] = [
             branch
         ];
-        return this.git("rebase", [], args).then(value => {
-            return value;
-        }, reason => {
-            this.rebaseActive = true;
-            return reason;
-        });
+        return this.git("rebase", [], args).then(
+            value => value,
+            reason => {
+                this.rebaseActive = true;
+                return reason;
+            }
+        );
     }
 
     public rebaseContinue(): Promise<string> {
@@ -157,10 +156,10 @@ class Git {
         ];
         return this.git("log", options).then((value: string): Promise<void | GitLog> => {
             if (utils.isNull(value)) {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: false,
                     message: "Failed Gitlog",
-                    type: common.RejectType.GIT,
+                    type: reject.RejectType.GIT,
                     attributes: {}
                 };
                 return Promise.reject(reason);
@@ -169,8 +168,8 @@ class Git {
         });
     }
 
-    public diff(args?: string[], options?: string[]): Promise<string> {
-        return this.git("diff", args, options, null, false);
+    public diff(options?: string[], args?: string[]): Promise<string> {
+        return this.git("diff", options, args, null, false);
     }
 
     public ls_files(options?: string[]): Promise<string> {
@@ -181,6 +180,7 @@ class Git {
         options = utils.setDefault(options, []);
         args = utils.setDefault(args, []);
         stdin = utils.setDefault(stdin, "");
+        log = utils.setDefault(log, true);
         let fullArgs: string[] = [gitCommand];
         fullArgs = fullArgs.concat(options);
         fullArgs.push("--");
@@ -194,14 +194,14 @@ class Git {
             runOptions["input"] = stdin + "\n";
         }
 
-        return exec.run("git", fullArgs, runOptions, log).then((result): Promise<string | void> => {
+        return exec.run("git", fullArgs, runOptions, (log) ? this.logger : null).then((result): Promise<string | void> => {
             if (utils.isNull(result.error)) {
                 return Promise.resolve(result.stdout);
             } else {
-                let reason: common.RejectReason = {
+                let reason: reject.RejectReason = {
                     showInformation: false,
                     message: "Failed Git",
-                    type: common.RejectType.GIT,
+                    type: reject.RejectType.GIT,
                     attributes: { error: result.error, stderr: result.stderr }
                 };
                 console.warn(reason);
@@ -212,16 +212,5 @@ class Git {
     }
 }
 
-class GitSingleton {
-    private static _git: Git = null;
-
-    static get git() {
-        if (utils.isNull(GitSingleton._git)) {
-            GitSingleton._git = new Git();
-        }
-        return GitSingleton._git;
-    }
-}
-
-export default Git;
-export { Git };
+export default BasicGit;
+export { BasicGit };

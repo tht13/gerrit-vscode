@@ -1,41 +1,42 @@
-let rp = require("request-promise");
+import * as rp from "request-promise";
 import { workspace } from "vscode";
-import { FileContainer } from "./files/fileContainer";
-import { GlobalFileContainer } from "./files/globalFileContainer";
 import { IReview } from "./gerritAPI";
 import { Ref } from "./ref";
 import Event from "../common/event";
 import * as exec from "../common/exec";
-import { Git } from "../common/git/git";
-import { createLog, GitLog } from "../common/git/gitLog";
+import * as gitCommon from "../git/common";
+import { Git } from "../git/git";
+import { createLog, GitLog } from "../git/gitLog";
 import * as reject from "../common/reject";
-import { GerritSettings } from "../common/settings";
+import { Settings } from "../common/settings";
 import * as utils from "../common/utils";
+import { FileContainer } from "../files/fileContainer";
+import { FileServiceClient } from "../files/fileServiceClient";
+import { RequestEventType } from "../files/fileServiceInterface";
 import * as view from "../view/common";
 import { Logger } from "../view/logger";
 import { StatusBar } from "../view/statusbar";
-
-// TODO: Redo FileContainer and add event emitter
 
 // TODO: Contains serious regression in running on Tempest
 export class Gerrit {
     private branch: string;
     private currentRef: Ref;
     private logger: Logger;
-    private settings: GerritSettings;
+    private settings: Settings;
     private statusBar: StatusBar;
     private git: Git;
-    private fileIndex: GlobalFileContainer;
+    private fileIndex: FileServiceClient;
     private static _gerrit: Gerrit = null;
 
     constructor() {
-        this.settings = GerritSettings.getInstance();
+        this.settings = Settings.getInstance();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
-        this.logger.log("Activating Gerrit...", false);
+        this.logger.log("Activating Gerrit...");
         this.git = Git.getInstance();
-        this.fileIndex = new GlobalFileContainer();
-        this.updateStatus();
+        this.fileIndex = FileServiceClient.getInstance();
+        Event.on("server-ready", Gerrit.handleUpdate);
+        Event.on("update-head", Gerrit.handleUpdate);
     }
 
     static getInstance() {
@@ -45,28 +46,31 @@ export class Gerrit {
         return Gerrit._gerrit;
     }
 
+    static handleUpdate() {
+        Gerrit.getInstance().updateStatus();
+    }
+
     private updateStatus() {
-        this.fileIndex.updateFiles().then(value => {
-            this.getGitLog(0).then(value => {
-                console.log(value);
-                if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-                    this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
-                        this.settings.project = value.project;
-                        this.setBranch(value.branch);
-                        let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
-                        this.setCurrentRef(ref);
-                    }, reason => {
-                        console.log("rejected");
-                        console.log(reason);
-                    });
-                }
-            }, (reason: reject.RejectReason) => {
-                console.log("rejected");
-                console.log(reason);
-                if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
-                    this.logger.log("No commits on branch");
-                }
-            });
+        this.fileIndex.updateFiles();
+        this.getGitLog(0).then(value => {
+            console.log(value);
+            if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+                this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                    this.settings.project = value.project;
+                    this.setBranch(value.branch);
+                    let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
+                    this.setCurrentRef(ref);
+                }, reason => {
+                    console.log("rejected");
+                    console.log(reason);
+                });
+            }
+        }, (reason: reject.RejectReason) => {
+            console.log("rejected");
+            console.log(reason);
+            if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+                this.logger.log("No commits on branch");
+            }
         });
     }
 
@@ -95,22 +99,22 @@ export class Gerrit {
     Patch Set: ${this.currentRef.getPatchSet()}`);
     }
 
-    public isDirty(): Promise<boolean> {
-        return this.getDirtyFiles().then(value => {
-            return value.isDirty();
-        });
+    public isDirty(): PromiseLike<boolean> {
+        return this.getDirtyFiles().then(value => (value.length > 0));
     }
 
-    public getDirtyFiles(): Promise<FileContainer> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex;
-        });
+    public getDirtyFiles(): PromiseLike<view.FileStageQuickPick[]> {
+        return this.fileIndex.updateFiles().then(() =>
+            this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.DELETED,
+                gitCommon.GitStatus.MODIFIED,
+                gitCommon.GitStatus.UNTRACKED])
+        );
     }
 
-    public getStagedFiles(): Promise<FileContainer> {
-        return this.fileIndex.updateFiles().then(() => {
-            return this.fileIndex;
-        });
+    public getStagedFiles(): PromiseLike<view.FileStageQuickPick[]> {
+        return this.fileIndex.updateFiles().then(() =>
+            this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.STAGED])
+        );
     }
 
     public getBranches(): Promise<string[]> {
@@ -172,37 +176,35 @@ export class Gerrit {
         });
     }
 
-    public checkoutRef(ref: Ref): Promise<string> {
+    public checkoutRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.checkout);
+        return this.fetchRef(ref, (url: string ) => this.git.checkout(url));
     }
 
-    public cherrypickRef(ref: Ref): Promise<string> {
+    public cherrypickRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.cherrypick);
+        return this.fetchRef(ref, (url: string ) => this.git.cherrypick(url));
     }
 
-    private fetchRef<T>(ref: Ref, resolver: (url: string) => Promise<string>): Promise<string | void> {
-        return this.isDirty().then(dirty => {
-            if (dirty) {
-                let reason: reject.RejectReason = {
-                    showInformation: true,
-                    message: "Dirty Head",
-                    type: reject.RejectType.DEFAULT
-                };
-                return Promise.reject(reason);
-            }
-
-            this.setCurrentRef(ref);
-
-            return this.git.fetch(ref.getUrl()).then(value => {
-                return resolver.apply(this.git, ["FETCH_HEAD"]);
-            });
-        });
+    private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
+        return this.git.fetch(ref.getUrl())
+            .then(value => resolver("FETCH_HEAD"))
+            .then(value => this.setCurrentRef(ref));
+        // TODO: find method to reimplement this but use exit 128 for now
+        // return this.isDirty().then(dirty => {
+        //     if (dirty) {
+        //         let reason: reject.RejectReason = {
+        //             showInformation: true,
+        //             message: "Dirty Head",
+        //             type: reject.RejectType.DEFAULT
+        //         };
+        //         return Promise.reject(reason);
+        //     }
+        // });
     }
 
     public push(branch: string): Promise<string> {
@@ -211,6 +213,7 @@ export class Gerrit {
         ];
         return this.git.push(target).then(value => {
             this.setBranch(branch);
+            this.updateStatus();
             return value;
         });
     }
@@ -246,20 +249,21 @@ export class Gerrit {
             return Promise.reject("Host not setup");
         }
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
-        console.log(url);
-        let options = {
+        return rp({
             url: url,
             auth: {
                 user: this.settings.username,
                 pass: this.settings.httpPassword,
                 sendImmediately: false
             }
-        };
-        return rp(options).then(value => {
-            return JSON.parse(value.replace(")]}'\n", ""));
-        }, reason => {
-            console.log(reason);
-        });
+        }).then(
+            value => {
+                let temp = value.replace(")]}'\n", "");
+                let json = JSON.parse(temp);
+                return json;
+            },
+            reason => console.log(reason)
+        );
     }
 }
 

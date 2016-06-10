@@ -1,6 +1,23 @@
-import { workspace } from "vscode";
+import Event from "../common/event";
+import * as utils from "../common/utils";
 
-class GerritSettings {
+export interface SettingsExport {
+    showLog: boolean;
+    host: string;
+    protocol: string;
+    httpPort: number;
+    sshPort: number;
+    username: string;
+    project: string;
+    version: string;
+    httpPassword: string;
+    workspaceRoot: string;
+    extensionRoot: string;
+}
+
+class Settings {
+    private _active: boolean;
+    private _showLog: boolean;
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -11,33 +28,59 @@ class GerritSettings {
     private _httpPassword: string;
     private _workspaceRoot: string;
     private _extensionRoot: string;
-    private static _gerritSettings: GerritSettings = null;
+    private static _settings: Settings = null;
 
     constructor() {
-        this._workspaceRoot = workspace.rootPath;
-        this.loadSettings();
-        workspace.onDidChangeConfiguration(() => {
-            this.loadSettings();
-        });
     }
 
     static getInstance() {
-        if (GerritSettings._gerritSettings === null) {
-            GerritSettings._gerritSettings = new GerritSettings();
+        if (Settings._settings === null) {
+            Settings._settings = new Settings();
         }
-        return GerritSettings._gerritSettings;
+        return Settings._settings;
     }
 
-    private loadSettings(): void {
-        let settings: any = workspace.getConfiguration("gerrit");
+    public loadSettings(settings: any): void {
+        this._active = settings.active;
+        this._showLog = settings.showLog;
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
+        this._httpPort = (utils.isNull(this._httpPort) && !utils.isNull(settings.port)) ? settings.port : this._httpPort;
         this._sshPort = settings.sshPort;
         this._username = settings.username;
         this._project = settings.project;
         this._version = settings.version;
         this._httpPassword = settings.httpPassword;
+        this.emitUpdate();
+    }
+
+    exportSettings(): SettingsExport {
+        return {
+            host: this._host,
+            showLog: this._showLog,
+            protocol: this._protocol,
+            httpPort: this._httpPort,
+            sshPort: this._sshPort,
+            username: this._username,
+            project: this._project,
+            version: this._version,
+            httpPassword: this._httpPassword,
+            workspaceRoot: this._workspaceRoot,
+            extensionRoot: this._extensionRoot
+        };
+    }
+
+    private emitUpdate() {
+        Event.emit("settings-update");
+    }
+
+    get active(): boolean {
+        return this._active;
+    }
+
+    get showLog(): boolean {
+        return this._showLog;
     }
 
     get host(): string {
@@ -66,6 +109,7 @@ class GerritSettings {
 
     set project(project: string) {
         this._project = project;
+        this.emitUpdate();
     }
 
     get version(): string {
@@ -80,14 +124,20 @@ class GerritSettings {
         return this._workspaceRoot;
     }
 
+    set workspaceRoot(value: string) {
+        this._workspaceRoot = value;
+        this.emitUpdate();
+    }
+
     get extensionRoot(): string {
         return this._extensionRoot;
     }
 
     set extensionRoot(value: string) {
         this._extensionRoot = value;
+        this.emitUpdate();
     }
 }
 
-export default GerritSettings;
-export { GerritSettings };
+export default Settings;
+export { Settings };

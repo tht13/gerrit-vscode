@@ -1,7 +1,8 @@
 import { QuickPickItem, window } from "vscode";
 import * as utils from "../common/utils";
+import * as fileCommon from "../files/common";
 
-export interface FileStageQuickPick extends QuickPickItem {
+export interface FileStageQuickPick extends QuickPickItem, fileCommon.BasciFileQuickPick {
     path: string;
 }
 
@@ -19,7 +20,5 @@ export interface PatchsetQuickPick extends QuickPickItem {
 }
 
 export function confirm(message: string): Thenable<boolean> {
-    return window.showInformationMessage(message, "Yes", "No").then(value => {
-        return value === "Yes";
-    });
+    return window.showInformationMessage(message, "Yes", "No").then(value => value === "Yes");
 }

@@ -25,11 +25,11 @@ export class Ref {
 
     public getUrl(): string {
         let idString = this.id.toString();
-        let shortId: number;
+        let shortId: string;
         if (idString.length > 1) {
-            shortId = parseInt(idString.substr(idString.length - 2));
+            shortId = idString.substr(idString.length - 2);
         } else {
-            shortId = parseInt(idString);
+            shortId = idString;
         }
         return `refs/changes/${shortId}/${idString}/${this.patchSet.toString()}`;
     }

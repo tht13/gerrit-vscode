@@ -31,6 +31,7 @@ export class StatusBar {
     public updateStatusBarRef(_this: StatusBar, ref: Ref) {
         if (!utils.isNull(ref) && _this.statusBarText.ref !== ref.text) {
             _this.statusBarText.ref = ref.text;
+            _this.statusBarText.branch = "";
             _this.updateStatusBar();
         }
     }
@@ -38,6 +39,7 @@ export class StatusBar {
     public updateStatusBarBranch(_this: StatusBar, branch: string) {
         if (!utils.isNull(branch) && _this.statusBarText.branch !== branch) {
             _this.statusBarText.branch = branch;
+            _this.statusBarText.ref = "";
             _this.updateStatusBar();
         }
     }
@@ -53,7 +55,7 @@ export class StatusBar {
         let icon = (this.statusBarText.icon.length > 0) ? ` $(${this.statusBarText.icon})` : "";
         let branch = this.statusBarText.branch;
         let ref = this.statusBarText.ref;
-        let text = `Gerrit:${branch}:${ref}${icon} `;
+        let text = `Gerrit:${branch}${ref}${icon} `;
         this.statusBarItem.text = text;
         this.statusBarItem.show();
     }
