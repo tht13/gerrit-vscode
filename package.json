@@ -176,7 +176,16 @@
             "gerrit.httpPassword": {
                 "type": "string",
                 "description": "Gerrit http password, Required"
+            },
+            "gerrit.showLog": {
+                "type": "boolean",
+                "description": "Show the gerrit log during commands, Default=False"
+            },
+            "gerrit.active": {
+                "type": "boolean",
+                "description": "Activate Gerrit extension, Default=False"
             }
+
         }
     },
     "//": {

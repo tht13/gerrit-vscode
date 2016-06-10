@@ -5,10 +5,8 @@ import * as gitCommon from "../../git/common";
 import * as reject from "../../common/reject";
 import * as utils from "../../common/utils";
 
-// TODO: Make GlobalFileContainer singleton
 export class FileService extends BasicFileContainer {
     private git: BasicGit;
-
 
     constructor() {
         super();
