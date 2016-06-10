@@ -180,19 +180,19 @@ export class Gerrit {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.checkout);
+        return this.fetchRef(ref, (url: string ) => this.git.checkout(url));
     }
 
     public cherrypickRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.cherrypick);
+        return this.fetchRef(ref, (url: string ) => this.git.cherrypick(url));
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
         return this.git.fetch(ref.getUrl())
-            .then(value => resolver.apply(this.git, ["FETCH_HEAD"]))
+            .then(value => resolver("FETCH_HEAD"))
             .then(value => this.setCurrentRef(ref));
         // TODO: find method to reimplement this but use exit 128 for now
         // return this.isDirty().then(dirty => {
