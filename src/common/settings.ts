@@ -15,6 +15,7 @@ export interface SettingsExport {
 }
 
 class Settings {
+    private _active: boolean;
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -38,6 +39,7 @@ class Settings {
     }
 
     public loadSettings(settings: any): void {
+        this._active = settings.active;
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
@@ -67,6 +69,10 @@ class Settings {
 
     private emitUpdate() {
         Event.emit("settings-update");
+    }
+
+    get active(): boolean {
+        return this._active;
     }
 
     get host(): string {
