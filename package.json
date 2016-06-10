@@ -13,7 +13,7 @@
     },
     "license": "MIT",
     "engines": {
-        "vscode": "^1.2"
+        "vscode": "^1.2.0"
     },
     "main": "./out/src/extension",
     "icon": "images/gerrit_icon.png",
