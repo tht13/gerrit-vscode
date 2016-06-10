@@ -1,6 +1,7 @@
 import { window, OutputChannel } from "vscode";
 import { BasicLogger } from "./simpleLogger";
 import * as utils from "../common/utils";
+import Settings from "../common/settings";
 
 export class Logger extends BasicLogger {
     private outputChannel: OutputChannel;
@@ -18,9 +19,8 @@ export class Logger extends BasicLogger {
         return Logger._logger;
     }
 
-    log(value: string, show?: boolean) {
-        show = utils.setDefault(show, true);
-        if (show) {
+    log(value: string) {
+        if (!utils.isNull(Settings.getInstance().showLog && Settings.getInstance().showLog)) {
             this.outputChannel.show(true);
         }
         let lines: string[] = value.split(utils.SPLIT_LINE);

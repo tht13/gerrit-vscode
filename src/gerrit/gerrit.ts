@@ -32,7 +32,7 @@ export class Gerrit {
         this.settings = Settings.getInstance();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
-        this.logger.log("Activating Gerrit...", false);
+        this.logger.log("Activating Gerrit...");
         this.git = Git.getInstance();
         this.fileIndex = FileServiceClient.getInstance();
         Event.on("server-ready", Gerrit.handleUpdate);
