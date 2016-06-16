@@ -106,36 +106,6 @@
                 "title": "Rebase continue",
                 "category": "Gerrit"
             }
-        ],
-        "keybindings": [
-            {
-                "command": "gerrit.stageAll",
-                "key": "ctrl+shift+alt+s"
-            },
-            {
-                "command": "gerrit.stageCurrentFile",
-                "key": "ctrl+alt+s"
-            },
-            {
-                "command": "gerrit.resetAll",
-                "key": "ctrl+shift+alt+r"
-            },
-            {
-                "command": "gerrit.resetCurrentFile",
-                "key": "ctrl+alt+r"
-            },
-            {
-                "command": "gerrit.commit",
-                "key": "ctrl+alt+c"
-            },
-            {
-                "command": "gerrit.commitAmend",
-                "key": "ctrl+shift+alt+c"
-            },
-            {
-                "command": "gerrit.pushBranch",
-                "key": "ctrl+alt+p"
-            }
         ]
     },
     "scripts": {

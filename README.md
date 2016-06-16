@@ -5,11 +5,11 @@ It can checkout changes, commit, push, cherry-pick and rebase.
 
 All commands are listed below in full:
 
-* Commit - `ctrl+alt+c`
-* Commit amend - `ctrl+shift+alt+c`
-* Push to branch - `ctrl+alt+p`
-* Stage all files - `ctrl+shift+alt+s`
-* Stage current file - `ctrl+alt+s`
+* Commit
+* Commit amend
+* Push to branch
+* Stage all files
+* Stage current file
 * Stage file
 * Checkout branch
 * Checkout revision
@@ -17,9 +17,12 @@ All commands are listed below in full:
 * Cherrypick continue
 * Rebase from branch
 * Rebase continue
-* Reset all files - `ctrl+shift+alt+r`
-* Reset current file - `ctrl+alt+r`
+* Reset all files
+* Reset current file
 * Reset file
+
+Default keybindings have been removed as of 0.4.1 but all commands listed above are available to be 
+attached to keybindings at the users own choice in the keybindings.json configuration file.
 
 ## Requirements
 
