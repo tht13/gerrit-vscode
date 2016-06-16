@@ -277,6 +277,10 @@ export class Controller {
         this.aquireLock(this.git, this.git.rebaseContinue, []);
     }
 
+    public toggleLog() {
+        this.logger.toggleLog();
+    }
+
     private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V> | PromiseLike<V>, args?: U[]): Promise<V> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");

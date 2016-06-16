@@ -20,6 +20,7 @@ All commands are listed below in full:
 * Reset all files
 * Reset current file
 * Reset file
+* Toggle Log
 
 Default keybindings have been removed as of 0.4.1 but all commands listed above are available to be 
 attached to keybindings at the users own choice in the keybindings.json configuration file.

@@ -105,6 +105,11 @@
                 "command": "gerrit.rebaseContinue",
                 "title": "Rebase continue",
                 "category": "Gerrit"
+            },
+            {
+                "command": "gerrit.log",
+                "title": "Toggle log",
+                "category": "Gerrit"
             }
         ]
     },

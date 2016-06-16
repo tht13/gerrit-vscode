@@ -1,7 +1,6 @@
 import * as utils from "../common/utils";
 
 export class BasicLogger {
-    protected visible: boolean = false;
     protected debugMode: boolean = false;
     private static _basicLogger: BasicLogger = null;
 

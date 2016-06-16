@@ -81,6 +81,9 @@ function _activate(context: vscode.ExtensionContext) {
     commands.push(
         vscode.commands.registerCommand("gerrit.rebaseContinue", () => controller.rebaseContinue())
     );
+    commands.push(
+        vscode.commands.registerCommand("gerrit.log", () => controller.toggleLog())
+    );
 
     context.subscriptions.concat(commands);
 }

@@ -6,6 +6,7 @@ import Settings from "../common/settings";
 export class Logger extends BasicLogger {
     private outputChannel: OutputChannel;
     private static _logger: Logger = null;
+    private visible: boolean = false;
 
     constructor() {
         super();
@@ -27,5 +28,10 @@ export class Logger extends BasicLogger {
         for (let i in lines) {
             this.outputChannel.appendLine(lines[i]);
         }
+    }
+
+    toggleLog() {
+        this.visible ? this.outputChannel.hide() : this.outputChannel.show(true);
+        this.visible = !this.visible;
     }
 }
