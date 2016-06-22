@@ -135,6 +135,11 @@
         "type": "object",
         "title": "Gerrit configuration",
         "properties": {
+            "gerrit.httpProtocol": {
+                "type": "string",
+                "default": "http",
+                "description": "The http protocol of the gerrit host, Default=http"
+            },
             "gerrit.host": {
                 "type": "string",
                 "description": "The Gerrit host url, Required"

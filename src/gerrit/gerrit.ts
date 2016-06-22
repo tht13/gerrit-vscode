@@ -248,7 +248,7 @@ export class Gerrit {
         if (utils.isNull(this.settings.host) || utils.isNull(this.settings.httpPort)) {
             return Promise.reject("Host not setup");
         }
-        let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
+        let url = `${this.settings.httpProtocol}://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
         return rp({
             url: url,
             auth: {
