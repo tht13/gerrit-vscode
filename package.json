@@ -135,10 +135,10 @@
         "type": "object",
         "title": "Gerrit configuration",
         "properties": {
-            "gerrit.httpProtocol": {
+            "gerrit.protocol": {
                 "type": "string",
                 "default": "http",
-                "description": "The http protocol of the gerrit host, Default=http"
+                "description": "The protocol used for fetch, ssh, https or http, Default=http"
             },
             "gerrit.host": {
                 "type": "string",
@@ -188,11 +188,6 @@
                 "gerrit.host": {
                     "type": "string",
                     "description": "The Gerrit host url, Required"
-                },
-                "gerrit.protocol": {
-                    "type": "string",
-                    "default": "http",
-                    "description": "The protocol used for fetch, ssh or http, Default=http"
                 },
                 "gerrit.httpPort": {
                     "type": "number",

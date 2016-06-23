@@ -3,7 +3,6 @@ import * as utils from "../common/utils";
 
 export interface SettingsExport {
     showLog: boolean;
-    httpProtocol: string;
     host: string;
     protocol: string;
     httpPort: number;
@@ -19,7 +18,6 @@ export interface SettingsExport {
 class Settings {
     private _active: boolean;
     private _showLog: boolean;
-    private _httpProtocol: string;
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -45,7 +43,6 @@ class Settings {
     public loadSettings(settings: any): void {
         this._active = settings.active;
         this._showLog = settings.showLog;
-        this._httpProtocol = settings.httpProtocol;
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
@@ -60,7 +57,6 @@ class Settings {
 
     exportSettings(): SettingsExport {
         return {
-            httpProtocol: this._httpProtocol,
             host: this._host,
             showLog: this._showLog,
             protocol: this._protocol,
@@ -85,10 +81,6 @@ class Settings {
 
     get showLog(): boolean {
         return this._showLog;
-    }
-
-    get httpProtocol(): string {
-        return this._httpProtocol;
     }
 
     get host(): string {
