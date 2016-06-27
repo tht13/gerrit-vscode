@@ -235,20 +235,25 @@ export class Gerrit {
     }
 
     private generateFetchUrl(): string {
-        if (["http", "ssh"].indexOf(this.settings.protocol) === -1) {
+        if (["https", "http", "ssh"].indexOf(this.settings.protocol) === -1) {
             this.logger.log("Incorrect protocol specified");
-            this.logger.log("Must be http or ssh");
+            this.logger.log("Must be https, http or ssh");
             throw new Error("Incorrect protocol specified");
         }
-        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "http")
-            ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
+        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "ssh")
+            ? this.settings.sshPort : this.settings.httpPort}/${this.settings.project}`;
     }
 
     private get(path: string): Promise<any> {
         if (utils.isNull(this.settings.host) || utils.isNull(this.settings.httpPort)) {
             return Promise.reject("Host not setup");
         }
-        let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
+        if (["https", "http"].indexOf(this.settings.protocol) === -1) {
+            this.logger.log("Incorrect protocol specified");
+            this.logger.log("Must be https or http");
+            throw new Error("Incorrect protocol specified");
+        }
+        let url = `${this.settings.protocol}://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
         return rp({
             url: url,
             auth: {
