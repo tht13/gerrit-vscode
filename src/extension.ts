@@ -1,5 +1,6 @@
 "use strict";
 import * as vscode from "vscode";
+import * as utils from "./common/utils";
 import { Git } from "./git/git";
 import { Settings } from "./common/settings";
 import { Controller } from "./controller";
@@ -14,16 +15,18 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function _activate(context: vscode.ExtensionContext) {
-    {
-        let settings = Settings.getInstance();
-        settings.extensionRoot = context.extensionPath;
-        settings.workspaceRoot = vscode.workspace.rootPath;
-        settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
-        vscode.workspace.onDidChangeConfiguration(() => settings.loadSettings(vscode.workspace.getConfiguration("gerrit")));
-
-        let fileContainer = FileServiceClient.getInstance();
-        context.subscriptions.push(fileContainer.startServer());
+    let settings = Settings.getInstance();
+    settings.extensionRoot = context.extensionPath;
+    settings.workspaceRoot = vscode.workspace.rootPath;
+    settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
+    if (!utils.isNull(settings.active) && !settings.active) {
+        return;
     }
+    vscode.workspace.onDidChangeConfiguration(() => settings.loadSettings(vscode.workspace.getConfiguration("gerrit")));
+
+    let fileContainer = FileServiceClient.getInstance();
+    context.subscriptions.push(fileContainer.startServer());
+
     let commands: vscode.Disposable[] = [];
     controller = new Controller();
 

@@ -2,6 +2,7 @@ import Event from "../common/event";
 import * as utils from "../common/utils";
 
 export interface SettingsExport {
+    showLog: boolean;
     host: string;
     protocol: string;
     httpPort: number;
@@ -15,6 +16,8 @@ export interface SettingsExport {
 }
 
 class Settings {
+    private _active: boolean;
+    private _showLog: boolean;
     private _host: string;
     private _protocol: string;
     private _httpPort: number;
@@ -38,6 +41,8 @@ class Settings {
     }
 
     public loadSettings(settings: any): void {
+        this._active = settings.active;
+        this._showLog = settings.showLog;
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
@@ -53,6 +58,7 @@ class Settings {
     exportSettings(): SettingsExport {
         return {
             host: this._host,
+            showLog: this._showLog,
             protocol: this._protocol,
             httpPort: this._httpPort,
             sshPort: this._sshPort,
@@ -67,6 +73,14 @@ class Settings {
 
     private emitUpdate() {
         Event.emit("settings-update");
+    }
+
+    get active(): boolean {
+        return this._active;
+    }
+
+    get showLog(): boolean {
+        return this._showLog;
     }
 
     get host(): string {

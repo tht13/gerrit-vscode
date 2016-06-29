@@ -1,11 +1,11 @@
 {
+  "name": "gerrit-vscode",
   "dependencies": {
-    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+    "bluebird": "registry:npm/bluebird#3.3.4+20160531224558",
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519",
+    "request": "registry:npm/request#2.69.0+20160428223725"
   },
-  "ambientDependencies": {
-    "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
-    "form-data": "registry:dt/form-data#0.0.0+20160316155526",
-    "request": "registry:dt/request#0.0.0+20160316155526",
+  "globalDependencies": {
     "request-promise": "registry:dt/request-promise#0.4.2+20160316155526"
   }
 }

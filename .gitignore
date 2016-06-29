@@ -1,5 +1,6 @@
 out
 node_modules
 *.vsix
-typings/main*
-typings/browser*
+typings/globals
+typings/modules
+typings/index.d.ts

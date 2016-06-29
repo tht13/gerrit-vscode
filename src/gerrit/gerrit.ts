@@ -1,4 +1,4 @@
-let rp = require("request-promise");
+import * as rp from "request-promise";
 import { workspace } from "vscode";
 import { IReview, IRevision } from "./gerritAPI";
 import { Ref } from "./ref";
@@ -32,7 +32,7 @@ export class Gerrit {
         this.settings = Settings.getInstance();
         this.logger = Logger.logger;
         this.logger.setDebug(true);
-        this.logger.log("Activating Gerrit...", false);
+        this.logger.log("Activating Gerrit...");
         this.git = Git.getInstance();
         this.fileIndex = FileServiceClient.getInstance();
         Event.on("server-ready", Gerrit.handleUpdate);
@@ -180,19 +180,19 @@ export class Gerrit {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.checkout);
+        return this.fetchRef(ref, (url: string ) => this.git.checkout(url));
     }
 
     public cherrypickRef(ref: Ref): PromiseLike<string> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, this.git.cherrypick);
+        return this.fetchRef(ref, (url: string ) => this.git.cherrypick(url));
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
         return this.git.fetch(ref.getUrl())
-            .then(value => resolver.apply(this.git, ["FETCH_HEAD"]))
+            .then(value => resolver("FETCH_HEAD"))
             .then(value => this.setCurrentRef(ref));
         // TODO: find method to reimplement this but use exit 128 for now
         // return this.isDirty().then(dirty => {
@@ -249,15 +249,14 @@ export class Gerrit {
             return Promise.reject("Host not setup");
         }
         let url = `http://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
-        let options = {
+        return rp({
             url: url,
             auth: {
                 user: this.settings.username,
                 pass: this.settings.httpPassword,
                 sendImmediately: false
             }
-        };
-        return rp(options).then(
+        }).then(
             value => {
                 let temp = value.replace(")]}'\n", "");
                 let json = JSON.parse(temp);
