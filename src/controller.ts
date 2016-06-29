@@ -1,11 +1,11 @@
 import * as fs from "fs";
+import { isNil } from "lodash";
 import * as path from "path";
 import { window, workspace, InputBoxOptions,
     StatusBarItem, StatusBarAlignment,
     QuickPickOptions } from "vscode";
 import { Git } from "./git/git";
 import * as reject from "./common/reject";
-import * as utils from "./common/utils";
 import * as octicon from "./common/octicons";
 import * as gitCommon from "./git/common";
 import { Gerrit } from "./gerrit/gerrit";
@@ -57,7 +57,7 @@ export class Controller {
                 return value;
             }),
             { placeHolder: "File to stage" }).then(value => {
-                if (utils.isNull(value)) {
+                if (isNil(value)) {
                     return;
                 }
                 let filePath = path.join(workspace.rootPath, value.path);
@@ -98,7 +98,7 @@ export class Controller {
                 return value;
             }),
             { placeHolder: "File to reset" }).then(value => {
-                if (utils.isNull(value)) {
+                if (isNil(value)) {
                     return;
                 }
                 let filePath: string = path.join(workspace.rootPath, value.path);
@@ -142,7 +142,7 @@ export class Controller {
         };
 
         window.showInputBox(options).then(message => {
-            if (utils.isNull(message)) {
+            if (isNil(message)) {
                 return;
             }
             this.aquireLock(this.git, this.git.commit, [message, false]);
@@ -160,7 +160,7 @@ export class Controller {
         };
 
         window.showQuickPick(this.gerrit.getBranches(), options).then(branch => {
-            if (utils.isNull(branch)) {
+            if (isNil(branch)) {
                 return;
             }
             this.aquireLock(this.gerrit, this.gerrit.checkoutBranch, [branch]);
@@ -174,11 +174,11 @@ export class Controller {
         };
 
         window.showQuickPick(this.gerrit.getChanges(), revisionOptions).then(refValue => {
-            if (utils.isNull(refValue)) {
+            if (isNil(refValue)) {
                 return;
             }
             let refId = refValue.change_number;
-            if (utils.isNull(refId)) {
+            if (isNil(refId)) {
                 window.showWarningMessage("Valid Ref number not entered");
                 return;
             }
@@ -187,11 +187,11 @@ export class Controller {
             patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
 
             window.showQuickPick(this.gerrit.getPatchsets(refValue.change_number), patchsetOptions).then(patchValue => {
-                if (utils.isNull(refValue)) {
+                if (isNil(refValue)) {
                     return;
                 }
                 let patchId = patchValue.patchset;
-                if (utils.isNull(patchId)) {
+                if (isNil(patchId)) {
                     window.showWarningMessage("Valid PatchSet number not entered");
                     return;
                 }
@@ -210,11 +210,11 @@ export class Controller {
         };
 
         window.showQuickPick(this.gerrit.getChanges(), revisionOptions).then(refValue => {
-            if (utils.isNull(refValue)) {
+            if (isNil(refValue)) {
                 return;
             }
             let refId = refValue.change_number;
-            if (utils.isNull(refId)) {
+            if (isNil(refId)) {
                 window.showWarningMessage("Valid Ref number not entered");
                 return;
             }
@@ -223,11 +223,11 @@ export class Controller {
             patchsetOptions.placeHolder = `Patchset for Ref: ${refValue.label}`;
 
             window.showQuickPick(this.gerrit.getPatchsets(refValue.change_number), patchsetOptions).then(patchValue => {
-                if (utils.isNull(refValue)) {
+                if (isNil(refValue)) {
                     return;
                 }
                 let patchId = patchValue.patchset;
-                if (utils.isNull(patchId)) {
+                if (isNil(patchId)) {
                     window.showWarningMessage("Valid PatchSet number not entered");
                     return;
                 }
@@ -250,7 +250,7 @@ export class Controller {
         };
 
         window.showQuickPick(this.gerrit.getBranches(), options).then(branch => {
-            if (utils.isNull(branch)) {
+            if (isNil(branch)) {
                 return;
             }
             this.aquireLock(this.gerrit, this.gerrit.push, [branch]);
@@ -264,7 +264,7 @@ export class Controller {
         };
 
         window.showQuickPick(this.gerrit.getBranches(), rebaseOptions).then(branch => {
-            if (utils.isNull(branch)) {
+            if (isNil(branch)) {
                 return;
             }
             this.aquireLock(this.gerrit, this.gerrit.rebase, [branch]).then(value => {
@@ -281,13 +281,12 @@ export class Controller {
         this.logger.toggleLog();
     }
 
-    private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V> | PromiseLike<V>, args?: U[]): Promise<V> {
+    private aquireLock<T, U, V>(thisArg: T, func: (...args: U[]) => Promise<V> | PromiseLike<V>, args: U[] = []): Promise<V> {
         if (this.lock) {
             window.showInformationMessage("Gerrit command in progress...");
             return new Promise<V>((resolve, reject) => reject("Locked"));
         } else {
             this.statusBar.updateStatusBarIcon(this.statusBar, octicon.OCTICONS.SYNC);
-            args = utils.setDefault(args, []);
             this.lock = true;
             return func.apply(thisArg, args).then(value => {
                 this.lock = false;

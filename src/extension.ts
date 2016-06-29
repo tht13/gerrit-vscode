@@ -1,6 +1,6 @@
 "use strict";
+import { isNil } from "lodash";
 import * as vscode from "vscode";
-import * as utils from "./common/utils";
 import { Git } from "./git/git";
 import { Settings } from "./common/settings";
 import { Controller } from "./controller";
@@ -19,7 +19,7 @@ function _activate(context: vscode.ExtensionContext) {
     settings.extensionRoot = context.extensionPath;
     settings.workspaceRoot = vscode.workspace.rootPath;
     settings.loadSettings(vscode.workspace.getConfiguration("gerrit"));
-    if (!utils.isNull(settings.active) && !settings.active) {
+    if (!isNil(settings.active) && !settings.active) {
         return;
     }
     vscode.workspace.onDidChangeConfiguration(() => settings.loadSettings(vscode.workspace.getConfiguration("gerrit")));

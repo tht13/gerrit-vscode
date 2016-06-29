@@ -1,8 +1,8 @@
+import { isNil } from "lodash";
 import { createLog, GitLog } from "./gitLog";
 import * as exec from "../common/exec";
 import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
-import * as utils from "../common/utils";
 import { BasicLogger } from "../view/simpleLogger";
 
 
@@ -21,7 +21,7 @@ class BasicGit {
     }
 
     static getInstance() {
-        if (utils.isNull(BasicGit._basicGit)) {
+        if (isNil(BasicGit._basicGit)) {
             BasicGit._basicGit = new BasicGit();
         }
         return BasicGit._basicGit;
@@ -34,8 +34,7 @@ class BasicGit {
         return this.git("add", [], args);
     }
 
-    public reset(path: string, hard?: boolean): Promise<string> {
-        hard = utils.setDefault(hard, false);
+    public reset(path: string, hard: boolean = false): Promise<string> {
         let args: string[] = [
             path
         ];
@@ -55,7 +54,7 @@ class BasicGit {
         if (amend) {
             options.push("--amend", "--no-edit");
         } else {
-            if (utils.isNull(msg) || msg.length === 0) {
+            if (isNil(msg) || msg.length === 0) {
                 let reason: reject.RejectReason = {
                     showInformation: true,
                     message: "Requires a message to commit with",
@@ -68,10 +67,7 @@ class BasicGit {
         return this.git("commit", options, [], (!amend) ? msg : null);
     }
 
-    public fetch(url: string, options?: string[], origin?: string): Promise<string> {
-        url = utils.setDefault(url, "");
-        options = utils.setDefault(options, []);
-        origin = utils.setDefault(origin, "origin");
+    public fetch(url: string = "", options: string[] = [], origin: string = ""): Promise<string> {
         let args: string[] = [
             origin
         ];
@@ -115,8 +111,7 @@ class BasicGit {
         });
     }
 
-    public push(target: string[], origin?: string): Promise<string> {
-        origin = utils.setDefault(origin, "origin");
+    public push(target: string[], origin: string = "origin"): Promise<string> {
         target.unshift(origin);
         return this.git("push", [], target);
     }
@@ -155,7 +150,7 @@ class BasicGit {
             "1"
         ];
         return this.git("log", options).then((value: string): Promise<void | GitLog> => {
-            if (utils.isNull(value)) {
+            if (isNil(value)) {
                 let reason: reject.RejectReason = {
                     showInformation: false,
                     message: "Failed Gitlog",
@@ -176,11 +171,7 @@ class BasicGit {
         return this.git("ls-files", options, null, null, false);
     }
 
-    public git(gitCommand: string, options?: string[], args?: string[], stdin?: string, log?: boolean): Promise<string | void> {
-        options = utils.setDefault(options, []);
-        args = utils.setDefault(args, []);
-        stdin = utils.setDefault(stdin, "");
-        log = utils.setDefault(log, true);
+    public git(gitCommand: string, options: string[] = [], args: string[] = [], stdin: string = "", log: boolean = true): Promise<string | void> {
         let fullArgs: string[] = [gitCommand];
         fullArgs = fullArgs.concat(options);
         fullArgs.push("--");
@@ -195,7 +186,7 @@ class BasicGit {
         }
 
         return exec.run("git", fullArgs, runOptions, (log) ? this.logger : null).then((result): Promise<string | void> => {
-            if (utils.isNull(result.error)) {
+            if (isNil(result.error)) {
                 return Promise.resolve(result.stdout);
             } else {
                 let reason: reject.RejectReason = {

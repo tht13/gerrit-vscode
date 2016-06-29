@@ -1,5 +1,5 @@
 import Event from "../common/event";
-import * as utils from "../common/utils";
+import { isNil } from "lodash";
 
 export interface SettingsExport {
     showLog: boolean;
@@ -46,7 +46,7 @@ class Settings {
         this._host = settings.host;
         this._protocol = settings.protocol;
         this._httpPort = settings.httpPort;
-        this._httpPort = (utils.isNull(this._httpPort) && !utils.isNull(settings.port)) ? settings.port : this._httpPort;
+        this._httpPort = (isNil(this._httpPort) && !isNil(settings.port)) ? settings.port : this._httpPort;
         this._sshPort = settings.sshPort;
         this._username = settings.username;
         this._project = settings.project;

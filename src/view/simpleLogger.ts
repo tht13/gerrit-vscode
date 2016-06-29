@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import * as utils from "../common/utils";
 
 export class BasicLogger {
@@ -8,7 +9,7 @@ export class BasicLogger {
     }
 
     static get logger() {
-        if (utils.isNull(BasicLogger._basicLogger)) {
+        if (isNil(BasicLogger._basicLogger)) {
             BasicLogger._basicLogger = new BasicLogger();
         }
         return BasicLogger._basicLogger;
@@ -18,8 +19,7 @@ export class BasicLogger {
         this.debugMode = value;
     }
 
-    log(value: string, show?: boolean) {
-        show = utils.setDefault(show, true);
+    log(value: string, show: boolean = true) {
         let lines: string[] = value.split(utils.SPLIT_LINE);
         for (let i in lines) {
             console.log(lines[i]);

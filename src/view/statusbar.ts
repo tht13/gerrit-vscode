@@ -1,7 +1,7 @@
+import { isNil } from "lodash";
 import { window, StatusBarItem, StatusBarAlignment } from "vscode";
 import Event from "../common/event";
 import * as octicon from "../common/octicons";
-import * as utils from "../common/utils";
 import { Ref } from"../gerrit/ref";
 
 export class StatusBar {
@@ -29,7 +29,7 @@ export class StatusBar {
     }
 
     public updateStatusBarRef(_this: StatusBar, ref: Ref) {
-        if (!utils.isNull(ref) && _this.statusBarText.ref !== ref.text) {
+        if (!isNil(ref) && _this.statusBarText.ref !== ref.text) {
             _this.statusBarText.ref = ref.text;
             _this.statusBarText.branch = "";
             _this.updateStatusBar();
@@ -37,14 +37,14 @@ export class StatusBar {
     }
 
     public updateStatusBarBranch(_this: StatusBar, branch: string) {
-        if (!utils.isNull(branch) && _this.statusBarText.branch !== branch) {
+        if (!isNil(branch) && _this.statusBarText.branch !== branch) {
             _this.statusBarText.branch = branch;
             _this.statusBarText.ref = "";
             _this.updateStatusBar();
         }
     }
     public updateStatusBarIcon(_this: StatusBar, icon: octicon.OCTICONS) {
-        if (!utils.isNull(icon) && octicon.getOcticon(_this.statusBarIcon) !== octicon.getOcticon(icon)) {
+        if (!isNil(icon) && octicon.getOcticon(_this.statusBarIcon) !== octicon.getOcticon(icon)) {
             _this.statusBarIcon = icon;
             _this.statusBarText.icon = octicon.getOcticon(_this.statusBarIcon);
             _this.updateStatusBar();

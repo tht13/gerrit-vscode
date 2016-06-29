@@ -1,4 +1,5 @@
 import * as rp from "request-promise";
+import { isNil } from "lodash";
 import { workspace } from "vscode";
 import { IReview } from "./gerritAPI";
 import { Ref } from "./ref";
@@ -9,7 +10,6 @@ import { Git } from "../git/git";
 import { createLog, GitLog } from "../git/gitLog";
 import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
-import * as utils from "../common/utils";
 import { FileContainer } from "../files/fileContainer";
 import { FileServiceClient } from "../files/fileServiceClient";
 import { RequestEventType } from "../files/fileServiceInterface";
@@ -40,7 +40,7 @@ export class Gerrit {
     }
 
     static getInstance() {
-        if (utils.isNull(Gerrit._gerrit)) {
+        if (isNil(Gerrit._gerrit)) {
             Gerrit._gerrit = new Gerrit();
         }
         return Gerrit._gerrit;
@@ -54,7 +54,7 @@ export class Gerrit {
         this.fileIndex.updateFiles();
         this.getGitLog(0).then(value => {
             console.log(value);
-            if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
+            if (!isNil(value) && !isNil(value.change_id)) {
                 this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
                     this.settings.project = value.project;
                     this.setBranch(value.branch);
@@ -68,7 +68,7 @@ export class Gerrit {
         }, (reason: reject.RejectReason) => {
             console.log("rejected");
             console.log(reason);
-            if (!utils.isNull(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
+            if (!isNil(reason.attributes) && reason.attributes.stderr.indexOf("does not have any commits yet") > -1) {
                 this.logger.log("No commits on branch");
             }
         });
@@ -119,8 +119,8 @@ export class Gerrit {
 
     public getBranches(): Promise<string[]> {
         return this.get(`projects/${this.settings.project}/branches/`).then(value => {
-            if (utils.isNull(value)) {
-                return [(utils.isNull(this.getBranch())) ? "master" : this.getBranch()];
+            if (isNil(value)) {
+                return [(isNil(this.getBranch())) ? "master" : this.getBranch()];
             }
             let branches: string[] = [];
             for (let head of value) {
@@ -129,12 +129,12 @@ export class Gerrit {
                 }
             }
             // Return branches if set, or this.branch or master if all other are null
-            return (branches.length > 0) ? branches : [(utils.isNull(this.getBranch())) ? "master" : this.getBranch()];
+            return (branches.length > 0) ? branches : [(isNil(this.getBranch())) ? "master" : this.getBranch()];
         });
     }
 
     public getChanges(count?: number): Promise<view.ChangeQuickPick[]> {
-        let countString = (utils.isNull(count)) ? "" : "&n=" + count;
+        let countString = (isNil(count)) ? "" : "&n=" + count;
         return this.get(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
             let changes: view.ChangeQuickPick[] = [];
             for (let item of value) {
@@ -245,7 +245,7 @@ export class Gerrit {
     }
 
     private get(path: string): Promise<any> {
-        if (utils.isNull(this.settings.host) || utils.isNull(this.settings.httpPort)) {
+        if (isNil(this.settings.host) || isNil(this.settings.httpPort)) {
             return Promise.reject("Host not setup");
         }
         if (["https", "http"].indexOf(this.settings.protocol) === -1) {

@@ -1,11 +1,11 @@
 import * as path from "path";
+import { isNil } from "lodash";
 import { workspace } from "vscode";
 import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
 import * as fileCommon from "./common";
 import { Request, RequestResult, RequestEventType, RequestParams, RequestPackage } from "./fileServiceInterface";
 import Event from "../common/event";
 import { Settings } from "../common/settings";
-import * as utils from "../common/utils";
 import * as gitCommon from "../git/common";
 import { Gerrit } from "../gerrit/gerrit";
 
@@ -17,7 +17,7 @@ export class FileServiceClient {
     }
 
     static getInstance() {
-        if (utils.isNull(FileServiceClient._client)) {
+        if (isNil(FileServiceClient._client)) {
             FileServiceClient._client = new FileServiceClient();
         }
         return FileServiceClient._client;

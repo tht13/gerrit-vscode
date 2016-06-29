@@ -1,9 +1,9 @@
 import { spawn, ChildProcess } from "child_process";
+import { isNil } from "lodash";
 import * as utils from "./utils";
 import { BasicLogger } from "../view/simpleLogger";
 
-export function run(command: string, args: string[], options: any, logger?: BasicLogger): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
-    logger = utils.setDefault(logger, null);
+export function run(command: string, args: string[], options: any, logger: BasicLogger = null): Promise<{ exit_code: number, error: Error, stdout: string, stderr: string }> {
     let child = spawn(command, args, options);
 
     if (options.input) {
@@ -11,7 +11,7 @@ export function run(command: string, args: string[], options: any, logger?: Basi
     }
 
     return exec(child, logger).then(value => {
-        if (!utils.isNull(value.error)) {
+        if (!isNil(value.error)) {
             value.error.name = `Command ${command} ${args.join(" ")} failed with exit code: ${value.exit_code}`;
         }
         return value;
@@ -28,7 +28,7 @@ function exec(child: ChildProcess, log: BasicLogger): Promise<{ exit_code: numbe
     let stderrPromise = new Promise((resolve, reject) => {
         let stderr: Buffer[] = [];
         child.stderr.on("data", (b: Buffer) => {
-            if (!utils.isNull) log.log(b.toString());
+            if (!isNil) log.log(b.toString());
             stderr.push(b);
         });
         child.stderr.on("close", () => {
@@ -39,7 +39,7 @@ function exec(child: ChildProcess, log: BasicLogger): Promise<{ exit_code: numbe
     let stdoutPromise = new Promise((resolve, reject) => {
         let stdout: Buffer[] = [];
         child.stdout.on("data", (b: Buffer) => {
-            if (!utils.isNull(log)) log.log(b.toString());
+            if (!isNil(log)) log.log(b.toString());
             stdout.push(b);
         });
         child.stdout.on("close", () => {

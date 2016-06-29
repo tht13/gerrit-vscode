@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import { window, OutputChannel } from "vscode";
 import { BasicLogger } from "./simpleLogger";
 import * as utils from "../common/utils";
@@ -14,14 +15,14 @@ export class Logger extends BasicLogger {
     }
 
     static get logger() {
-        if (utils.isNull(Logger._logger)) {
+        if (isNil(Logger._logger)) {
             Logger._logger = new Logger();
         }
         return Logger._logger;
     }
 
     log(value: string) {
-        if (!utils.isNull(Settings.getInstance().showLog && Settings.getInstance().showLog)) {
+        if (!isNil(Settings.getInstance().showLog && Settings.getInstance().showLog)) {
             this.outputChannel.show(true);
         }
         let lines: string[] = value.split(utils.SPLIT_LINE);
