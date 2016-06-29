@@ -32,7 +32,7 @@ interface IVote extends IUser {
     "date"?: string;
 }
 
-interface IRevision {
+export interface IRevision {
     "_number": string;
     "created": string;
     "uploader": IUser;

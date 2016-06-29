@@ -1,6 +1,6 @@
 let rp = require("request-promise");
 import { workspace } from "vscode";
-import { IReview } from "./gerritAPI";
+import { IReview, IRevision } from "./gerritAPI";
 import { Ref } from "./ref";
 import Event from "../common/event";
 import * as exec from "../common/exec";
@@ -55,7 +55,7 @@ export class Gerrit {
         this.getGitLog(0).then(value => {
             console.log(value);
             if (!utils.isNull(value) && !utils.isNull(value.change_id)) {
-                this.get(`changes/${value.change_id}/revisions/${value.commit}/review`).then((value: IReview) => {
+                this.get<IReview>(`changes/${value.change_id}/revisions/${value.commit}/review`).then(value => {
                     this.settings.project = value.project;
                     this.setBranch(value.branch);
                     let ref: Ref = new Ref(value._number, value.revisions[value.current_revision]._number);
@@ -118,7 +118,7 @@ export class Gerrit {
     }
 
     public getBranches(): Promise<string[]> {
-        return this.get(`projects/${this.settings.project}/branches/`).then(value => {
+        return this.get<IRevision[]>(`projects/${this.settings.project}/branches/`).then(value => {
             if (utils.isNull(value)) {
                 return [(utils.isNull(this.getBranch())) ? "master" : this.getBranch()];
             }
@@ -135,11 +135,11 @@ export class Gerrit {
 
     public getChanges(count?: number): Promise<view.ChangeQuickPick[]> {
         let countString = (utils.isNull(count)) ? "" : "&n=" + count;
-        return this.get(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
+        return this.get<IReview[]>(`changes/?q=status:open+project:${this.settings.project}${countString}`).then(value => {
             let changes: view.ChangeQuickPick[] = [];
             for (let item of value) {
                 let change: view.ChangeQuickPick = {
-                    change_id: item.change_id,
+                    change_id: Number.parseInt(item.change_id),
                     change_number: item._number,
                     label: item._number.toString(),
                     description: item.subject
@@ -151,7 +151,7 @@ export class Gerrit {
     }
 
     public getPatchsets(change_id: number): Promise<view.PatchsetQuickPick[]> {
-        return this.get(`changes/?q=${change_id}&o=CURRENT_REVISION`).then((value: IReview) => {
+        return this.get<IReview>(`changes/?q=${change_id}&o=CURRENT_REVISION`).then(value => {
             let revision_count: number = value[0].revisions[value[0].current_revision]._number;
             let revisions: view.PatchsetQuickPick[] = [];
             for (let i = revision_count; i >= 1; i--) {
@@ -231,7 +231,7 @@ export class Gerrit {
     }
 
     private getGitLog(index: number): Promise<GitLog> {
-        return this.git.getGitLog(index);
+        return <Promise<GitLog>>this.git.getGitLog(index);
     }
 
     private generateFetchUrl(): string {
@@ -244,7 +244,7 @@ export class Gerrit {
             ? this.settings.httpPort : this.settings.sshPort}/${this.settings.project}`;
     }
 
-    private get(path: string): Promise<any> {
+    private get<T>(path: string): Promise<T> {
         if (utils.isNull(this.settings.host) || utils.isNull(this.settings.httpPort)) {
             return Promise.reject("Host not setup");
         }
