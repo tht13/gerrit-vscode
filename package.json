@@ -1,223 +1,223 @@
 {
-    "name": "gerrit-vscode",
-    "version": "0.4.1",
-    "displayName": "Gerrit",
-    "description": "A Gerrit extension for vscode",
-    "authors": [
-        "Thomas Haakon Townsend"
-    ],
-    "publisher": "tht13",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tht13/gerrit-vscode.git"
-    },
-    "license": "MIT",
-    "engines": {
-        "vscode": "^1.2.0"
-    },
-    "main": "./out/src/extension",
-    "icon": "images/gerrit_icon.png",
-    "galleryBanner": {
-        "color": "#eeeeee",
-        "theme": "light"
-    },
-    "bugs": "https://github.com/tht13/gerrit-vscode/issues",
-    "homepage": "https://github.com/tht13/gerrit-vscode/blob/master/README.md",
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "contributes": {
-        "commands": [
-            {
-                "command": "gerrit.stageAll",
-                "title": "Stage all files",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.stageCurrentFile",
-                "title": "Stage current file",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.stageFile",
-                "title": "Stage file",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.resetAll",
-                "title": "Reset all files",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.resetCurrentFile",
-                "title": "Reset current file",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.resetFile",
-                "title": "Reset file",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.checkoutBranch",
-                "title": "Checkout branch",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.checkoutRevision",
-                "title": "Checkout revision",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.cherrypickRevision",
-                "title": "Cherrypick revision",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.cherrypickContinue",
-                "title": "Cherrypick continue",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.commit",
-                "title": "Commit",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.commitAmend",
-                "title": "Commit amend",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.pushBranch",
-                "title": "Push to branch",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.draftBranch",
-                "title": "Draft to branch",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.rebaseBranch",
-                "title": "Rebase from branch",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.rebaseContinue",
-                "title": "Rebase continue",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.log",
-                "title": "Toggle log",
-                "category": "Gerrit"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "npm run typings",
-        "typings": "./node_modules/.bin/typings install",
-        "posttypings": "node ./node_modules/vscode/bin/install"
-    },
-    "devDependencies": {
-        "typescript": "1.8.7",
-        "vscode": "^0.11.13",
-        "typings": "^1.0.4"
-    },
-    "dependencies": {
-        "request-promise": "^3.0.0",
-        "vscode-languageclient": "^2.2.1",
-        "vscode-languageserver": "^2.2.0",
-        "object-hash": "^1.1.2"
-    },
-    "configuration": {
-        "type": "object",
-        "title": "Gerrit configuration",
-        "properties": {
-            "gerrit.protocol": {
-                "type": "string",
-                "default": "http",
-                "description": "The protocol used for fetch, ssh, https or http, Default=http"
-            },
-            "gerrit.host": {
-                "type": "string",
-                "description": "The Gerrit host url, Required"
-            },
-            "gerrit.port": {
-                "type": "number",
-                "default": 8080,
-                "description": "The port used by the gerrit server, Default=8080"
-            },
-            "gerrit.project": {
-                "type": "string",
-                "description": "Gerrit project, Required"
-            },
-            "gerrit.httpPassword": {
-                "type": "string",
-                "description": "Gerrit http password, Required"
-            },
-            "gerrit.showLog": {
-                "type": "boolean",
-                "description": "Show the gerrit log during commands, Default=False"
-            },
-            "gerrit.active": {
-                "type": "boolean",
-                "description": "Activate Gerrit extension, Default=False"
-            }
-
-        }
-    },
-    "//": {
-        "commands": [
-            {
-                "command": "gerrit.cleanAll",
-                "title": "Clean all files",
-                "category": "Gerrit"
-            },
-            {
-                "command": "gerrit.cleanCurrentFile",
-                "title": "Clean current file",
-                "category": "Gerrit"
-            }
-        ],
-        "configuration": {
-            "type": "object",
-            "title": "Gerrit configuration",
-            "properties": {
-                "gerrit.host": {
-                    "type": "string",
-                    "description": "The Gerrit host url, Required"
-                },
-                "gerrit.httpPort": {
-                    "type": "number",
-                    "default": 80,
-                    "description": "The port used for http access, Default=80"
-                },
-                "gerrit.sshPort": {
-                    "type": "number",
-                    "default": 443,
-                    "description": "The port used for ssh access, Default=443"
-                },
-                "gerrit.username": {
-                    "type": "string",
-                    "description": "Gerrit username, Required"
-                },
-                "gerrit.project": {
-                    "type": "string",
-                    "description": "Gerrit project, Required"
-                },
-                "gerrit.version": {
-                    "type": "number",
-                    "default": 2.0,
-                    "description": "The version of Gerrit in use by the server."
-                }
-            }
-        }
+  "name": "gerrit-vscode",
+  "version": "0.4.1",
+  "displayName": "Gerrit",
+  "description": "A Gerrit extension for vscode",
+  "authors": [
+    "Thomas Haakon Townsend"
+  ],
+  "publisher": "tht13",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tht13/gerrit-vscode.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.2.0"
+  },
+  "main": "./out/src/extension",
+  "icon": "images/gerrit_icon.png",
+  "galleryBanner": {
+    "color": "#eeeeee",
+    "theme": "light"
+  },
+  "bugs": "https://github.com/tht13/gerrit-vscode/issues",
+  "homepage": "https://github.com/tht13/gerrit-vscode/blob/master/README.md",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "gerrit.stageAll",
+        "title": "Stage all files",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.stageCurrentFile",
+        "title": "Stage current file",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.stageFile",
+        "title": "Stage file",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.resetAll",
+        "title": "Reset all files",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.resetCurrentFile",
+        "title": "Reset current file",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.resetFile",
+        "title": "Reset file",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.checkoutBranch",
+        "title": "Checkout branch",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.checkoutRevision",
+        "title": "Checkout revision",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.cherrypickRevision",
+        "title": "Cherrypick revision",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.cherrypickContinue",
+        "title": "Cherrypick continue",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.commit",
+        "title": "Commit",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.commitAmend",
+        "title": "Commit amend",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.pushBranch",
+        "title": "Push to branch",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.draftBranch",
+        "title": "Draft to branch",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.rebaseBranch",
+        "title": "Rebase from branch",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.rebaseContinue",
+        "title": "Rebase continue",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.log",
+        "title": "Toggle log",
+        "category": "Gerrit"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "npm run typings",
+    "typings": "./node_modules/.bin/typings install",
+    "posttypings": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "typescript": "1.8.7",
+    "vscode": "^0.11.13",
+    "typings": "^1.0.4"
+  },
+  "dependencies": {
+    "lodash": "^4.15.0",
+    "object-hash": "^1.1.2",
+    "request-promise": "^3.0.0",
+    "vscode-languageclient": "^2.2.1",
+    "vscode-languageserver": "^2.2.0"
+  },
+  "configuration": {
+    "type": "object",
+    "title": "Gerrit configuration",
+    "properties": {
+      "gerrit.protocol": {
+        "type": "string",
+        "default": "http",
+        "description": "The protocol used for fetch, ssh, https or http, Default=http"
+      },
+      "gerrit.host": {
+        "type": "string",
+        "description": "The Gerrit host url, Required"
+      },
+      "gerrit.port": {
+        "type": "number",
+        "default": 8080,
+        "description": "The port used by the gerrit server, Default=8080"
+      },
+      "gerrit.project": {
+        "type": "string",
+        "description": "Gerrit project, Required"
+      },
+      "gerrit.httpPassword": {
+        "type": "string",
+        "description": "Gerrit http password, Required"
+      },
+      "gerrit.showLog": {
+        "type": "boolean",
+        "description": "Show the gerrit log during commands, Default=False"
+      },
+      "gerrit.active": {
+        "type": "boolean",
+        "description": "Activate Gerrit extension, Default=False"
+      }
     }
+  },
+  "//": {
+    "commands": [
+      {
+        "command": "gerrit.cleanAll",
+        "title": "Clean all files",
+        "category": "Gerrit"
+      },
+      {
+        "command": "gerrit.cleanCurrentFile",
+        "title": "Clean current file",
+        "category": "Gerrit"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Gerrit configuration",
+      "properties": {
+        "gerrit.host": {
+          "type": "string",
+          "description": "The Gerrit host url, Required"
+        },
+        "gerrit.httpPort": {
+          "type": "number",
+          "default": 80,
+          "description": "The port used for http access, Default=80"
+        },
+        "gerrit.sshPort": {
+          "type": "number",
+          "default": 443,
+          "description": "The port used for ssh access, Default=443"
+        },
+        "gerrit.username": {
+          "type": "string",
+          "description": "Gerrit username, Required"
+        },
+        "gerrit.project": {
+          "type": "string",
+          "description": "Gerrit project, Required"
+        },
+        "gerrit.version": {
+          "type": "number",
+          "default": 2,
+          "description": "The version of Gerrit in use by the server."
+        }
+      }
+    }
+  }
 }
