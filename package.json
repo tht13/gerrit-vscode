@@ -97,6 +97,11 @@
                 "category": "Gerrit"
             },
             {
+                "command": "gerrit.draftBranch",
+                "title": "Draft to branch",
+                "category": "Gerrit"
+            },
+            {
                 "command": "gerrit.rebaseBranch",
                 "title": "Rebase from branch",
                 "category": "Gerrit"

@@ -76,6 +76,9 @@ function _activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand("gerrit.pushBranch", () => controller.push())
     );
     commands.push(
+        vscode.commands.registerCommand("gerrit.draftBranch", () => controller.draft())
+    );
+    commands.push(
         vscode.commands.registerCommand("gerrit.rebaseBranch", () => controller.rebase())
     );
     commands.push(
