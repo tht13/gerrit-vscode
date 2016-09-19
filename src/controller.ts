@@ -258,6 +258,20 @@ export class Controller {
         });
     }
 
+    public draft() {
+        let options: QuickPickOptions = {
+            placeHolder: "The branch to draft"
+        };
+
+        window.showQuickPick(this.gerrit.getBranches(), options).then(branch => {
+            if (isNil(branch)) {
+                return;
+            }
+            this.aquireLock(this.gerrit, this.gerrit.draft, [branch]);
+        }, reason => {
+        });
+    }
+
     public rebase() {
         let rebaseOptions: QuickPickOptions = {
             placeHolder: "The branch to rebase"

@@ -218,6 +218,17 @@ export class Gerrit {
         });
     }
 
+    public draft(branch: string): Promise<string> {
+        let target = [
+            `HEAD:refs/drafts/${branch}`
+        ];
+        return this.git.push(target).then(value => {
+            this.setBranch(branch);
+            this.updateStatus();
+            return value;
+        });
+    }
+
     public rebase(branch: string): Promise<string> {
         this.logger.debug(`Rebase Branch:
     Branch: origin/${branch}`);
