@@ -1,9 +1,9 @@
 import { isNil } from "lodash";
-import { createLog, GitLog } from "./gitLog";
 import * as exec from "../common/exec";
 import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
 import { BasicLogger } from "../view/simpleLogger";
+import { createLog, GitLog } from "./gitLog";
 
 
 class BasicGit {
@@ -67,7 +67,7 @@ class BasicGit {
         return this.git("commit", options, [], (!amend) ? msg : null);
     }
 
-    public fetch(url: string = "", options: string[] = [], origin: string = ""): Promise<string> {
+    public fetch(url: string = "", options: string[] = [], origin: string = "origin"): Promise<string> {
         let args: string[] = [
             origin
         ];
@@ -142,14 +142,14 @@ class BasicGit {
         });
     }
 
-    public getGitLog(index: number): Promise<void | GitLog> {
+    public getGitLog(index: number): Promise<GitLog> {
         let options = [
             "--skip",
             index.toString(),
             "-n",
             "1"
         ];
-        return this.git("log", options).then((value: string): Promise<void | GitLog> => {
+        return this.git("log", options).then((value: string): Promise<GitLog> => {
             if (isNil(value)) {
                 let reason: reject.RejectReason = {
                     showInformation: false,
@@ -171,7 +171,7 @@ class BasicGit {
         return this.git("ls-files", options, null, null, false);
     }
 
-    public git(gitCommand: string, options: string[] = [], args: string[] = [], stdin: string = "", log: boolean = true): Promise<string | void> {
+    public git(gitCommand: string, options: string[] = [], args: string[] = [], stdin: string = "", log: boolean = true): Promise<string> {
         let fullArgs: string[] = [gitCommand];
         fullArgs = fullArgs.concat(options);
         fullArgs.push("--");
@@ -181,11 +181,11 @@ class BasicGit {
         let runOptions = {
             cwd: this.settings.workspaceRoot,
         };
-        if (stdin.length > 0) {
+        if (stdin && stdin.length && stdin.length > 0) {
             runOptions["input"] = stdin + "\n";
         }
 
-        return exec.run("git", fullArgs, runOptions, (log) ? this.logger : null).then((result): Promise<string | void> => {
+        return exec.run("git", fullArgs, runOptions, (log) ? this.logger : null).then((result): Promise<string> => {
             if (isNil(result.error)) {
                 return Promise.resolve(result.stdout);
             } else {

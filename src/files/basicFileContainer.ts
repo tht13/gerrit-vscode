@@ -1,7 +1,6 @@
 const hash = require("object-hash");
-import * as fileCommon from "./common";
 import * as gitCommon from "../git/common";
-import * as utils from "../common/utils";
+import * as fileCommon from "./common";
 
 
 export abstract class BasicFileContainer {

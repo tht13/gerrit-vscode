@@ -1,21 +1,17 @@
-import * as rp from "request-promise";
 import { isNil } from "lodash";
-import { workspace } from "vscode";
-import { IReview } from "./gerritAPI";
-import { Ref } from "./ref";
+import * as rp from "request-promise";
 import Event from "../common/event";
-import * as exec from "../common/exec";
-import * as gitCommon from "../git/common";
-import { Git } from "../git/git";
-import { createLog, GitLog } from "../git/gitLog";
 import * as reject from "../common/reject";
 import { Settings } from "../common/settings";
-import { FileContainer } from "../files/fileContainer";
 import { FileServiceClient } from "../files/fileServiceClient";
-import { RequestEventType } from "../files/fileServiceInterface";
+import * as gitCommon from "../git/common";
+import { Git } from "../git/git";
+import { GitLog } from "../git/gitLog";
 import * as view from "../view/common";
 import { Logger } from "../view/logger";
 import { StatusBar } from "../view/statusbar";
+import { IReview } from "./gerritAPI";
+import { Ref } from "./ref";
 
 // TODO: Contains serious regression in running on Tempest
 export class Gerrit {
@@ -106,8 +102,8 @@ export class Gerrit {
     public getDirtyFiles(): PromiseLike<view.FileStageQuickPick[]> {
         return this.fileIndex.updateFiles().then(() =>
             this.fileIndex.getDescriptorsByType([gitCommon.GitStatus.DELETED,
-                gitCommon.GitStatus.MODIFIED,
-                gitCommon.GitStatus.UNTRACKED])
+            gitCommon.GitStatus.MODIFIED,
+            gitCommon.GitStatus.UNTRACKED])
         );
     }
 
@@ -176,18 +172,18 @@ export class Gerrit {
         });
     }
 
-    public checkoutRef(ref: Ref): PromiseLike<string> {
+    public checkoutRef(ref: Ref): PromiseLike<string | void> {
         this.logger.debug(`Checkout Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, (url: string ) => this.git.checkout(url));
+        return this.fetchRef(ref, (url: string) => this.git.checkout(url));
     }
 
-    public cherrypickRef(ref: Ref): PromiseLike<string> {
+    public cherrypickRef(ref: Ref): PromiseLike<string | void> {
         this.logger.debug(`Cherrypick Ref:
     ID: ${ref.getId()}
     Patch Set: ${ref.getPatchSet()}`);
-        return this.fetchRef(ref, (url: string ) => this.git.cherrypick(url));
+        return this.fetchRef(ref, (url: string) => this.git.cherrypick(url));
     }
 
     private fetchRef<T>(ref: Ref, resolver: (url: string) => PromiseLike<string>): PromiseLike<string | void> {
@@ -245,26 +241,11 @@ export class Gerrit {
         return this.git.getGitLog(index);
     }
 
-    private generateFetchUrl(): string {
-        if (["https", "http", "ssh"].indexOf(this.settings.protocol) === -1) {
-            this.logger.log("Incorrect protocol specified");
-            this.logger.log("Must be https, http or ssh");
-            throw new Error("Incorrect protocol specified");
-        }
-        return `${this.settings.protocol}://${this.settings.host}:${(this.settings.protocol === "ssh")
-            ? this.settings.sshPort : this.settings.httpPort}/${this.settings.project}`;
-    }
-
     private get(path: string): Promise<any> {
-        if (isNil(this.settings.host) || isNil(this.settings.httpPort)) {
-            return Promise.reject("Host not setup");
+        if (isNil(this.settings.url)) {
+            return Promise.reject("Gerrit URL is not set");
         }
-        if (["https", "http"].indexOf(this.settings.protocol) === -1) {
-            this.logger.log("Incorrect protocol specified");
-            this.logger.log("Must be https or http");
-            throw new Error("Incorrect protocol specified");
-        }
-        let url = `${this.settings.protocol}://${this.settings.host}:${this.settings.httpPort}/a/${path}`;
+        const url = `${this.settings.url}/a/${path}`;
         return rp({
             url: url,
             auth: {

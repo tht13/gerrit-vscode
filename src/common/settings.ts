@@ -1,15 +1,10 @@
 import Event from "../common/event";
-import { isNil } from "lodash";
 
 export interface SettingsExport {
     showLog: boolean;
-    host: string;
-    protocol: string;
-    httpPort: number;
-    sshPort: number;
+    url: string;
     username: string;
     project: string;
-    version: string;
     httpPassword: string;
     workspaceRoot: string;
     extensionRoot: string;
@@ -18,53 +13,39 @@ export interface SettingsExport {
 class Settings {
     private _active: boolean;
     private _showLog: boolean;
-    private _host: string;
-    private _protocol: string;
-    private _httpPort: number;
-    private _sshPort: number;
+    private _url: string;
     private _username: string;
     private _project: string;
-    private _version: string;
     private _httpPassword: string;
     private _workspaceRoot: string;
     private _extensionRoot: string;
-    private static _settings: Settings = null;
+    private static instance: Settings;
 
-    constructor() {
-    }
+    private constructor() { }
 
-    static getInstance() {
-        if (Settings._settings === null) {
-            Settings._settings = new Settings();
+    public static getInstance(): Settings {
+        if (!Settings.instance) {
+            Settings.instance = new Settings();
         }
-        return Settings._settings;
+        return Settings.instance;
     }
 
     public loadSettings(settings: any): void {
         this._active = settings.active;
         this._showLog = settings.showLog;
-        this._host = settings.host;
-        this._protocol = settings.protocol;
-        this._httpPort = settings.httpPort;
-        this._httpPort = (isNil(this._httpPort) && !isNil(settings.port)) ? settings.port : this._httpPort;
-        this._sshPort = settings.sshPort;
+        this._url = settings.url;
         this._username = settings.username;
         this._project = settings.project;
-        this._version = settings.version;
         this._httpPassword = settings.httpPassword;
         this.emitUpdate();
     }
 
     exportSettings(): SettingsExport {
         return {
-            host: this._host,
+            url: this._url,
             showLog: this._showLog,
-            protocol: this._protocol,
-            httpPort: this._httpPort,
-            sshPort: this._sshPort,
             username: this._username,
             project: this._project,
-            version: this._version,
             httpPassword: this._httpPassword,
             workspaceRoot: this._workspaceRoot,
             extensionRoot: this._extensionRoot
@@ -83,20 +64,8 @@ class Settings {
         return this._showLog;
     }
 
-    get host(): string {
-        return this._host;
-    }
-
-    get protocol(): string {
-        return this._protocol;
-    }
-
-    get httpPort(): number {
-        return this._httpPort;
-    }
-
-    get sshPort(): number {
-        return this._sshPort;
+    get url(): string {
+        return this._url;
     }
 
     get username(): string {
@@ -110,10 +79,6 @@ class Settings {
     set project(project: string) {
         this._project = project;
         this.emitUpdate();
-    }
-
-    get version(): string {
-        return this._version;
     }
 
     get httpPassword(): string {

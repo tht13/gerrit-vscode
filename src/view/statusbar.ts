@@ -1,8 +1,8 @@
 import { isNil } from "lodash";
-import { window, StatusBarItem, StatusBarAlignment } from "vscode";
+import { StatusBarAlignment, StatusBarItem, window } from "vscode";
 import Event from "../common/event";
 import * as octicon from "../common/octicons";
-import { Ref } from"../gerrit/ref";
+import { Ref } from "../gerrit/ref";
 
 export class StatusBar {
     private statusBarText: StatusBarFormat;
@@ -55,7 +55,7 @@ export class StatusBar {
         let icon = (this.statusBarText.icon.length > 0) ? ` $(${this.statusBarText.icon})` : "";
         let branch = this.statusBarText.branch;
         let ref = this.statusBarText.ref;
-        let text = `Gerrit:${branch}${ref}${icon} `;
+        let text = `Gerrit: ${branch}${ref}${icon}`;
         this.statusBarItem.text = text;
         this.statusBarItem.show();
     }

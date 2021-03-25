@@ -35,6 +35,6 @@ export class Ref {
     }
 
     public get text(): string {
-        return `Ref ${this.id}:${this.patchSet}`;
+        return `${this.id}/${this.patchSet}`;
     }
 }

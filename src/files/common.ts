@@ -14,5 +14,5 @@ export interface IUpdateResult {
 export interface BasciFileQuickPick {
     path: string;
     label: string;
-    description: string;
+    description?: string;
 }

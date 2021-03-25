@@ -1,15 +1,12 @@
 import * as fs from "fs";
 import { isNil } from "lodash";
 import * as path from "path";
-import { window, workspace, InputBoxOptions,
-    StatusBarItem, StatusBarAlignment,
-    QuickPickOptions } from "vscode";
-import { Git } from "./git/git";
-import * as reject from "./common/reject";
+import { InputBoxOptions, QuickPickOptions, window, workspace } from "vscode";
 import * as octicon from "./common/octicons";
-import * as gitCommon from "./git/common";
+import * as reject from "./common/reject";
 import { Gerrit } from "./gerrit/gerrit";
 import { Ref } from "./gerrit/ref";
+import { Git } from "./git/git";
 import * as view from "./view/common";
 import { Logger } from "./view/logger";
 import { StatusBar } from "./view/statusbar";

@@ -1,12 +1,7 @@
 import { isNil } from "lodash";
-import { BasicGit } from "./basicGit";
-import { createLog, GitLog } from "./gitLog";
 import Event from "../common/event";
-import * as exec from "../common/exec";
-import * as reject from "../common/reject";
-import { Settings } from "../common/settings";
-import { Gerrit } from "../gerrit/gerrit";
 import { Logger } from "../view/logger";
+import { BasicGit } from "./basicGit";
 
 
 class Git extends BasicGit {
@@ -25,7 +20,7 @@ class Git extends BasicGit {
     }
 
     public push(target: string[], origin?: string): Promise<string> {
-     return super.push(target, origin).then(value => {
+        return super.push(target, origin).then(value => {
             Event.emit("update-head");
             return value;
         });

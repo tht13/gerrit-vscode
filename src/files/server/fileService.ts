@@ -1,9 +1,8 @@
-import { BasicFileContainer } from "../basicFileContainer";
-import * as fileCommon from "../common";
+import * as utils from "../../common/utils";
 import { BasicGit } from "../../git/basicGit";
 import * as gitCommon from "../../git/common";
-import * as reject from "../../common/reject";
-import * as utils from "../../common/utils";
+import { BasicFileContainer } from "../basicFileContainer";
+import * as fileCommon from "../common";
 
 export class FileService extends BasicFileContainer {
     private git: BasicGit;

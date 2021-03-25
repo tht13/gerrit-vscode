@@ -1,9 +1,10 @@
-import { RequestType } from "vscode-languageclient";
-import * as fileCommon from "./common";
+import { RequestType } from "vscode-languageclient/node";
 import { SettingsExport } from "../common/settings";
 import * as gitCommon from "../git/common";
+import * as fileCommon from "./common";
 
 export namespace Request {
+    // @ts-expect-error
     export const type: RequestType<RequestParams, RequestResult, RequestError> = { get method() { return "request"; } };
 }
 

@@ -1,8 +1,8 @@
 import { isNil } from "lodash";
-import { window, OutputChannel } from "vscode";
-import { BasicLogger } from "./simpleLogger";
-import * as utils from "../common/utils";
+import { OutputChannel, window } from "vscode";
 import Settings from "../common/settings";
+import * as utils from "../common/utils";
+import { BasicLogger } from "./simpleLogger";
 
 export class Logger extends BasicLogger {
     private outputChannel: OutputChannel;

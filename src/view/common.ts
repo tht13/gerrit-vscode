@@ -1,5 +1,4 @@
 import { QuickPickItem, window } from "vscode";
-import * as utils from "../common/utils";
 import * as fileCommon from "../files/common";
 
 export interface FileStageQuickPick extends QuickPickItem, fileCommon.BasciFileQuickPick {

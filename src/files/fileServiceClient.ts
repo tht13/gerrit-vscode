@@ -1,13 +1,11 @@
-import * as path from "path";
 import { isNil } from "lodash";
-import { workspace } from "vscode";
-import { ServerOptions, LanguageClientOptions, LanguageClient, TransportKind } from "vscode-languageclient";
-import * as fileCommon from "./common";
-import { Request, RequestResult, RequestEventType, RequestParams, RequestPackage } from "./fileServiceInterface";
+import * as path from "path";
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
 import Event from "../common/event";
 import { Settings } from "../common/settings";
 import * as gitCommon from "../git/common";
-import { Gerrit } from "../gerrit/gerrit";
+import * as fileCommon from "./common";
+import { Request, RequestEventType, RequestPackage, RequestParams } from "./fileServiceInterface";
 
 export class FileServiceClient {
     private languageClient: LanguageClient;
@@ -28,10 +26,9 @@ export class FileServiceClient {
     }
 
     private getOptions(): { serverOptions: ServerOptions, clientOptions: LanguageClientOptions } {
-        let serverModule = path.join(Settings.getInstance().extensionRoot, "out", "src",
-            "files", "server", "fileServiceServer.js");
+        let serverModule = path.join(Settings.getInstance().extensionRoot, "dist", "fileServiceServer.js");
         let debugOptions = {
-            execArgv: ["--nolazy", "--debug=6004"],
+            execArgv: ["--nolazy", "--inspect=6004"],
             cwd: Settings.getInstance().extensionRoot
         };
 
